@@ -27,7 +27,8 @@ private:
 
 private:
     TileMap* map;
-    Player* player;
+    Player* player1;
+    Player* player2;
     ShaderProgram texProgram;
     float currentTime;
 };

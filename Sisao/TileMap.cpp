@@ -75,19 +75,12 @@ bool TileMap::loadLevel(const string& levelFile) {
     player2_spawn *= tileSize;
 
     map = new int[mapSize.x * mapSize.y];
-
     for (int j = 0; j < mapSize.y; j++) {
         for (int i = 0; i < mapSize.x; i++) {
             fin.read(tile, 1);
             map[j * mapSize.x + i] = strtoul(tile, nullptr, 21);
         }
         fin.read(tile, 1);
-        /*
-                        fin.read(tile,1);
-    #ifndef _WIN32
-        fin.get(tile);
-    #endif
-        */
     }
     fin.close();
 
@@ -204,5 +197,26 @@ bool TileMap::collisionMoveDown(const glm::ivec2& pos, const glm::ivec2& size,
     return false;
 }
 
+bool TileMap::collisionMoveUp(const glm::ivec2& pos, const glm::ivec2& size,
+                              int& posY) const {
+    int x0 = pos.x / tileSize;                // bb left
+    int x1 = (pos.x + size.x - 1) / tileSize; // bb right
+    int y = pos.y / tileSize;  // bb bot
+    for (int x = x0; x <= x1; ++x) {
+        if (map[y * mapSize.x + x] != 0) {
+            if (posY - tileSize * y - size.y <= 6) // 6¿? idk, pero s'ha solucionat!
+            {
+                posY = tileSize * y + size.y;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 glm::vec2 TileMap::get_spawn1() const { return player1_spawn; }
 glm::vec2 TileMap::get_spawn2() const { return player2_spawn; }
+
+glm::vec2 TileMap::get_center() const {
+    return glm::vec2(mapSize * tileSize) / 2.f;
+}

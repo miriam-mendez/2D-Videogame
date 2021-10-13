@@ -30,6 +30,7 @@ Sprite::Sprite(const glm::vec2& quadSize, const glm::vec2& sizeInSpritesheet, Te
     shaderProgram = program;
     currentAnimation = -1;
     position = glm::vec2(0.f);
+    quad_size = quadSize;
 }
 
 void Sprite::update(int deltaTime) {
@@ -46,7 +47,7 @@ void Sprite::update(int deltaTime) {
 void Sprite::render() const {
     glm::mat4 modelview = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0.f));
     auto cam = Camera::get_instance().view_matrix();
-    modelview = modelview * cam;
+    modelview = modelview * cam * modifier;
 
     shaderProgram->setUniformMatrix4f("modelview", modelview);
     shaderProgram->setUniform2f("texCoordDispl", texCoordDispl.x, texCoordDispl.y);
@@ -95,5 +96,8 @@ void Sprite::setPosition(const glm::vec2& pos) {
     position = pos;
 }
 
-
+void Sprite::setModifier(const glm::mat4& modifier) {
+    auto center = glm::translate(glm::mat4(1.0f), glm::vec3(quad_size / 2.f, 0.f));
+    this->modifier = center * modifier * glm::inverse(center);
+}
 

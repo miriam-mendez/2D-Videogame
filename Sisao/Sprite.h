@@ -32,7 +32,7 @@ public:
     int animation() const;
 
     void setPosition(const glm::vec2& pos);
-
+    void setModifier(const glm::mat4& modifier);
 private:
     Texture* texture;
     ShaderProgram* shaderProgram;
@@ -44,7 +44,8 @@ private:
     float timeAnimation;
     glm::vec2 texCoordDispl;
     vector<AnimKeyframes> animations;
-
+    glm::vec2 quad_size;
+    glm::mat4 modifier = glm::mat4(1);
 };
 
 

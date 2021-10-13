@@ -31,9 +31,13 @@ public:
     bool collisionMoveRight(const glm::ivec2& pos, const glm::ivec2& size) const;
     bool collisionMoveDown(const glm::ivec2& pos, const glm::ivec2& size,
                            int& posY) const;
+    bool collisionMoveUp(const glm::ivec2& pos, const glm::ivec2& size,
+                         int& posY) const;
 
     glm::vec2 get_spawn1() const;
     glm::vec2 get_spawn2() const;
+
+    glm::vec2 get_center() const;
 
 private:
     bool loadLevel(const string& levelFile);
@@ -49,6 +53,7 @@ private:
     glm::vec2 tileTexSize;
     int* map;
     glm::vec2 player1_spawn, player2_spawn;
+    glm::vec2 map_center;
 };
 
 #endif // _TILE_MAP_INCLUDE

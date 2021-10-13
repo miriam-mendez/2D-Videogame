@@ -1,1 +1,8 @@
 .vs
+*.log
+*.tlog
+*.obj
+*.pdb
+*.ilk
+*.exp
+*.exe
