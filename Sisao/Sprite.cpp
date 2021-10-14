@@ -45,9 +45,16 @@ void Sprite::update(int deltaTime) {
 }
 
 void Sprite::render() const {
-    glm::mat4 modelview = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0.f));
-    auto cam = Camera::get_instance().view_matrix();
-    modelview = modelview * cam * modifier;
+    // compute translation
+    const auto& cameraview = Camera::get_instance().view_matrix();
+    glm::mat4 modelview = glm::translate(cameraview, glm::vec3(position.x, position.y, 0.f));
+    // compute rotation
+    auto rotation_mat = glm::rotate(flipVH, rotation, glm::vec3(1.f, 0.f, 0.f));
+    const auto center_mat = glm::translate(glm::mat4(1.0f), glm::vec3(quad_size / 2.f, 0.f));
+    rotation_mat = center_mat * rotation_mat * glm::inverse(center_mat);
+    // compute scale
+    const auto scale_mat = glm::scale(glm::mat4(1.f), glm::vec3(scale, 1.f));
+    modelview = modelview * rotation_mat * scale_mat;
 
     shaderProgram->setUniformMatrix4f("modelview", modelview);
     shaderProgram->setUniform2f("texCoordDispl", texCoordDispl.x, texCoordDispl.y);
@@ -96,8 +103,17 @@ void Sprite::setPosition(const glm::vec2& pos) {
     position = pos;
 }
 
-void Sprite::setModifier(const glm::mat4& modifier) {
-    auto center = glm::translate(glm::mat4(1.0f), glm::vec3(quad_size / 2.f, 0.f));
-    this->modifier = center * modifier * glm::inverse(center);
+void Sprite::setRotation(float radians) {
+    rotation = radians;
+}
+
+void Sprite::setFlip(bool vertical, bool horizontal) {
+    const float radians = glm::radians(180.f);
+    flipVH = glm::rotate(glm::mat4(1.0f), horizontal * radians, glm::vec3(1.f, 0.f, 0.f));
+    flipVH = glm::rotate(flipVH, vertical * radians, glm::vec3(0.f, 1.f, 0.f));
+}
+
+void Sprite::setScale(const glm::vec2& axis_scale) {
+    scale = axis_scale;
 }
 

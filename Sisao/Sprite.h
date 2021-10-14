@@ -32,22 +32,32 @@ public:
     int animation() const;
 
     void setPosition(const glm::vec2& pos);
-    void setModifier(const glm::mat4& modifier);
+    void setRotation(float radians);
+    void setFlip(bool vertical, bool horizontal);
+    void setScale(const glm::vec2& scale);
+
 private:
     Texture* texture;
     ShaderProgram* shaderProgram;
     GLuint vao;
     GLuint vbo;
     GLint posLocation, texCoordLocation;
+
+    glm::vec2 quad_size;
+    glm::mat4 modifier = glm::mat4(1);
     glm::vec2 position;
+    float rotation = 0.f;
+    glm::vec2 scale = glm::vec2(1, 1);
+    glm::mat4 flipVH = glm::mat4(1);
+    bool flipV = false;
+    bool flipH = false;
+
     int currentAnimation, currentKeyframe;
     float timeAnimation;
     glm::vec2 texCoordDispl;
     vector<AnimKeyframes> animations;
-    glm::vec2 quad_size;
-    glm::mat4 modifier = glm::mat4(1);
-};
 
+};
 
 #endif // _SPRITE_INCLUDE
 

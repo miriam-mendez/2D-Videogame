@@ -7,8 +7,9 @@
 void FlippedPlayer::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram) {
     Player::init(tileMapPos, shaderProgram); // same code, no need to override
     // mirrored sprite
-    auto flip = glm::rotate(glm::mat4(1.0f), glm::radians(180.f), glm::vec3(1.f, 0.f, 0.f));
-    sprite->setModifier(flip);
+    //auto flip = glm::rotate(glm::mat4(1.0f), glm::radians(180.f), glm::vec3(1.f, 0.f, 0.f));
+    //sprite->setModifier(flip);
+    sprite->setFlip(false, true);
 }
 
 void FlippedPlayer::update(int deltaTime) {
