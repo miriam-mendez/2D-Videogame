@@ -1,9 +1,10 @@
-TILEMAP
-19 15			-- Size of tile map in tiles
-32 32			-- Tile size & block size
-images/land.png		-- Tilesheet
-10 2			-- Number of tiles in tilesheet
-7 3 7 9			-- Player1 X Y and Player2 X Y spawn points
+[BEGIN TILEMAP]
+DIMENSIONS 19 15
+TILE_SIZE 32
+BLOCK_SIZE 32
+TILESHEET images/land.png
+TILESHEET_NUMTILES 10 2
+[BEGIN TILES]
 0000000000000000000
 0000000000000000000
 0000000000000000000
@@ -19,3 +20,13 @@ images/land.png		-- Tilesheet
 0000000000000000000
 0000000000000000000
 0000000000000000000
+[END TILES]
+[END TILEMAP]
+
+[BEGIN OBJECTS]
+PLAYER 200 70 0
+PLAYER 200 300 1 # X Y Flip(0 means false, 1 true)
+BOX 250 70 # X Y
+BOX 250 70
+[END OBJECTS]
+

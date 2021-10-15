@@ -17,10 +17,11 @@
     <ClInclude Include="Constants.h" />
     <ClInclude Include="FlippedPlayer.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="PhysicPlayer.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="PhysicsListener.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="Object.h" />
-    <ClInclude Include="Player.h" />
+    <ClInclude Include="OLD_PLAYER.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />
@@ -35,8 +36,8 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />
-    <ClCompile Include="PhysicPlayer.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="OLD_PLAYER.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />

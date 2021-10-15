@@ -1,22 +1,21 @@
 #include "TileMap.h"
-#include <fstream>
 #include <iostream>
-#include <sstream>
 #include <vector>
-
+#include "Constants.h"
+#include "utils.h"
+#include <box2d/b2_fixture.h>
+#include <box2d/b2_polygon_shape.h>
+#include <fstream>
+#include <sstream>
 using namespace std;
 
-TileMap* TileMap::createTileMap(const string& levelFile,
-                                const glm::vec2& minCoords,
-                                ShaderProgram& program) {
-    TileMap* map = new TileMap(levelFile, minCoords, program);
 
-    return map;
-}
+TileMap::TileMap() {}
 
-TileMap::TileMap(const string& levelFile, const glm::vec2& minCoords,
+TileMap::TileMap(std::ifstream& stream, b2World& physics, const glm::vec2& minCoords,
                  ShaderProgram& program) {
-    loadLevel(levelFile);
+    read_tilemap(stream);
+    register_physics(physics);
     prepareArrays(minCoords, program);
 }
 
@@ -37,54 +36,55 @@ void TileMap::render() const {
 
 void TileMap::free() { glDeleteBuffers(1, &vbo); }
 
-bool TileMap::loadLevel(const string& levelFile) {
-    ifstream fin;
-    string line, tilesheetFile;
-    stringstream sstream;
-    char tile[1];
-
-    fin.open(levelFile.c_str());
-    if (!fin.is_open())
-        return false;
-    getline(fin, line);
-    if (line.compare(0, 7, "TILEMAP") != 0)
-        return false;
-    getline(fin, line);
-    sstream.str(line);
-    sstream >> mapSize.x >> mapSize.y;
-    getline(fin, line);
-    sstream.str(line);
-    sstream >> tileSize >> blockSize;
-    getline(fin, line);
-    sstream.str(line);
-    sstream >> tilesheetFile;
-    tilesheet.loadFromFile(tilesheetFile, TEXTURE_PIXEL_FORMAT_RGBA);
-    tilesheet.setWrapS(GL_CLAMP_TO_EDGE);
-    tilesheet.setWrapT(GL_CLAMP_TO_EDGE);
-    tilesheet.setMinFilter(GL_NEAREST);
-    tilesheet.setMagFilter(GL_NEAREST);
-    getline(fin, line);
-    sstream.str(line);
-    sstream >> tilesheetSize.x >> tilesheetSize.y;
-    tileTexSize = glm::vec2(1.f / tilesheetSize.x, 1.f / tilesheetSize.y);
-    getline(fin, line);
-    sstream.str(line);
-    sstream >> player1_spawn.x >> player1_spawn.y >> player2_spawn.x >>
-        player2_spawn.y;
-    player1_spawn *= tileSize;
-    player2_spawn *= tileSize;
-
-    map = new int[mapSize.x * mapSize.y];
-    for (int j = 0; j < mapSize.y; j++) {
-        for (int i = 0; i < mapSize.x; i++) {
-            fin.read(tile, 1);
-            map[j * mapSize.x + i] = strtoul(tile, nullptr, 21);
+void TileMap::read_tilemap(std::ifstream& stream) {
+    std::string line;
+    std::getline(stream, line);
+    while (line.find("[END TILEMAP]") == string::npos) {
+        auto instr_end = line.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ_");
+        instr_end = (instr_end == string::npos) ? 0 : instr_end;
+        auto instr = line.substr(0, instr_end);
+        auto args = line.substr(instr_end);
+        std::stringstream sstream;
+        if (instr == "DIMENSIONS") {
+            sstream.str(args);
+            sstream >> mapSize.x >> mapSize.y;
         }
-        fin.read(tile, 1);
+        else if (instr == "TILE_SIZE") {
+            sstream.str(args);
+            sstream >> tileSize;
+        }
+        else if (instr == "BLOCK_SIZE") {
+            sstream.str(args);
+            sstream >> blockSize;
+        }
+        else if (instr == "TILESHEET") {
+            sstream.str(args);
+            std::string file;
+            sstream >> file;
+            tilesheet.loadFromFile(file, TEXTURE_PIXEL_FORMAT_RGBA);
+            tilesheet.setWrapS(GL_CLAMP_TO_EDGE);
+            tilesheet.setWrapT(GL_CLAMP_TO_EDGE);
+            tilesheet.setMinFilter(GL_NEAREST);
+            tilesheet.setMagFilter(GL_NEAREST);
+        }
+        else if (instr == "TILESHEET_NUMTILES") {
+            sstream.str(args);
+            sstream >> tilesheetSize.x >> tilesheetSize.y;
+            tileTexSize = glm::vec2(1.f / tilesheetSize.x, 1.f / tilesheetSize.y);
+        }
+        else if (line.find("[BEGIN TILES]") != string::npos) {
+            char tile[1];
+            map = new int[mapSize.x * mapSize.y];
+            for (int j = 0; j < mapSize.y; j++) {
+                for (int i = 0; i < mapSize.x; i++) {
+                    stream.read(tile, 1);
+                    map[j * mapSize.x + i] = strtoul(tile, nullptr, 21);
+                }
+                stream.read(tile, 1);
+            }
+        }
+        std::getline(stream, line);
     }
-    fin.close();
-
-    return true;
 }
 
 void TileMap::prepareArrays(const glm::vec2& minCoords,
@@ -148,6 +148,42 @@ void TileMap::prepareArrays(const glm::vec2& minCoords,
         program.bindVertexAttribute("position", 2, 4 * sizeof(float), 0);
     texCoordLocation = program.bindVertexAttribute(
         "texCoord", 2, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+}
+
+void TileMap::register_physics(b2World& physics) {
+    const float tile_size_meters = tileSize * Constants::Units::meters_per_pixel;
+    for (int j = 0; j < mapSize.y; j++) {
+        for (int i = 0; i < mapSize.x; i++) {
+            int tile = map[j * mapSize.x + i];
+            if (tile != 0) {// Non-empty tile
+                b2BodyDef body_def;
+                float x = i * tile_size_meters;
+                float y = j * tile_size_meters;
+                body_def.position.Set(x, y);
+                physics_body = physics.CreateBody(&body_def);
+
+                b2BodyUserData data;
+                data.pointer = 0xFFFF;
+                physics_body->GetUserData() = data;
+
+                b2PolygonShape shape;
+                // collision shapes are separated by 1 pixel gap (ghost edge avoidance)
+                float offset = Constants::Units::meters_per_pixel;
+                float hx = (tile_size_meters - offset) / 2.f;
+                float hy = hx;
+                shape.SetAsBox(hx, hy);
+
+                b2FixtureDef fixture_def;
+                fixture_def.shape = &shape;
+                fixture_def.density = 0.0f;
+                fixture_def.friction = 0.1f;
+                fixture_def.filter.categoryBits = (int)Constants::Physics::Category::Wall;
+                fixture_def.filter.maskBits = (int)Constants::Physics::Mask::Wall;
+                physics_body->CreateFixture(&fixture_def);
+            }
+
+        }
+    }
 }
 
 // Collision tests for axis aligned bounding boxes.

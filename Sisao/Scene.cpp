@@ -5,27 +5,16 @@
 #include "Game.h"
 #include "Camera.h"
 #include "FlippedPlayer.h"
-
-#include "PhysicPlayer.h"
+#include "Player.h"
 #include "Box.h"
 #include "Constants.h"
-
-#define INIT_PLAYER_X_TILES 3
-#define INIT_PLAYER_Y_TILES 3
-
-#define MAP_HEIGHT 11
-
-//#define SCREEN_X 0//SCREEN_WIDTH/2 - INIT_PLAYER_X_TILES*32
-//#define SCREEN_Y 0//SCREEN_HEIGHT/2 - 32*MAP_HEIGHT/2
+#include <fstream>
+#include <sstream>
 
 
 Scene::Scene() {}
 
 Scene::~Scene() {
-    delete map;
-    delete player1;
-    delete player2;
-    delete physics;
     for (auto const& x : objects) {
         delete x.second;
     }
@@ -36,52 +25,31 @@ Scene::~Scene() {
 void Scene::init(std::string level) {
     initShaders();
     currentTime = 0.0f;
-    map = TileMap::createTileMap(level, glm::vec2(0, 0), texProgram);
-    // spawn player 1
-    player1 = new Player();
-    player1->init(glm::ivec2(0, 0), texProgram);
-    player1->setPosition(map->get_spawn1());
-    player1->setTileMap(map);
-    // spawn player 2
-    player2 = new FlippedPlayer();
-    player2->init(glm::ivec2(0, 0), texProgram);
-    player2->setPosition(map->get_spawn2());
-    player2->setTileMap(map);
-    // setup camera
+
+    physics.SetContactListener(&physics_listener);
     Camera::get_instance().set_orthogonal(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
 
-    b2Vec2 gravity(0.0f, 0.0f); // gravity set to 0 -> controlled by each body not globally
-    physics = new b2World(gravity);
-
-    auto phyplayer = new PhysicPlayer();
-    phyplayer->init(physics, texProgram);
-    phyplayer->set_position(map->get_spawn1());
-    objects.emplace(23423, phyplayer);
-
-    auto test = new Box();
-    test->init(physics, texProgram);
-    test->set_position(map->get_spawn2());
-    objects.emplace(345, test);
+    std::ifstream stream;
+    stream.open(level.c_str());
+    read_level(stream);
 }
 
 void Scene::update(int deltaTime) {
     currentTime += deltaTime;
-    player1->update(deltaTime);
-    player2->update(deltaTime);
 
     for (auto const& x : objects) {
         x.second->update(deltaTime);
     }
 
-    physics->Step(Constants::Physics::timestep, Constants::Physics::velocity_iters, Constants::Physics::position_iters);
+    physics.Step(Constants::Physics::timestep, Constants::Physics::velocity_iters, Constants::Physics::position_iters);
 }
 
 void Scene::render() {
     auto& cam = Camera::get_instance();
     auto projection = cam.projection_matrix();
 
-    glm::vec2 players_center = (player1->getPosition() + player2->getPosition()) / 2.f;
-    glm::vec2 map_center = map->get_center();
+    glm::vec2 players_center = glm::vec2(200, 0);//(player1->getPosition() + player2->getPosition()) / 2.f;
+    glm::vec2 map_center = map.get_center();
     glm::vec2 camera_focus_point = glm::vec2(SCREEN_WIDTH / 2.f - players_center.x, SCREEN_HEIGHT / 2.f - map_center.y);
     cam.view_matrix() = glm::translate(glm::mat4(1.0f), glm::vec3(camera_focus_point, 0.f));
     auto model_view = cam.view_matrix();
@@ -91,12 +59,56 @@ void Scene::render() {
     texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
     texProgram.setUniformMatrix4f("modelview", model_view);
     texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
-    map->render();
-    player1->render();
-    player2->render();
+    map.render();
 
     for (auto const& x : objects) {
         x.second->render();
+    }
+}
+
+void Scene::read_level(std::ifstream& stream) {
+    std::string line;
+    while (std::getline(stream, line)) {
+        if (line.find("[BEGIN TILEMAP]") != string::npos) {
+            map = TileMap(stream, physics, glm::vec2(0, 0), texProgram);
+        }
+        else if (line.find("[BEGIN OBJECTS]") != string::npos) {
+            read_objects(stream);
+        }
+    }
+}
+
+void Scene::read_objects(std::ifstream& stream) {
+    std::string line;
+    std::getline(stream, line);
+    while (line.find("[END OBJECTS]") == string::npos) {
+        auto instr_end = line.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ_");
+        instr_end = (instr_end == string::npos) ? 0 : instr_end;
+        auto instr = line.substr(0, instr_end);
+        auto args = line.substr(instr_end);
+        std::stringstream sstream;
+        if (instr == "PLAYER") {
+            glm::ivec2 pos;
+            bool invert;
+            sstream.str(args);
+            sstream >> pos.x >> pos.y >> invert;
+            auto id = generate_object_uuid();
+            Player* player = invert ? new FlippedPlayer(id) : new Player(id);
+            player->init(physics, texProgram);
+            player->set_position(glm::vec2(pos));
+            objects.emplace(id, player);
+        }
+        else if (instr == "BOX") {
+            auto id = generate_object_uuid();
+            auto box = new Box(id);
+            box->init(physics, texProgram);
+            sstream.str(args);
+            glm::ivec2 pos;
+            sstream >> pos.x >> pos.y;
+            box->set_position(glm::vec2(pos));
+            objects.emplace(id, box);
+        }
+        std::getline(stream, line);
     }
 }
 
@@ -124,6 +136,11 @@ void Scene::initShaders() {
     texProgram.bindFragmentOutput("outColor");
     vShader.free();
     fShader.free();
+}
+
+Object::uuid_t Scene::generate_object_uuid() {
+    static Object::uuid_t current = 0;
+    return current++;
 }
 
 

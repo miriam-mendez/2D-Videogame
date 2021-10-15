@@ -5,6 +5,7 @@
 
 #include "ShaderProgram.h"
 #include "Texture.h"
+#include <box2d/b2_world.h>
 
 // Class Tilemap is capable of loading a tile map from a text file in a very
 // simple format (see level01.txt for an example). With this information
@@ -13,12 +14,10 @@
 
 class TileMap {
 public:
-    // Tile maps can only be created inside an OpenGL context
-    static TileMap* createTileMap(const string& levelFile,
-                                  const glm::vec2& minCoords,
-                                  ShaderProgram& program);
 
-    TileMap(const string& levelFile, const glm::vec2& minCoords,
+    TileMap(); // Tile maps can only be created inside an OpenGL context
+
+    TileMap(std::ifstream& stream, b2World& physics, const glm::vec2& minCoords,
             ShaderProgram& program);
     ~TileMap();
 
@@ -40,20 +39,23 @@ public:
     glm::vec2 get_center() const;
 
 private:
-    bool loadLevel(const string& levelFile);
+    void read_tilemap(std::ifstream& stream);
     void prepareArrays(const glm::vec2& minCoords, ShaderProgram& program);
+    void register_physics(b2World& physics);
 
 private:
     GLuint vao;
     GLuint vbo;
     GLint posLocation, texCoordLocation;
-    glm::ivec2 position, mapSize, tilesheetSize;
+    glm::ivec2 mapSize, tilesheetSize;
     int tileSize, blockSize;
     Texture tilesheet;
     glm::vec2 tileTexSize;
     int* map;
     glm::vec2 player1_spawn, player2_spawn;
     glm::vec2 map_center;
+
+    b2Body* physics_body = nullptr; // freed automatically
 };
 
 #endif // _TILE_MAP_INCLUDE
