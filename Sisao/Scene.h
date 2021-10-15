@@ -9,12 +9,19 @@
 #include "PhysicsListener.h"
 #include <fstream>
 
-// Scene contains all the entities of our game.
-// It is responsible for updating and render them.
-
 
 class Scene {
+    TileMap map;
+    std::unordered_map<Object::uuid_t, Object*> objects;
+    b2World physics = b2World(b2Vec2(0.0f, 0.0f));
+    PhysicsListener<Object> physics_listener;
 
+    ShaderProgram texProgram;
+    float currentTime;
+
+    void read_level(std::ifstream& stream);
+    void read_objects(std::ifstream& stream);
+    void initShaders();
 public:
     Scene();
     ~Scene();
@@ -23,19 +30,7 @@ public:
     void update(int deltaTime);
     void render();
 
-private:
-    Object::uuid_t generate_object_uuid();
-    void read_level(std::ifstream& stream);
-    void read_objects(std::ifstream& stream);
-    void initShaders();
+    Object* get_object(Object::uuid_t id);
 
-private:
-    TileMap map;
-    std::unordered_map<std::uint32_t, Object*> objects;
-    b2World physics = b2World(b2Vec2(0.0f, 0.0f));
-    PhysicsListener<Object> physics_listener;
-
-    ShaderProgram texProgram;
-    float currentTime;
 };
 

@@ -152,26 +152,26 @@ void TileMap::prepareArrays(const glm::vec2& minCoords,
 
 void TileMap::register_physics(b2World& physics) {
     const float tile_size_meters = tileSize * Constants::Units::meters_per_pixel;
+    b2BodyDef body_def;
+    body_def.position.Set(0.f, 0.f);
+    physics_body = physics.CreateBody(&body_def);
+
+    b2BodyUserData data;
+    data.pointer = 0xFFFF;
+    physics_body->GetUserData() = data;
+
     for (int j = 0; j < mapSize.y; j++) {
         for (int i = 0; i < mapSize.x; i++) {
             int tile = map[j * mapSize.x + i];
             if (tile != 0) {// Non-empty tile
-                b2BodyDef body_def;
                 float x = i * tile_size_meters;
                 float y = j * tile_size_meters;
-                body_def.position.Set(x, y);
-                physics_body = physics.CreateBody(&body_def);
-
-                b2BodyUserData data;
-                data.pointer = 0xFFFF;
-                physics_body->GetUserData() = data;
-
                 b2PolygonShape shape;
                 // collision shapes are separated by 1 pixel gap (ghost edge avoidance)
                 float offset = Constants::Units::meters_per_pixel;
                 float hx = (tile_size_meters - offset) / 2.f;
                 float hy = hx;
-                shape.SetAsBox(hx, hy);
+                shape.SetAsBox(hx, hy, b2Vec2(x, y), 0.f);
 
                 b2FixtureDef fixture_def;
                 fixture_def.shape = &shape;

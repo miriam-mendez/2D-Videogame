@@ -38,17 +38,53 @@ void Player::init(b2World& physics, ShaderProgram& shaderProgram) {
     body_def.type = b2_dynamicBody;
     body_def.position.Set(position.x, position.y);
     physic_body = physics.CreateBody(&body_def);
-    // PHYSICS: SHAPE SETUP
+    // PHYSICS: SHAPE SETUP (CAPSULE: 2 circles and 1 rectangle)
     const glm::vec2 sprite_size_meters = glm::vec2(sprite_size_pixels) * Constants::Units::meters_per_pixel;
-    b2PolygonShape box_shape;
-    box_shape.SetAsBox(sprite_size_meters.x / 2.f, sprite_size_meters.y / 2.f);
-    b2FixtureDef fixture_def;
+    float radius = glm::min(sprite_size_meters.x, sprite_size_meters.y) / 2.f;
+    b2CircleShape c1;
+    c1.m_radius = radius;
+    float c1_y = position.y + sprite_size_meters.y / 2.f - radius;
+    c1.m_p.Set(position.x, c1_y);
+    b2CircleShape c2;
+    c2.m_radius = radius;
+    float c2_y = position.y - sprite_size_meters.y / 2.f + radius;
+    c2.m_p.Set(position.x, c2_y);
+    b2PolygonShape box;
+    box.SetAsBox(sprite_size_meters.x / 2.f, glm::abs(c1_y - c2_y) / 2.f, b2Vec2(position.x, position.y), 0.f);
+
+    b2FixtureDef fixture_c1;
+    fixture_c1.shape = &c1;
+    fixture_c1.density = 1.0f;
+    fixture_c1.friction = 0.2f;
+    fixture_c1.filter.categoryBits = (int)Constants::Physics::Category::Regular;
+    fixture_c1.filter.maskBits = (int)Constants::Physics::Mask::Regular;
+    physic_body->CreateFixture(&fixture_c1);
+
+    b2FixtureDef fixture_c2;
+    fixture_c2.shape = &c2;
+    fixture_c2.density = 1.0f;
+    fixture_c2.friction = 0.2f;
+    fixture_c2.filter.categoryBits = (int)Constants::Physics::Category::Regular;
+    fixture_c2.filter.maskBits = (int)Constants::Physics::Mask::Regular;
+    physic_body->CreateFixture(&fixture_c2);
+
+    b2FixtureDef fixture_box;
+    fixture_box.shape = &box;
+    fixture_box.density = 1.0f;
+    fixture_box.friction = 0.2f;
+    fixture_box.filter.categoryBits = (int)Constants::Physics::Category::Regular;
+    fixture_box.filter.maskBits = (int)Constants::Physics::Mask::Regular;
+    physic_body->CreateFixture(&fixture_box);
+
+    //b2PolygonShape box_shape;
+    //box_shape.SetAsBox(sprite_size_meters.x / 2.f, sprite_size_meters.y / 2.f);
+    /*b2FixtureDef fixture_def;
     fixture_def.shape = &box_shape;
     fixture_def.density = 1.0f;
     fixture_def.friction = 0.2f;
     fixture_def.filter.categoryBits = (int)Constants::Physics::Category::Regular;
     fixture_def.filter.maskBits = (int)Constants::Physics::Mask::Regular;
-    auto fixture = physic_body->CreateFixture(&fixture_def);
+    auto fixture = physic_body->CreateFixture(&fixture_def);*/
     physic_body->SetFixedRotation(true);
 }
 
@@ -104,7 +140,9 @@ void Player::update(int deltaTime) {
 void Player::begin_overlap(b2Contact* contact) {
     Object::uuid_t id1 = contact->GetFixtureA()->GetBody()->GetUserData().pointer;
     Object::uuid_t id2 = contact->GetFixtureB()->GetBody()->GetUserData().pointer;
-
+    
+    //Game::instance().get_scene().get_object(id2); might be useful with dynamic_cast ;D
+    
     if (uuid == id1 || uuid == id2) {
         jumping = false;
     }

@@ -24,6 +24,8 @@ public:
     bool update(int deltaTime);
     void render();
 
+    Scene& get_scene() { return scene; };
+
     // Input callback methods
     void keyPressed(int key);
     void keyReleased(int key);

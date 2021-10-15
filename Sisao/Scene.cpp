@@ -66,6 +66,11 @@ void Scene::render() {
     }
 }
 
+Object* Scene::get_object(Object::uuid_t id) {
+    auto search = objects.find(id);
+    return (search != objects.end()) ? search->second : nullptr;
+}
+
 void Scene::read_level(std::ifstream& stream) {
     std::string line;
     while (std::getline(stream, line)) {
@@ -89,24 +94,27 @@ void Scene::read_objects(std::ifstream& stream) {
         std::stringstream sstream;
         if (instr == "PLAYER") {
             glm::ivec2 pos;
-            bool invert;
+            bool inverted;
+            Object::uuid_t id;
             sstream.str(args);
-            sstream >> pos.x >> pos.y >> invert;
-            auto id = generate_object_uuid();
-            Player* player = invert ? new FlippedPlayer(id) : new Player(id);
+            sstream >> id >> pos.x >> pos.y >> inverted;
+            Player* player = inverted ? new FlippedPlayer(id) : new Player(id);
             player->init(physics, texProgram);
             player->set_position(glm::vec2(pos));
-            objects.emplace(id, player);
+            auto r = objects.emplace(id, player);
+            assert(r.second);
         }
         else if (instr == "BOX") {
-            auto id = generate_object_uuid();
-            auto box = new Box(id);
-            box->init(physics, texProgram);
-            sstream.str(args);
             glm::ivec2 pos;
-            sstream >> pos.x >> pos.y;
+            bool inverted;
+            Object::uuid_t id;
+            sstream.str(args);
+            sstream >> id >> pos.x >> pos.y >> inverted;
+            auto box = new Box(id);
+            box->init(physics, texProgram, inverted);
             box->set_position(glm::vec2(pos));
-            objects.emplace(id, box);
+            auto r = objects.emplace(id, box);
+            assert(r.second);
         }
         std::getline(stream, line);
     }
@@ -138,10 +146,6 @@ void Scene::initShaders() {
     fShader.free();
 }
 
-Object::uuid_t Scene::generate_object_uuid() {
-    static Object::uuid_t current = 0;
-    return current++;
-}
 
 
 
