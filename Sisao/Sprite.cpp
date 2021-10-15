@@ -49,7 +49,7 @@ void Sprite::render() const {
     const auto& cameraview = Camera::get_instance().view_matrix();
     glm::mat4 modelview = glm::translate(cameraview, glm::vec3(position.x, position.y, 0.f));
     // compute rotation
-    auto rotation_mat = glm::rotate(flipVH, rotation, glm::vec3(1.f, 0.f, 0.f));
+    auto rotation_mat = glm::rotate(flipVH, rotation, glm::vec3(0.f, 0.f, 1.f));
     const auto center_mat = glm::translate(glm::mat4(1.0f), glm::vec3(quad_size / 2.f, 0.f));
     rotation_mat = center_mat * rotation_mat * glm::inverse(center_mat);
     // compute scale

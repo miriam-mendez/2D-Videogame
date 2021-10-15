@@ -6,6 +6,10 @@
 #include "Camera.h"
 #include "FlippedPlayer.h"
 
+#include "PhysicPlayer.h"
+#include "Box.h"
+#include "Constants.h"
+
 #define INIT_PLAYER_X_TILES 3
 #define INIT_PLAYER_Y_TILES 3
 
@@ -15,18 +19,17 @@
 //#define SCREEN_Y 0//SCREEN_HEIGHT/2 - 32*MAP_HEIGHT/2
 
 
-Scene::Scene() {
-    map = NULL;
-    player1 = NULL;
-}
+Scene::Scene() {}
 
 Scene::~Scene() {
-    if (map != NULL)
-        delete map;
-    if (player1 != NULL) {
-        delete player1;
-        delete player2;
+    delete map;
+    delete player1;
+    delete player2;
+    delete physics;
+    for (auto const& x : objects) {
+        delete x.second;
     }
+    objects.clear();
 }
 
 
@@ -46,12 +49,31 @@ void Scene::init(std::string level) {
     player2->setTileMap(map);
     // setup camera
     Camera::get_instance().set_orthogonal(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
+
+    b2Vec2 gravity(0.0f, 0.0f); // gravity set to 0 -> controlled by each body not globally
+    physics = new b2World(gravity);
+
+    auto phyplayer = new PhysicPlayer();
+    phyplayer->init(physics, texProgram);
+    phyplayer->set_position(map->get_spawn1());
+    objects.emplace(23423, phyplayer);
+
+    auto test = new Box();
+    test->init(physics, texProgram);
+    test->set_position(map->get_spawn2());
+    objects.emplace(345, test);
 }
 
 void Scene::update(int deltaTime) {
     currentTime += deltaTime;
     player1->update(deltaTime);
     player2->update(deltaTime);
+
+    for (auto const& x : objects) {
+        x.second->update(deltaTime);
+    }
+
+    physics->Step(Constants::Physics::timestep, Constants::Physics::velocity_iters, Constants::Physics::position_iters);
 }
 
 void Scene::render() {
@@ -72,6 +94,10 @@ void Scene::render() {
     map->render();
     player1->render();
     player2->render();
+
+    for (auto const& x : objects) {
+        x.second->render();
+    }
 }
 
 void Scene::initShaders() {
