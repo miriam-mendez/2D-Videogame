@@ -26,16 +26,6 @@ public:
 
     int getTileSize() const { return tileSize; }
 
-    bool collisionMoveLeft(const glm::ivec2& pos, const glm::ivec2& size) const;
-    bool collisionMoveRight(const glm::ivec2& pos, const glm::ivec2& size) const;
-    bool collisionMoveDown(const glm::ivec2& pos, const glm::ivec2& size,
-                           int& posY) const;
-    bool collisionMoveUp(const glm::ivec2& pos, const glm::ivec2& size,
-                         int& posY) const;
-
-    glm::vec2 get_spawn1() const;
-    glm::vec2 get_spawn2() const;
-
     glm::vec2 get_center() const;
 
 private:
@@ -52,8 +42,6 @@ private:
     Texture tilesheet;
     glm::vec2 tileTexSize;
     int* map;
-    glm::vec2 player1_spawn, player2_spawn;
-    glm::vec2 map_center;
 
     b2Body* physics_body = nullptr; // freed automatically
 };

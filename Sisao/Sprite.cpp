@@ -3,6 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Sprite.h"
 #include "Camera.h"
+#include "Game.h"
 
 Sprite* Sprite::createSprite(const glm::vec2& quadSize, const glm::vec2& sizeInSpritesheet, Texture* spritesheet, ShaderProgram* program) {
     Sprite* quad = new Sprite(quadSize, sizeInSpritesheet, spritesheet, program);
@@ -46,10 +47,11 @@ void Sprite::update(int deltaTime) {
 
 void Sprite::render() const {
     // compute translation
-    const auto& cameraview = Camera::get_instance().view_matrix();
+    const auto& cameraview = Game::instance().get_scene().get_camera().view_matrix();
     glm::mat4 modelview = glm::translate(cameraview, glm::vec3(position.x, position.y, 0.f));
     // compute rotation
-    auto rotation_mat = glm::rotate(flipVH, rotation, glm::vec3(0.f, 0.f, 1.f));
+    auto rotation_mat = glm::rotate(glm::mat4(1), rotation, glm::vec3(0.f, 0.f, 1.f));
+    rotation_mat = rotation_mat * flipVH;
     const auto center_mat = glm::translate(glm::mat4(1.0f), glm::vec3(quad_size / 2.f, 0.f));
     rotation_mat = center_mat * rotation_mat * glm::inverse(center_mat);
     // compute scale

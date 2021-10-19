@@ -54,37 +54,27 @@ void Player::init(b2World& physics, ShaderProgram& shaderProgram) {
 
     b2FixtureDef fixture_c1;
     fixture_c1.shape = &c1;
-    fixture_c1.density = 1.0f;
-    fixture_c1.friction = 0.2f;
+    fixture_c1.density = 1.5f;
+    fixture_c1.friction = 1.f;
     fixture_c1.filter.categoryBits = (int)Constants::Physics::Category::Regular;
     fixture_c1.filter.maskBits = (int)Constants::Physics::Mask::Regular;
     physic_body->CreateFixture(&fixture_c1);
 
     b2FixtureDef fixture_c2;
     fixture_c2.shape = &c2;
-    fixture_c2.density = 1.0f;
-    fixture_c2.friction = 0.2f;
+    fixture_c2.density = 1.5f;
+    fixture_c2.friction = 1.f;
     fixture_c2.filter.categoryBits = (int)Constants::Physics::Category::Regular;
     fixture_c2.filter.maskBits = (int)Constants::Physics::Mask::Regular;
     physic_body->CreateFixture(&fixture_c2);
 
     b2FixtureDef fixture_box;
     fixture_box.shape = &box;
-    fixture_box.density = 1.0f;
-    fixture_box.friction = 0.2f;
+    fixture_box.density = 1.5f;
+    fixture_box.friction = 1.f;
     fixture_box.filter.categoryBits = (int)Constants::Physics::Category::Regular;
     fixture_box.filter.maskBits = (int)Constants::Physics::Mask::Regular;
     physic_body->CreateFixture(&fixture_box);
-
-    //b2PolygonShape box_shape;
-    //box_shape.SetAsBox(sprite_size_meters.x / 2.f, sprite_size_meters.y / 2.f);
-    /*b2FixtureDef fixture_def;
-    fixture_def.shape = &box_shape;
-    fixture_def.density = 1.0f;
-    fixture_def.friction = 0.2f;
-    fixture_def.filter.categoryBits = (int)Constants::Physics::Category::Regular;
-    fixture_def.filter.maskBits = (int)Constants::Physics::Mask::Regular;
-    auto fixture = physic_body->CreateFixture(&fixture_def);*/
     physic_body->SetFixedRotation(true);
 }
 
@@ -116,6 +106,7 @@ void Player::update(int deltaTime) {
         }*/
     }
     physic_body->ApplyLinearImpulseToCenter(to_box2d(h_impulse), true);
+
     if (Game::instance().getSpecialKey(GLUT_KEY_UP)) {
         float max_jump = Constants::Regular::max_jump_speed * Constants::Units::meters_per_pixel;
         float vvchange = max_jump - glm::abs(velocity.y);
@@ -134,16 +125,20 @@ void Player::update(int deltaTime) {
 
     // gravity
     auto gravity = Constants::Physics::gravity * Constants::Units::meters_per_pixel;
-    physic_body->ApplyForceToCenter(to_box2d(gravity), true);
+    physic_body->ApplyForceToCenter(to_box2d(gravity * physic_body->GetMass()), true);
 }
 
 void Player::begin_overlap(b2Contact* contact) {
     Object::uuid_t id1 = contact->GetFixtureA()->GetBody()->GetUserData().pointer;
     Object::uuid_t id2 = contact->GetFixtureB()->GetBody()->GetUserData().pointer;
-    
+
     //Game::instance().get_scene().get_object(id2); might be useful with dynamic_cast ;D
-    
-    if (uuid == id1 || uuid == id2) {
-        jumping = false;
+
+    if (jumping && (uuid == id1 || uuid == id2)) {
+        b2WorldManifold b;
+        contact->GetWorldManifold(&b);
+        auto normal = glm::vec2(b.normal.x, b.normal.y);
+        auto dot = glm::dot(normal, glm::vec2(0.f, 1.f));
+        jumping = glm::abs(dot) < 0.9;
     }
 }

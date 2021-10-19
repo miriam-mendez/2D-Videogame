@@ -27,32 +27,28 @@ void Scene::init(std::string level) {
     currentTime = 0.0f;
 
     physics.SetContactListener(&physics_listener);
-    Camera::get_instance().set_orthogonal(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
 
     std::ifstream stream;
     stream.open(level.c_str());
     read_level(stream);
+
+    camera.init(physics, 1.f, false, true);
+    camera.set_orthogonal(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
+    camera.set_position(map.get_center());
 }
 
 void Scene::update(int deltaTime) {
     currentTime += deltaTime;
-
     for (auto const& x : objects) {
         x.second->update(deltaTime);
     }
-
+    camera.update(deltaTime);
     physics.Step(Constants::Physics::timestep, Constants::Physics::velocity_iters, Constants::Physics::position_iters);
 }
 
 void Scene::render() {
-    auto& cam = Camera::get_instance();
-    auto projection = cam.projection_matrix();
-
-    glm::vec2 players_center = glm::vec2(200, 0);//(player1->getPosition() + player2->getPosition()) / 2.f;
-    glm::vec2 map_center = map.get_center();
-    glm::vec2 camera_focus_point = glm::vec2(SCREEN_WIDTH / 2.f - players_center.x, SCREEN_HEIGHT / 2.f - map_center.y);
-    cam.view_matrix() = glm::translate(glm::mat4(1.0f), glm::vec3(camera_focus_point, 0.f));
-    auto model_view = cam.view_matrix();
+    auto projection = camera.projection_matrix();
+    auto model_view = camera.view_matrix();
 
     texProgram.use();
     texProgram.setUniformMatrix4f("projection", projection);
@@ -69,6 +65,10 @@ void Scene::render() {
 Object* Scene::get_object(Object::uuid_t id) {
     auto search = objects.find(id);
     return (search != objects.end()) ? search->second : nullptr;
+}
+
+Camera& Scene::get_camera() {
+    return camera;
 }
 
 void Scene::read_level(std::ifstream& stream) {
@@ -102,6 +102,7 @@ void Scene::read_objects(std::ifstream& stream) {
             player->init(physics, texProgram);
             player->set_position(glm::vec2(pos));
             auto r = objects.emplace(id, player);
+            camera.follow(player);
             assert(r.second);
         }
         else if (instr == "BOX") {

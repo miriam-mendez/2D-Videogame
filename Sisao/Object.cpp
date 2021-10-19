@@ -47,3 +47,11 @@ void Object::set_rotation(float radians) {
     }
     rotation = radians;
 }
+
+glm::vec2 Object::get_position() {
+    return position;
+}
+
+float Object::get_rotation() {
+    return rotation;
+}

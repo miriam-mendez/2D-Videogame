@@ -22,8 +22,8 @@ void Box::init(b2World& physics, ShaderProgram& shaderProgram, bool inverted) {
     box_shape.SetAsBox(sprite_size_meters.x / 2.f, sprite_size_meters.y / 2.f);
     b2FixtureDef fixture_def;
     fixture_def.shape = &box_shape;
-    fixture_def.density = 1.0f;
-    fixture_def.friction = 5.f;
+    fixture_def.density = 3.0f;
+    fixture_def.friction = 0.4f;
     fixture_def.filter.categoryBits = (int)Constants::Physics::Category::Regular;
     fixture_def.filter.maskBits = (int)Constants::Physics::Mask::Regular;
     physic_body->CreateFixture(&fixture_def);
@@ -35,5 +35,5 @@ void Box::update(int deltaTime) {
     // gravity
     auto gravity = Constants::Physics::gravity * Constants::Units::meters_per_pixel;
     gravity = inverted ? -gravity : (gravity);
-    physic_body->ApplyForceToCenter(to_box2d(gravity), true);
+    physic_body->ApplyForceToCenter(to_box2d(gravity * physic_body->GetMass()), true);
 }

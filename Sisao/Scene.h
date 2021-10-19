@@ -8,6 +8,7 @@
 #include "Object.h"
 #include "PhysicsListener.h"
 #include <fstream>
+#include "Camera.h"
 
 
 class Scene {
@@ -18,6 +19,7 @@ class Scene {
 
     ShaderProgram texProgram;
     float currentTime;
+    Camera camera = Camera(Object::undefined_uuid);
 
     void read_level(std::ifstream& stream);
     void read_objects(std::ifstream& stream);
@@ -31,6 +33,6 @@ public:
     void render();
 
     Object* get_object(Object::uuid_t id);
-
+    Camera& get_camera();
 };
 

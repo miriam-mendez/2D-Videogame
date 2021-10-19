@@ -106,7 +106,7 @@ void TileMap::prepareArrays(const glm::vec2& minCoords,
                     glm::vec2(float((tile - 1) % tilesheetSize.x) / tilesheetSize.x,
                               float((tile - 1) / tilesheetSize.x) / tilesheetSize.y);
                 texCoordTile[1] = texCoordTile[0] + tileTexSize;
-                // texCoordTile[0] += halfTexel;
+                texCoordTile[0] += halfTexel;
                 texCoordTile[1] -= halfTexel;
                 // First triangle
                 vertices.push_back(posTile.x);
@@ -176,7 +176,7 @@ void TileMap::register_physics(b2World& physics) {
                 b2FixtureDef fixture_def;
                 fixture_def.shape = &shape;
                 fixture_def.density = 0.0f;
-                fixture_def.friction = 0.1f;
+                fixture_def.friction = 1.f;
                 fixture_def.filter.categoryBits = (int)Constants::Physics::Category::Wall;
                 fixture_def.filter.maskBits = (int)Constants::Physics::Mask::Wall;
                 physics_body->CreateFixture(&fixture_def);
@@ -185,73 +185,6 @@ void TileMap::register_physics(b2World& physics) {
         }
     }
 }
-
-// Collision tests for axis aligned bounding boxes.
-// Method collisionMoveDown also corrects Y coordinate if the box is
-// already intersecting a tile below.
-
-bool TileMap::collisionMoveLeft(const glm::ivec2& pos,
-                                const glm::ivec2& size) const {
-    int x = pos.x / tileSize;
-    int y0 = pos.y / tileSize;
-    int y1 = (pos.y + size.y - 1) / tileSize;
-    for (int y = y0; y <= y1; ++y) {
-        if (map[y * mapSize.x + x] != 0)
-            return true;
-    }
-
-    return false;
-}
-
-bool TileMap::collisionMoveRight(const glm::ivec2& pos,
-                                 const glm::ivec2& size) const {
-    int x = (pos.x + size.x - 1) / tileSize;
-    int y0 = pos.y / tileSize;
-    int y1 = (pos.y + size.y - 1) / tileSize;
-    for (int y = y0; y <= y1; ++y) {
-        if (map[y * mapSize.x + x] != 0)
-            return true;
-    }
-
-    return false;
-}
-
-bool TileMap::collisionMoveDown(const glm::ivec2& pos, const glm::ivec2& size,
-                                int& posY) const {
-    int x0 = pos.x / tileSize;                // bb left
-    int x1 = (pos.x + size.x - 1) / tileSize; // bb right
-    int y = (pos.y + size.y - 1) / tileSize;  // bb top
-    for (int x = x0; x <= x1; ++x) {
-        if (map[y * mapSize.x + x] != 0) {
-            if (posY - tileSize * y + size.y <= 6) // 6¿? idk, pero s'ha solucionat!
-            {
-                posY = tileSize * y - size.y;
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-bool TileMap::collisionMoveUp(const glm::ivec2& pos, const glm::ivec2& size,
-                              int& posY) const {
-    int x0 = pos.x / tileSize;                // bb left
-    int x1 = (pos.x + size.x - 1) / tileSize; // bb right
-    int y = pos.y / tileSize;  // bb bot
-    for (int x = x0; x <= x1; ++x) {
-        if (map[y * mapSize.x + x] != 0) {
-            if (posY - tileSize * y - size.y <= 6) // 6¿? idk, pero s'ha solucionat!
-            {
-                posY = tileSize * y + size.y;
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-glm::vec2 TileMap::get_spawn1() const { return player1_spawn; }
-glm::vec2 TileMap::get_spawn2() const { return player2_spawn; }
 
 glm::vec2 TileMap::get_center() const {
     return glm::vec2(mapSize * tileSize) / 2.f;

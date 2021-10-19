@@ -121,5 +121,5 @@ void FlippedPlayer::update(int deltaTime) {
 
     // gravity
     auto gravity = -Constants::Physics::gravity * Constants::Units::meters_per_pixel;
-    physic_body->ApplyForceToCenter(to_box2d(gravity), true);
+    physic_body->ApplyForceToCenter(to_box2d(gravity * physic_body->GetMass()), true);
 }
