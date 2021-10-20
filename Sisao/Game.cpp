@@ -6,7 +6,7 @@
 void Game::init() {
     bPlay = true;
     glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-    scene.init("levels/levelXX.txt");
+    scene.init("levels/levelX4.txt");
 }
 
 bool Game::update(int deltaTime) {

@@ -13,7 +13,7 @@ void Box::init(b2World& physics, ShaderProgram& shaderProgram, bool inverted) {
     sprite->setFlip(false, inverted);
 
     b2BodyDef body_def;
-    body_def.type = b2_dynamicBody;
+    body_def.type = b2_staticBody;
     body_def.position.Set(position.x, position.y);
     physic_body = physics.CreateBody(&body_def);
 
