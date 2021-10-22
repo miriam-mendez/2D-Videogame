@@ -12,11 +12,12 @@ using namespace std;
 
 TileMap::TileMap() {}
 
-TileMap::TileMap(std::ifstream& stream, b2World& physics, const glm::vec2& minCoords,
+TileMap::TileMap(std::ifstream& stream, b2World& physics, const glm::vec2& position,
                  ShaderProgram& program) {
+    this->position = position;
     read_tilemap(stream);
     register_physics(physics);
-    prepareArrays(minCoords, program);
+    prepareArrays(program);
 }
 
 TileMap::~TileMap() {
@@ -87,8 +88,8 @@ void TileMap::read_tilemap(std::ifstream& stream) {
     }
 }
 
-void TileMap::prepareArrays(const glm::vec2& minCoords,
-                            ShaderProgram& program) {
+void TileMap::prepareArrays(ShaderProgram& program) {
+    glm::vec2 offset = position - glm::vec2(tileSize, tileSize) / 2.f;
     int tile, nTiles = 0;
     glm::vec2 posTile, texCoordTile[2], halfTexel;
     vector<float> vertices;
@@ -101,7 +102,7 @@ void TileMap::prepareArrays(const glm::vec2& minCoords,
                 // Non-empty tile
                 nTiles++;
                 posTile =
-                    glm::vec2(minCoords.x + i * tileSize, minCoords.y + j * tileSize);
+                    glm::vec2(offset.x + i * tileSize, offset.y + j * tileSize);
                 texCoordTile[0] =
                     glm::vec2(float((tile - 1) % tilesheetSize.x) / tilesheetSize.x,
                               float((tile - 1) / tilesheetSize.x) / tilesheetSize.y);
@@ -152,8 +153,9 @@ void TileMap::prepareArrays(const glm::vec2& minCoords,
 
 void TileMap::register_physics(b2World& physics) {
     const float tile_size_meters = tileSize * Constants::Units::meters_per_pixel;
+    const auto pos_in_meters = position * Constants::Units::meters_per_pixel;
     b2BodyDef body_def;
-    body_def.position.Set(0.f, 0.f);
+    body_def.position.Set(pos_in_meters.x, pos_in_meters.y);
     physics_body = physics.CreateBody(&body_def);
 
     b2BodyUserData data;

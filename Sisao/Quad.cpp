@@ -1,36 +1,50 @@
+#include "Quad.h"
 #include <GL/glew.h>
 #include <GL/gl.h>
-#include "Quad.h"
+#include <glm/gtc/matrix_transform.hpp>
+#include "Sprite.h"
+#include "Camera.h"
+#include "Game.h"
 
+Quad::Quad(float width, float height, ShaderProgram& program) : shaderProgram(program) {
+    /*float vertices[24] = {0.f, 0.f, 0.f, 0.f,
+        width, 0.f, 1.f, 0.f,
+        width, height, 1.f, 1.f,
+        0.f, 0.f, 0.f, 0.f,
+        width, height, 1.f, 1.f,
+        0.f, height, 0.f, 1.f };*/
 
-Quad* Quad::createQuad(float x, float y, float width, float height, ShaderProgram& program)
-{
-	Quad* quad = new Quad(x, y, width, height, program);
+    float vertices[24] = { 0.f, 0.f, 0.f, 0.f,
+        width, 0.f, 1.f, 0.f,
+        width, height, 1.f, 1.f,
+        0.f, 0.f, 0.f, 0.f,
+        width, height, 1.f, 1.f,
+        0.f, height, 0.f, 1.f };
 
-	return quad;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(float), vertices, GL_STATIC_DRAW);
+    posLocation = program.bindVertexAttribute("position", 2, 4 * sizeof(float), 0);
 }
 
-
-Quad::Quad(float x, float y, float width, float height, ShaderProgram& program)
-{
-	float vertices[12] = { x, y, x + width, y, x + width, y + height, x, y, x + width, y + height, x, y + height };
-
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), vertices, GL_STATIC_DRAW);
-	posLocation = program.bindVertexAttribute("position", 2, 0, 0);
+Quad::~Quad() {
+    glDeleteBuffers(1, &vbo);
 }
 
-void Quad::render() const
-{
-	glBindVertexArray(vao);
-	glEnableVertexAttribArray(posLocation);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+void Quad::update(int deltaTime) {}
+
+void Quad::render() const {
+    glBindVertexArray(vao);
+    glEnableVertexAttribArray(posLocation);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-void Quad::free()
-{
-	glDeleteBuffers(1, &vbo);
-}
+void Quad::setPosition(const glm::vec2& pos) {}
+
+void Quad::setRotation(float radians) {}
+
+void Quad::setFlip(bool vertical, bool horizontal) {}
+
+void Quad::setScale(const glm::vec2& scale) {}

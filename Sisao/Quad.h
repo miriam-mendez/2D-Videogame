@@ -2,23 +2,29 @@
 #include "ShaderProgram.h"
 
 
-// Given a point (x, y) and a size (width, height) in pixels Quad creates 
-// a VBO with two triangles. Vertices in the VBO have only a position
-// attribute (no colors or texture coordinates)
-class Quad
-{
+class Quad {
 public:
-	// Quads can only be created inside an OpenGL context
-	static Quad* createQuad(float x, float y, float width, float height, ShaderProgram& program);
+    Quad(float width, float height, ShaderProgram& program);
+    ~Quad();
 
-	Quad(float x, float y, float width, float height, ShaderProgram& program);
+    virtual void update(int deltaTime);
+    virtual void render() const;
 
-	void render() const;
-	void free();
+    void setPosition(const glm::vec2& pos);
+    void setRotation(float radians);
+    void setFlip(bool vertical, bool horizontal);
+    void setScale(const glm::vec2& scale);
 
 private:
-	GLuint vao;
-	GLuint vbo;
-	GLint posLocation;
+    GLuint vao;
+    GLuint vbo;
+    GLint posLocation;
+    ShaderProgram& shaderProgram;
 
+    glm::vec2 position = glm::vec2(0, 0);
+    float rotation = 0.f;
+    glm::vec2 scale = glm::vec2(1, 1);
+    glm::mat4 flipVH = glm::mat4(1);
+    bool flipV = false;
+    bool flipH = false;
 };

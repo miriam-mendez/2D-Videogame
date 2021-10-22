@@ -13,12 +13,15 @@ Sprite* Sprite::createSprite(const glm::vec2& quadSize, const glm::vec2& sizeInS
 
 
 Sprite::Sprite(const glm::vec2& quadSize, const glm::vec2& sizeInSpritesheet, Texture* spritesheet, ShaderProgram* program) {
-    float vertices[24] = { 0.f, 0.f, 0.f, 0.f,
-                                                quadSize.x, 0.f, sizeInSpritesheet.x, 0.f,
-                                                quadSize.x, quadSize.y, sizeInSpritesheet.x, sizeInSpritesheet.y,
-                                                0.f, 0.f, 0.f, 0.f,
-                                                quadSize.x, quadSize.y, sizeInSpritesheet.x, sizeInSpritesheet.y,
-                                                0.f, quadSize.y, 0.f, sizeInSpritesheet.y };
+
+    const glm::vec2 max = quadSize / 2.f;
+    const glm::vec2 min = -max;
+    float vertices[24] = { min.x, min.x, 0.f, 0.f,
+                                                max.x, min.y, sizeInSpritesheet.x, 0.f,
+                                                max.x, max.y, sizeInSpritesheet.x, sizeInSpritesheet.y,
+                                                min.x, min.y, 0.f, 0.f,
+                                                max.x, max.y, sizeInSpritesheet.x, sizeInSpritesheet.y,
+                                                min.x, max.y, 0.f, sizeInSpritesheet.y };
 
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -53,7 +56,7 @@ void Sprite::render() const {
     auto rotation_mat = glm::rotate(glm::mat4(1), rotation, glm::vec3(0.f, 0.f, 1.f));
     rotation_mat = rotation_mat * flipVH;
     const auto center_mat = glm::translate(glm::mat4(1.0f), glm::vec3(quad_size / 2.f, 0.f));
-    rotation_mat = center_mat * rotation_mat * glm::inverse(center_mat);
+    //rotation_mat = center_mat * rotation_mat * glm::inverse(center_mat);
     // compute scale
     const auto scale_mat = glm::scale(glm::mat4(1.f), glm::vec3(scale, 1.f));
     modelview = modelview * rotation_mat * scale_mat;

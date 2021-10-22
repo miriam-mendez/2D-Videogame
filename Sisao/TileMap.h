@@ -17,7 +17,7 @@ public:
 
     TileMap(); // Tile maps can only be created inside an OpenGL context
 
-    TileMap(std::ifstream& stream, b2World& physics, const glm::vec2& minCoords,
+    TileMap(std::ifstream& stream, b2World& physics, const glm::vec2& position,
             ShaderProgram& program);
     ~TileMap();
 
@@ -30,13 +30,15 @@ public:
 
 private:
     void read_tilemap(std::ifstream& stream);
-    void prepareArrays(const glm::vec2& minCoords, ShaderProgram& program);
+    void prepareArrays(ShaderProgram& program);
     void register_physics(b2World& physics);
 
 private:
     GLuint vao;
     GLuint vbo;
     GLint posLocation, texCoordLocation;
+
+    glm::vec2 position;
     glm::ivec2 mapSize, tilesheetSize;
     int tileSize, blockSize;
     Texture tilesheet;

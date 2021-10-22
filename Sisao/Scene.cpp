@@ -35,7 +35,7 @@ void Scene::init(std::string level) {
     camera.set_orthogonal(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
     camera.set_position(map.get_center());
 
-    water = Quad::createQuad(0.f, 0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1) / 2.f, waterProgram);
+    //water = Quad::createQuad(0.f, 0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1) / 2.f, waterProgram);
 }
 
 void Scene::update(int deltaTime) {
@@ -75,7 +75,7 @@ void Scene::render() {
     waterProgram.setUniformMatrix4f("modelview", model_view);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    water->render();
+    //water->render();
 }
 
 Object* Scene::get_object(Object::uuid_t id) {

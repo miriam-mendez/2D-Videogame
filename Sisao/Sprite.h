@@ -44,7 +44,6 @@ private:
     GLint posLocation, texCoordLocation;
 
     glm::vec2 quad_size;
-    glm::mat4 modifier = glm::mat4(1);
     glm::vec2 position;
     float rotation = 0.f;
     glm::vec2 scale = glm::vec2(1, 1);
