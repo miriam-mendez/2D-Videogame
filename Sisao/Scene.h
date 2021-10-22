@@ -9,21 +9,11 @@
 #include "PhysicsListener.h"
 #include <fstream>
 #include "Camera.h"
+#include "Quad.h"
 
 
 class Scene {
-    TileMap map;
-    std::unordered_map<Object::uuid_t, Object*> objects;
-    b2World physics = b2World(b2Vec2(0.0f, 0.0f));
-    PhysicsListener<Object> physics_listener;
 
-    ShaderProgram texProgram;
-    float currentTime;
-    Camera camera = Camera(Object::undefined_uuid);
-
-    void read_level(std::ifstream& stream);
-    void read_objects(std::ifstream& stream);
-    void initShaders();
 public:
     Scene();
     ~Scene();
@@ -34,5 +24,21 @@ public:
 
     Object* get_object(Object::uuid_t id);
     Camera& get_camera();
+
+private:
+    void read_level(std::ifstream& stream);
+    void read_objects(std::ifstream& stream);
+    void initShaders();
+
+private:
+    TileMap map;
+    Quad* water;
+    ShaderProgram texProgram;
+    float currentTime;
+    Camera camera = Camera(Object::undefined_uuid);
+
+    std::unordered_map<Object::uuid_t, Object*> objects;
+    b2World physics = b2World(b2Vec2(0.0f, 0.0f));
+    PhysicsListener<Object> physics_listener;
 };
 

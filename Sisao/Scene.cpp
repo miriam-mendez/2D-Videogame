@@ -25,7 +25,6 @@ Scene::~Scene() {
 void Scene::init(std::string level) {
     initShaders();
     currentTime = 0.0f;
-
     physics.SetContactListener(&physics_listener);
 
     std::ifstream stream;
@@ -35,6 +34,8 @@ void Scene::init(std::string level) {
     camera.init(physics, 1.f, false, true);
     camera.set_orthogonal(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
     camera.set_position(map.get_center());
+
+    water = Quad::createQuad(0.f, 0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1)/2.f, texProgram);
 }
 
 void Scene::update(int deltaTime) {
@@ -60,6 +61,18 @@ void Scene::render() {
     for (auto const& x : objects) {
         x.second->render();
     }
+
+    model_view = glm::translate(glm::mat4(1.0f), glm::vec3(0, SCREEN_HEIGHT / 2.f, 0));
+    texProgram.setUniform4f("color", 0.23f, 0.7f, 1.0f, 0.f);
+    texProgram.setUniformMatrix4f("modelview", model_view);
+    water->render();
+
+    model_view = glm::translate(glm::mat4(1.0f), glm::vec3(0, SCREEN_HEIGHT / 2.f, 0));
+    texProgram.setUniform4f("color", 0.23f, 0.7f, 1.0f, 0.8f);
+    texProgram.setUniformMatrix4f("modelview", model_view);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    water->render();
 }
 
 Object* Scene::get_object(Object::uuid_t id) {
