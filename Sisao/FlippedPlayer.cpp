@@ -70,10 +70,11 @@ void FlippedPlayer::update(int deltaTime) {
 
 */
 
-void FlippedPlayer::init(b2World& physics, ShaderProgram& shaderProgram) {
+/*
+void FlippedPlayer::init(b2World* physics, ShaderProgram& shaderProgram) {
     Player::init(physics, shaderProgram);
     sprite->setFlip(false, true);
-}
+}*/
 
 void FlippedPlayer::update(int deltaTime) {
     physics_update(deltaTime);

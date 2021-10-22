@@ -5,18 +5,10 @@
 #include "Camera.h"
 #include "Game.h"
 
-Sprite* Sprite::createSprite(const glm::vec2& quadSize, const glm::vec2& sizeInSpritesheet, Texture* spritesheet, ShaderProgram* program) {
-    Sprite* quad = new Sprite(quadSize, sizeInSpritesheet, spritesheet, program);
-
-    return quad;
-}
-
-
 Sprite::Sprite(const glm::vec2& quadSize, const glm::vec2& sizeInSpritesheet, Texture* spritesheet, ShaderProgram* program) {
-
     const glm::vec2 max = quadSize / 2.f;
     const glm::vec2 min = -max;
-    float vertices[24] = { min.x, min.x, 0.f, 0.f,
+    float vertices[24] = { min.x, min.y, 0.f, 0.f,
                                                 max.x, min.y, sizeInSpritesheet.x, 0.f,
                                                 max.x, max.y, sizeInSpritesheet.x, sizeInSpritesheet.y,
                                                 min.x, min.y, 0.f, 0.f,
@@ -37,6 +29,10 @@ Sprite::Sprite(const glm::vec2& quadSize, const glm::vec2& sizeInSpritesheet, Te
     quad_size = quadSize;
 }
 
+Sprite* Sprite::init(const glm::vec2& quadSize, const glm::vec2& sizeInSpritesheet, Texture* spritesheet, ShaderProgram* program) {
+    return new Sprite(quadSize, sizeInSpritesheet, spritesheet, program);
+}
+
 void Sprite::update(int deltaTime) {
     if (currentAnimation >= 0) {
         timeAnimation += deltaTime;
@@ -49,20 +45,14 @@ void Sprite::update(int deltaTime) {
 }
 
 void Sprite::render() const {
-    // compute translation
-    const auto& cameraview = Game::instance().get_scene().get_camera().view_matrix();
-    glm::mat4 modelview = glm::translate(cameraview, glm::vec3(position.x, position.y, 0.f));
-    // compute rotation
-    auto rotation_mat = glm::rotate(glm::mat4(1), rotation, glm::vec3(0.f, 0.f, 1.f));
-    rotation_mat = rotation_mat * flipVH;
-    const auto center_mat = glm::translate(glm::mat4(1.0f), glm::vec3(quad_size / 2.f, 0.f));
-    //rotation_mat = center_mat * rotation_mat * glm::inverse(center_mat);
-    // compute scale
-    const auto scale_mat = glm::scale(glm::mat4(1.f), glm::vec3(scale, 1.f));
-    modelview = modelview * rotation_mat * scale_mat;
-
+    shaderProgram->use();
+    auto& modelview = model_matrix();
+    auto projection = Game::instance().get_scene().get_camera().projection_matrix();
     shaderProgram->setUniformMatrix4f("modelview", modelview);
+    shaderProgram->setUniformMatrix4f("projection", projection);
     shaderProgram->setUniform2f("texCoordDispl", texCoordDispl.x, texCoordDispl.y);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
     texture->use();
     glBindVertexArray(vao);
@@ -70,11 +60,9 @@ void Sprite::render() const {
     glEnableVertexAttribArray(texCoordLocation);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
 }
 
-void Sprite::free() {
-    glDeleteBuffers(1, &vbo);
-}
 
 void Sprite::setNumberAnimations(int nAnimations) {
     animations.clear();
@@ -102,23 +90,5 @@ void Sprite::changeAnimation(int animId) {
 
 int Sprite::animation() const {
     return currentAnimation;
-}
-
-void Sprite::setPosition(const glm::vec2& pos) {
-    position = pos;
-}
-
-void Sprite::setRotation(float radians) {
-    rotation = radians;
-}
-
-void Sprite::setFlip(bool vertical, bool horizontal) {
-    const float radians = glm::radians(180.f);
-    flipVH = glm::rotate(glm::mat4(1.0f), horizontal * radians, glm::vec3(1.f, 0.f, 0.f));
-    flipVH = glm::rotate(flipVH, vertical * radians, glm::vec3(0.f, 1.f, 0.f));
-}
-
-void Sprite::setScale(const glm::vec2& axis_scale) {
-    scale = axis_scale;
 }
 

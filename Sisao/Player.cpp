@@ -7,11 +7,12 @@
 #include <GL/glut.h>
 #include "Constants.h"
 
-void Player::init(b2World& physics, ShaderProgram& shaderProgram) {
+void Player::init(b2World* physics, ShaderProgram& shaderProgram, bool inverse) {
+    inverted = inverse;
     const glm::ivec2 sprite_size_pixels = glm::ivec2(28, 33);
 
     spritesheet.loadFromFile("images/yoshi.png", TEXTURE_PIXEL_FORMAT_RGBA);
-    sprite = Sprite::createSprite(sprite_size_pixels, glm::vec2(1 / 12.f, 1 / 2.f), &spritesheet, &shaderProgram);
+    sprite = Sprite::init(sprite_size_pixels, glm::vec2(1 / 12.f, 1 / 2.f), &spritesheet, &shaderProgram);
     sprite->setNumberAnimations(4);
 
     sprite->setAnimationSpeed(STAND_LEFT_UP, 8);
@@ -32,25 +33,26 @@ void Player::init(b2World& physics, ShaderProgram& shaderProgram) {
 
     sprite->changeAnimation(0);
     sprite->setPosition(position);
+    sprite->setFlip(false, inverted);
 
     // PHYSICS: BODY CREATION
     b2BodyDef body_def;
     body_def.type = b2_dynamicBody;
     body_def.position.Set(position.x, position.y);
-    physic_body = physics.CreateBody(&body_def);
+    physic_body = physics->CreateBody(&body_def);
     // PHYSICS: SHAPE SETUP (CAPSULE: 2 circles and 1 rectangle)
     const glm::vec2 sprite_size_meters = glm::vec2(sprite_size_pixels) * Constants::Units::meters_per_pixel;
     float radius = glm::min(sprite_size_meters.x, sprite_size_meters.y) / 2.f;
     b2CircleShape c1;
     c1.m_radius = radius;
-    float c1_y = position.y + sprite_size_meters.y / 2.f - radius;
-    c1.m_p.Set(position.x, c1_y);
+    float c1_y = sprite_size_meters.y / 2.f - radius;
+    c1.m_p.Set(0, c1_y);
     b2CircleShape c2;
     c2.m_radius = radius;
-    float c2_y = position.y - sprite_size_meters.y / 2.f + radius;
-    c2.m_p.Set(position.x, c2_y);
+    float c2_y = -sprite_size_meters.y / 2.f + radius;
+    c2.m_p.Set(0, c2_y);
     b2PolygonShape box;
-    box.SetAsBox(sprite_size_meters.x / 2.f, glm::abs(c1_y - c2_y) / 2.f, b2Vec2(position.x, position.y), 0.f);
+    box.SetAsBox(sprite_size_meters.x / 2.f, glm::abs(c1_y - c2_y) / 2.f, b2Vec2(0, 0), 0.f);
 
     b2FixtureDef fixture_c1;
     fixture_c1.shape = &c1;
@@ -85,8 +87,8 @@ void Player::update(int deltaTime) {
 
     float max_xspeed_meters = Constants::Regular::max_movement_speed * Constants::Units::meters_per_pixel;
     float impulse = physic_body->GetMass() * (max_xspeed_meters - glm::abs(velocity.x));
-
     auto h_impulse = glm::vec2(0, 0);
+    float gravity_direction_y = (inverted) ? -1 : 1;
     if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
         if (sprite->animation() != MOVE_LEFT_UP)
             sprite->changeAnimation(MOVE_LEFT_UP);
@@ -112,7 +114,7 @@ void Player::update(int deltaTime) {
         float vvchange = max_jump - glm::abs(velocity.y);
         float impulse = physic_body->GetMass() * vvchange;
         if (!jumping) {
-            physic_body->ApplyLinearImpulseToCenter(b2Vec2(0, -impulse), true);
+            physic_body->ApplyLinearImpulseToCenter(b2Vec2(0, -gravity_direction_y * impulse), true);
             jumping = true;
         }
     }
@@ -124,7 +126,7 @@ void Player::update(int deltaTime) {
     }*/
 
     // gravity
-    auto gravity = Constants::Physics::gravity * Constants::Units::meters_per_pixel;
+    auto gravity = Constants::Physics::gravity * Constants::Units::meters_per_pixel * gravity_direction_y;
     physic_body->ApplyForceToCenter(to_box2d(gravity * physic_body->GetMass()), true);
 }
 
@@ -138,7 +140,8 @@ void Player::begin_overlap(b2Contact* contact) {
         b2WorldManifold b;
         contact->GetWorldManifold(&b);
         auto normal = glm::vec2(b.normal.x, b.normal.y);
-        auto dot = glm::dot(normal, glm::vec2(0.f, 1.f));
-        jumping = glm::abs(dot) < 0.9;
+        float gravity_direction_y = (inverted) ? -1 : 1;
+        auto dot = glm::dot(normal, glm::vec2(0.f, 1.f)) * -gravity_direction_y;
+        jumping = dot < 0.9;
     }
 }

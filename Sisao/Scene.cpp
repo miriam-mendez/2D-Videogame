@@ -19,23 +19,41 @@ Scene::~Scene() {
         delete x.second;
     }
     objects.clear();
+    delete water;
+}
+
+void Scene::free() {
+    for (auto const& x : objects) {
+        camera.unfollow(x.second);
+        delete x.second;
+    }
+    objects.clear();
+    delete water;
+    delete physics;
 }
 
 
 void Scene::init(std::string level) {
     initShaders();
     currentTime = 0.0f;
-    physics.SetContactListener(&physics_listener);
+
+    physics = new b2World(b2Vec2(0.0f, 0.0f));
+    physics->SetContactListener(&physics_listener);
 
     std::ifstream stream;
     stream.open(level.c_str());
     read_level(stream);
+    stream.close();
 
     camera.init(physics, 1.f, false, true);
     camera.set_orthogonal(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
     camera.set_position(map.get_center());
 
-    //water = Quad::createQuad(0.f, 0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1) / 2.f, waterProgram);
+    glm::vec2 ocean_size = glm::vec2(SCREEN_WIDTH * 99, SCREEN_HEIGHT);
+    glm::vec2 ocean_pos = map.get_center();
+    ocean_pos.y += ocean_size.y / 2;
+    water = Quad::init(ocean_size, &waterProgram);
+    water->setPosition(ocean_pos);
 }
 
 void Scene::update(int deltaTime) {
@@ -44,13 +62,12 @@ void Scene::update(int deltaTime) {
         x.second->update(deltaTime);
     }
     camera.update(deltaTime);
-    physics.Step(Constants::Physics::timestep, Constants::Physics::velocity_iters, Constants::Physics::position_iters);
+    physics->Step(Constants::Physics::timestep, Constants::Physics::velocity_iters, Constants::Physics::position_iters);
 }
 
 void Scene::render() {
     auto projection = camera.projection_matrix();
     auto model_view = camera.view_matrix();
-
     texProgram.use();
     texProgram.setUniformMatrix4f("projection", projection);
     texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
@@ -61,21 +78,12 @@ void Scene::render() {
     for (auto const& x : objects) {
         x.second->render();
     }
-    /*
-    model_view = glm::translate(glm::mat4(1.0f), glm::vec3(0, SCREEN_HEIGHT / 2.f, 0));
-    texProgram.setUniform4f("color", 0.23f, 0.7f, 1.0f, 0.f);
-    texProgram.setUniformMatrix4f("modelview", model_view);
-    water->render();
-    */
     waterProgram.use();
     model_view = glm::translate(glm::mat4(1.0f), glm::vec3(0, SCREEN_HEIGHT / 2.f, 0));
     waterProgram.setUniform1f("time", currentTime);
     waterProgram.setUniformMatrix4f("projection", projection);
     waterProgram.setUniform4f("color", 0.23f, 0.7f, 1.0f, 0.5f);
-    waterProgram.setUniformMatrix4f("modelview", model_view);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //water->render();
+    water->render();
 }
 
 Object* Scene::get_object(Object::uuid_t id) {
@@ -114,8 +122,8 @@ void Scene::read_objects(std::ifstream& stream) {
             Object::uuid_t id;
             sstream.str(args);
             sstream >> id >> pos.x >> pos.y >> inverted;
-            Player* player = inverted ? new FlippedPlayer(id) : new Player(id);
-            player->init(physics, texProgram);
+            Player* player = new Player(id);
+            player->init(physics, texProgram, inverted);
             player->set_position(glm::vec2(pos));
             auto r = objects.emplace(id, player);
             camera.follow(player);

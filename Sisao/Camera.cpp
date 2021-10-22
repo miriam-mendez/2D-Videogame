@@ -33,14 +33,14 @@ bool Camera::follow(Object* target) {
     return false;
 }
 
-void Camera::init(b2World& physics, float follow_speed, bool lock_x, bool lock_y) {
+void Camera::init(b2World* physics, float follow_speed, bool lock_x, bool lock_y) {
     this->follow_speed = follow_speed;
     this->lock_x = lock_x;
     this->lock_y = lock_y;
     b2BodyDef body_def;
     body_def.type = b2_dynamicBody;
     body_def.position.Set(position.x, position.y);
-    physic_body = physics.CreateBody(&body_def);
+    physic_body = physics->CreateBody(&body_def);
 
     const glm::vec2 view_rect_meters = glm::vec2(view_rect) * Constants::Units::meters_per_pixel;
     b2PolygonShape box_shape;

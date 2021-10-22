@@ -1,10 +1,12 @@
 #pragma once
 #include "ShaderProgram.h"
-
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 class Quad {
+    Quad(glm::vec2 size, ShaderProgram* program);
 public:
-    Quad(float width, float height, ShaderProgram& program);
+    static Quad* init(glm::vec2 size, ShaderProgram* program);
     ~Quad();
 
     virtual void update(int deltaTime);
@@ -15,11 +17,17 @@ public:
     void setFlip(bool vertical, bool horizontal);
     void setScale(const glm::vec2& scale);
 
-private:
+    ShaderProgram* expose_shader();
+
+protected:
+    Quad() {};
+
+    glm::mat4& model_matrix() const;
+
     GLuint vao;
     GLuint vbo;
     GLint posLocation;
-    ShaderProgram& shaderProgram;
+    ShaderProgram* shaderProgram;
 
     glm::vec2 position = glm::vec2(0, 0);
     float rotation = 0.f;

@@ -17,7 +17,7 @@ protected:
 public:
     Camera(Object::uuid_t uuid) : Object(uuid) {}
 
-    virtual void init(b2World& physics, float follow_speed, bool lock_x, bool lock_y);
+    virtual void init(b2World* physics, float follow_speed, bool lock_x, bool lock_y);
 
     virtual void update(int deltaTime);
 

@@ -12,7 +12,7 @@ using namespace std;
 
 TileMap::TileMap() {}
 
-TileMap::TileMap(std::ifstream& stream, b2World& physics, const glm::vec2& position,
+TileMap::TileMap(std::ifstream& stream, b2World* physics, const glm::vec2& position,
                  ShaderProgram& program) {
     this->position = position;
     read_tilemap(stream);
@@ -26,6 +26,8 @@ TileMap::~TileMap() {
 }
 
 void TileMap::render() const {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
     tilesheet.use();
     glBindVertexArray(vao);
@@ -33,6 +35,7 @@ void TileMap::render() const {
     glEnableVertexAttribArray(texCoordLocation);
     glDrawArrays(GL_TRIANGLES, 0, 6 * mapSize.x * mapSize.y);
     glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
 }
 
 void TileMap::free() { glDeleteBuffers(1, &vbo); }
@@ -151,12 +154,12 @@ void TileMap::prepareArrays(ShaderProgram& program) {
         "texCoord", 2, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 }
 
-void TileMap::register_physics(b2World& physics) {
+void TileMap::register_physics(b2World* physics) {
     const float tile_size_meters = tileSize * Constants::Units::meters_per_pixel;
     const auto pos_in_meters = position * Constants::Units::meters_per_pixel;
     b2BodyDef body_def;
     body_def.position.Set(pos_in_meters.x, pos_in_meters.y);
-    physics_body = physics.CreateBody(&body_def);
+    physics_body = physics->CreateBody(&body_def);
 
     b2BodyUserData data;
     data.pointer = 0xFFFF;

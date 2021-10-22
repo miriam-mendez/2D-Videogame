@@ -1,5 +1,4 @@
-#ifndef _SPRITE_INCLUDE
-#define _SPRITE_INCLUDE
+#pragma once
 
 
 #include <vector>
@@ -7,23 +6,16 @@
 #include "Texture.h"
 #include "ShaderProgram.h"
 #include "AnimKeyframes.h"
+#include "Quad.h"
 
 
-// This class is derived from code seen earlier in TexturedQuad but it is also
-// able to manage animations stored as a spritesheet. 
-
-
-class Sprite {
-
-public:
-    // Textured quads can only be created inside an OpenGL context
-    static Sprite* createSprite(const glm::vec2& quadSize, const glm::vec2& sizeInSpritesheet, Texture* spritesheet, ShaderProgram* program);
-
+class Sprite : public Quad {
     Sprite(const glm::vec2& quadSize, const glm::vec2& sizeInSpritesheet, Texture* spritesheet, ShaderProgram* program);
+public:
+    static Sprite* init(const glm::vec2& quadSize, const glm::vec2& sizeInSpritesheet, Texture* spritesheet, ShaderProgram* program);
 
-    void update(int deltaTime);
-    void render() const;
-    void free();
+    virtual void update(int deltaTime);
+    virtual void render() const;
 
     void setNumberAnimations(int nAnimations);
     void setAnimationSpeed(int animId, int keyframesPerSec);
@@ -31,32 +23,21 @@ public:
     void changeAnimation(int animId);
     int animation() const;
 
-    void setPosition(const glm::vec2& pos);
-    void setRotation(float radians);
-    void setFlip(bool vertical, bool horizontal);
-    void setScale(const glm::vec2& scale);
+protected:
+    Sprite() {};
 
-private:
     Texture* texture;
-    ShaderProgram* shaderProgram;
-    GLuint vao;
-    GLuint vbo;
-    GLint posLocation, texCoordLocation;
+    GLint texCoordLocation;
 
     glm::vec2 quad_size;
-    glm::vec2 position;
-    float rotation = 0.f;
-    glm::vec2 scale = glm::vec2(1, 1);
-    glm::mat4 flipVH = glm::mat4(1);
-    bool flipV = false;
-    bool flipH = false;
 
-    int currentAnimation, currentKeyframe;
-    float timeAnimation;
+    int currentAnimation = 0;
+    int currentKeyframe = 0;
+    float timeAnimation = 0;
     glm::vec2 texCoordDispl;
     vector<AnimKeyframes> animations;
 
-};
+    ShaderProgram* expose_shader() = delete;
 
-#endif // _SPRITE_INCLUDE
+};
 

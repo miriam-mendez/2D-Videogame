@@ -17,7 +17,7 @@ class Scene {
 public:
     Scene();
     ~Scene();
-
+    void free();
     void init(std::string level);
     void update(int deltaTime);
     void render();
@@ -39,7 +39,7 @@ private:
     Camera camera = Camera(Object::undefined_uuid);
 
     std::unordered_map<Object::uuid_t, Object*> objects;
-    b2World physics = b2World(b2Vec2(0.0f, 0.0f));
+    b2World* physics;
     PhysicsListener<Object> physics_listener;
 };
 

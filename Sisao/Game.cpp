@@ -1,12 +1,13 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include "Game.h"
+#include <string> 
 
 
 void Game::init() {
     bPlay = true;
     glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-    scene.init("levels/levelX4.txt");
+    scene.init("levels/level" + std::to_string(current_level) + ".txt");
 }
 
 bool Game::update(int deltaTime) {
@@ -23,6 +24,18 @@ void Game::render() {
 void Game::keyPressed(int key) {
     if (key == 27) // Escape code
         bPlay = false;
+    else if (key == 114) { // R key
+        scene.free();
+        scene.init("levels/level" + std::to_string(current_level) + ".txt");
+    }
+    else if (key == 101) { // E key
+        scene.free();
+        scene.init("levels/level" + std::to_string(--current_level) + ".txt");
+    }
+    else if (key == 116) { // T key
+        scene.free();
+        scene.init("levels/level" + std::to_string(++current_level) + ".txt");
+    }
     keys[key] = true;
 }
 

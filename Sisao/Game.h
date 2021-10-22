@@ -10,7 +10,7 @@
 // whole application
 
 class Game {
-
+    int current_level = 0;
 public:
     Game() {}
 
