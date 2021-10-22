@@ -16,12 +16,13 @@ namespace Constants {
         enum class Category { // what object type is it
             Wall = 0x0001,
             Regular = 0x0002,
-            Sensor = 0x0003
+            Sensor = 0x0003,
+            Camera = 0x0004
         };
         enum class Mask { // what object types does collide
             Wall = (int)Category::Regular,
             Regular = (int)Category::Wall | (int)Category::Regular | (int)Category::Sensor,
-            Sensor = (int)Category::Regular | (int)Category::Sensor
+            Sensor = (int)Category::Regular | (int)Category::Sensor | (int)Category::Camera
         };
     };
 

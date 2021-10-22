@@ -4,7 +4,6 @@
 #include "Scene.h"
 #include "Game.h"
 #include "Camera.h"
-#include "FlippedPlayer.h"
 #include "Player.h"
 #include "Box.h"
 #include "Constants.h"

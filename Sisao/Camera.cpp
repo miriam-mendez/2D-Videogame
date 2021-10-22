@@ -47,7 +47,7 @@ void Camera::init(b2World* physics, float follow_speed, bool lock_x, bool lock_y
     box_shape.SetAsBox(view_rect_meters.x / 2.f, view_rect_meters.y / 2.f);
     b2FixtureDef fixture_def;
     fixture_def.shape = &box_shape;
-    fixture_def.filter.categoryBits = (int)Constants::Physics::Category::Sensor;
+    fixture_def.filter.categoryBits = (int)Constants::Physics::Category::Camera;
     fixture_def.filter.maskBits = (int)Constants::Physics::Mask::Sensor;
     fixture_def.isSensor = true;
     physic_body->CreateFixture(&fixture_def);

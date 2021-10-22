@@ -38,7 +38,12 @@ void Sprite::update(int deltaTime) {
         timeAnimation += deltaTime;
         while (timeAnimation > animations[currentAnimation].millisecsPerKeyframe) {
             timeAnimation -= animations[currentAnimation].millisecsPerKeyframe;
-            currentKeyframe = (currentKeyframe + 1) % animations[currentAnimation].keyframeDispl.size();
+            auto last = currentKeyframe;
+            currentKeyframe = (currentKeyframe + 1) % animations[currentAnimation].keyframeDispl.size();;
+            bool loops = animations[currentAnimation].loop;
+            if (last > currentKeyframe && !loops) {
+                currentKeyframe = last;
+            }
         }
         texCoordDispl = animations[currentAnimation].keyframeDispl[currentKeyframe];
     }
@@ -72,6 +77,11 @@ void Sprite::setNumberAnimations(int nAnimations) {
 void Sprite::setAnimationSpeed(int animId, int keyframesPerSec) {
     if (animId < int(animations.size()))
         animations[animId].millisecsPerKeyframe = 1000.f / keyframesPerSec;
+}
+
+void Sprite::setAnimationLoop(int animId, bool loop) {
+    if (animId < int(animations.size()))
+        animations[animId].loop = loop;
 }
 
 void Sprite::addKeyframe(int animId, const glm::vec2& displacement) {
