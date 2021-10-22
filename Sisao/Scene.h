@@ -34,6 +34,7 @@ private:
     TileMap map;
     Quad* water;
     ShaderProgram texProgram;
+    ShaderProgram waterProgram;
     float currentTime;
     Camera camera = Camera(Object::undefined_uuid);
 
