@@ -7,23 +7,25 @@
 void Game::init() {
     bPlay = true;
     glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-    scene.init("levels/level" + std::to_string(current_level) + ".txt");
+    scene = new Scene();
+    scene->init("levels/level" + std::to_string(current_level) + ".txt");
 }
 
 bool Game::update(int deltaTime) {
     if (set_level != -1) {
-        scene = Scene();
-        scene.init("levels/level" + std::to_string(set_level) + ".txt");
+        delete scene;
+        scene = new Scene();
+        scene->init("levels/level" + std::to_string(set_level) + ".txt");
         set_level = -1;
     }
-    scene.update(deltaTime);
+    scene->update(deltaTime);
 
     return bPlay;
 }
 
 void Game::render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    scene.render();
+    scene->render();
 }
 
 void Game::keyPressed(int key) {

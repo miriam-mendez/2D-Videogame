@@ -7,6 +7,10 @@ ShaderProgram::ShaderProgram() {
     linked = false;
 }
 
+ShaderProgram::~ShaderProgram() {
+    glDeleteProgram(programId);
+}
+
 
 void ShaderProgram::init() {
     programId = glCreateProgram();
@@ -38,10 +42,6 @@ void ShaderProgram::link() {
     linked = (status == GL_TRUE);
     glGetProgramInfoLog(programId, 512, NULL, buffer);
     errorLog.assign(buffer);
-}
-
-void ShaderProgram::free() {
-    glDeleteProgram(programId);
 }
 
 void ShaderProgram::use() {

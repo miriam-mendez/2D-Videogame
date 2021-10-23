@@ -106,14 +106,14 @@ void Player::init(b2World* physics, ShaderProgram& shaderProgram, bool inverse) 
     physic_body->SetFixedRotation(true);
 
     b2BodyUserData data;
-    data.pointer = uuid;
+    data.pointer = get_id();
     physic_body->GetUserData() = data;
 }
 
 void Player::update(int deltaTime) {
     physics_update(deltaTime);
     b2Vec2 velocity = physic_body->GetLinearVelocity();
-    float gravity_direction_y = (inverted) ? -1 : 1;
+    float gravity_direction_y = (inverted) ? -1.f : 1.f;
     float min_fall_speed = Constants::Regular::max_jump_speed * Constants::Units::meters_per_pixel / 5.f;
     falling = velocity.y * gravity_direction_y - min_fall_speed > 0;
     float max_stand_speed = Constants::Regular::max_movement_speed * Constants::Units::meters_per_pixel / 5.f;
@@ -173,14 +173,14 @@ void Player::update(int deltaTime) {
 void Player::begin_overlap(b2Contact* contact) {
     Object::uuid_t id1 = contact->GetFixtureA()->GetBody()->GetUserData().pointer;
     Object::uuid_t id2 = contact->GetFixtureB()->GetBody()->GetUserData().pointer;
-
+    Object::uuid_t self_id = get_id();
     //Game::instance().get_scene().get_object(id2); might be useful with dynamic_cast ;D
-    if (uuid == id1 || uuid == id2) {
+    if (self_id == id1 || self_id == id2) {
         b2WorldManifold b;
         contact->GetWorldManifold(&b);
         auto normal = glm::vec2(b.normal.x, b.normal.y);
         if (jumping) {
-            float gravity_direction_y = (inverted) ? -1 : 1;
+            float gravity_direction_y = (inverted) ? -1.f : 1.f;
             auto dot = glm::dot(normal, glm::vec2(0.f, 1.f)) * -gravity_direction_y;
             jumping = dot < 0.9;
         }

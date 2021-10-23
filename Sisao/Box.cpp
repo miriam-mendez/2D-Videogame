@@ -29,7 +29,7 @@ void Box::init(b2World* physics, ShaderProgram& shaderProgram, bool inverted) {
     physic_body->CreateFixture(&fixture_def);
 
     b2BodyUserData data;
-    data.pointer = uuid;
+    data.pointer = get_id();
     physic_body->GetUserData() = data;
 }
 

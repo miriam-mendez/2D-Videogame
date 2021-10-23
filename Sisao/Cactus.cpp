@@ -26,7 +26,7 @@ void Cactus::init(b2World* physics, ShaderProgram& shaderProgram, int orientatio
     body_def.position.Set(position.x, position.y);
     physic_body = physics->CreateBody(&body_def);
 
-    auto radius_meters = 0.5 * sprite_size_pixels.y * Constants::Units::meters_per_pixel;
+    float radius_meters = 0.5f * sprite_size_pixels.y * Constants::Units::meters_per_pixel;
     b2CircleShape c1;
     c1.m_radius = radius_meters;
     c1.m_p.Set(0, 0);
@@ -38,7 +38,7 @@ void Cactus::init(b2World* physics, ShaderProgram& shaderProgram, int orientatio
     physic_body->CreateFixture(&fixture_def);
 
     b2BodyUserData data;
-    data.pointer = uuid;
+    data.pointer = get_id();
     physic_body->GetUserData() = data;
 }
 
@@ -46,8 +46,9 @@ void Cactus::init(b2World* physics, ShaderProgram& shaderProgram, int orientatio
 void Cactus::begin_overlap(b2Contact* contact) {
     Object::uuid_t id1 = contact->GetFixtureA()->GetBody()->GetUserData().pointer;
     Object::uuid_t id2 = contact->GetFixtureB()->GetBody()->GetUserData().pointer;
+    Object::uuid_t self_id = get_id();
 
-    if (uuid == id1 || uuid == id2) {
+    if (self_id == id1 || self_id == id2) {
         Object* a = Game::instance().get_scene().get_object(id1);
         Object* b = Game::instance().get_scene().get_object(id2);
 

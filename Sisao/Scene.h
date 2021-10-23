@@ -17,7 +17,6 @@ class Scene {
 public:
     Scene();
     ~Scene();
-    void free();
     void init(std::string level);
     void update(int deltaTime);
     void render();
@@ -36,7 +35,7 @@ private:
     ShaderProgram waterProgram;
     float currentTime;
 
-    TileMap map;
+    TileMap* map = nullptr;
     Quad* water = nullptr;
     Camera camera = Camera(Object::undefined_uuid);
     std::unordered_map<Object::uuid_t, Object*> objects;

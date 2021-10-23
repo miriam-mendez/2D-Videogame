@@ -25,7 +25,7 @@ public:
     bool update(int deltaTime);
     void render();
 
-    Scene& get_scene() { return scene; };
+    Scene& get_scene() { return *scene; };
 
     // Input callback methods
     void keyPressed(int key);
@@ -43,7 +43,7 @@ public:
 
 private:
     bool bPlay;                       // Continue to play game?
-    Scene scene;                      // Scene to render
+    Scene* scene = nullptr;                      // Scene to render
     bool keys[256], specialKeys[256]; // Store key states so that
                                       // we can have access at any time
 };

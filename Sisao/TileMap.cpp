@@ -22,8 +22,8 @@ TileMap::TileMap(std::ifstream& stream, b2World* physics, const glm::vec2& posit
 }
 
 TileMap::~TileMap() {
-    if (map != nullptr)
-        delete map;
+    glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &vao);
 }
 
 void TileMap::render() {
@@ -46,7 +46,6 @@ void TileMap::render() {
     glDisable(GL_BLEND);
 }
 
-void TileMap::free() { glDeleteBuffers(1, &vbo); }
 
 void TileMap::read_tilemap(std::ifstream& stream) {
     std::string line;
@@ -86,7 +85,7 @@ void TileMap::read_tilemap(std::ifstream& stream) {
         }
         else if (line.find("[BEGIN TILES]") != string::npos) {
             char tile[1];
-            map = new int[mapSize.x * mapSize.y];
+            map = std::vector<int>(mapSize.x * mapSize.y, 0);
             for (int j = 0; j < mapSize.y; j++) {
                 for (int i = 0; i < mapSize.x; i++) {
                     stream.read(tile, 1);
@@ -167,7 +166,7 @@ void TileMap::register_physics(b2World* physics) {
     const auto pos_in_meters = position * Constants::Units::meters_per_pixel;
     b2BodyDef body_def;
     body_def.position.Set(pos_in_meters.x, pos_in_meters.y);
-    physics_body = physics->CreateBody(&body_def);
+    auto physics_body = physics->CreateBody(&body_def); // freed automatically
 
     b2BodyUserData data;
     data.pointer = 0xFFFF;

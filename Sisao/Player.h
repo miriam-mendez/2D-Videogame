@@ -10,7 +10,7 @@ protected:
     bool standing = false;
     virtual void begin_overlap(b2Contact* contact);
 public:
-    enum PlayerAnims {
+    enum PlayerStates {
         STAND,
         JUMP_UP,
         FALL,

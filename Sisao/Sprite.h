@@ -28,7 +28,7 @@ public:
 protected:
     Sprite() {};
 
-    Texture* texture;
+    Texture* texture = nullptr; // not owned
     GLint texCoordLocation;
 
     glm::vec2 quad_size;

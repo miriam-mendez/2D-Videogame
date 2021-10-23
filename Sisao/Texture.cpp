@@ -12,9 +12,13 @@ Texture::Texture() {
     magFilter = GL_LINEAR_MIPMAP_LINEAR;
 }
 
+Texture::~Texture() {
+    glDeleteTextures(1, &texId);
+}
+
 
 bool Texture::loadFromFile(const string& filename, PixelFormat format) {
-    unsigned char* image = NULL;
+    unsigned char* image = nullptr;
 
     switch (format) {
     case TEXTURE_PIXEL_FORMAT_RGB:
@@ -37,7 +41,7 @@ bool Texture::loadFromFile(const string& filename, PixelFormat format) {
         break;
     }
     glGenerateMipmap(GL_TEXTURE_2D);
-
+    delete image;
     return true;
 }
 

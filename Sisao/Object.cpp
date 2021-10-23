@@ -13,6 +13,10 @@ void Object::physics_update(int deltaTime) {
     }
 }
 
+Object::~Object() {
+    delete sprite;
+}
+
 void Object::update(int deltaTime) {
     physics_update(deltaTime);
 }

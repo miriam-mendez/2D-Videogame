@@ -1,11 +1,10 @@
-#ifndef _TILE_MAP_INCLUDE
-#define _TILE_MAP_INCLUDE
+#pragma once
 
 #include <glm/glm.hpp>
-
 #include "ShaderProgram.h"
 #include "Texture.h"
 #include <box2d/b2_world.h>
+#include <vector>
 
 // Class Tilemap is capable of loading a tile map from a text file in a very
 // simple format (see level01.txt for an example). With this information
@@ -22,7 +21,6 @@ public:
     ~TileMap();
 
     void render();
-    void free();
 
     int getTileSize() const { return tileSize; }
 
@@ -44,9 +42,6 @@ private:
     int tileSize, blockSize;
     Texture tilesheet;
     glm::vec2 tileTexSize;
-    int* map = nullptr;
-
-    b2Body* physics_body = nullptr; // freed automatically
+    std::vector<int> map;
 };
 
-#endif // _TILE_MAP_INCLUDE

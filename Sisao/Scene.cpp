@@ -15,10 +15,7 @@
 Scene::Scene() {}
 
 Scene::~Scene() {
-    free();
-}
-
-void Scene::free() {
+    delete map;
     for (auto const& x : objects) {
         camera.unfollow(x.second);
         delete x.second;
@@ -28,6 +25,7 @@ void Scene::free() {
     physics_listener.free();
     delete physics;
 }
+
 
 
 void Scene::init(std::string level) {
@@ -45,10 +43,10 @@ void Scene::init(std::string level) {
 
     camera.init(physics, 1.f, false, true);
     camera.set_orthogonal(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
-    camera.set_position(map.get_center());
+    camera.set_position(map->get_center());
 
     glm::vec2 ocean_size = glm::vec2(SCREEN_WIDTH * 99, SCREEN_HEIGHT);
-    glm::vec2 ocean_pos = map.get_center();
+    glm::vec2 ocean_pos = map->get_center();
     ocean_pos.y += ocean_size.y / 2;
     water = Quad::init(ocean_size, &waterProgram);
     water->setPosition(ocean_pos);
@@ -64,7 +62,7 @@ void Scene::update(int deltaTime) {
 }
 
 void Scene::render() {
-    map.render();
+    map->render();
     for (auto const& x : objects) {
         x.second->render();
     }
@@ -88,7 +86,8 @@ void Scene::read_level(std::ifstream& stream) {
     std::string line;
     while (std::getline(stream, line)) {
         if (line.find("[BEGIN TILEMAP]") != string::npos) {
-            map = TileMap(stream, physics, glm::vec2(0, 0), texProgram);
+            delete map;
+            map = new TileMap(stream, physics, glm::vec2(0, 0), texProgram);
         }
         else if (line.find("[BEGIN OBJECTS]") != string::npos) {
             read_objects(stream);

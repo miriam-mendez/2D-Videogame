@@ -30,6 +30,7 @@ Quad* Quad::init(glm::vec2 size, ShaderProgram* program) {
 
 Quad::~Quad() {
     glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &vao);
 }
 
 void Quad::update(int deltaTime) {}

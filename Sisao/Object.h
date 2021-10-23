@@ -13,8 +13,9 @@ public:
 
     Object() : uuid(undefined_uuid) {};
     Object(uuid_t uuid) : uuid(uuid) {};
+    virtual ~Object();
 
-    virtual void update(int deltaTime);
+    virtual void update(int deltaTime) = 0;
     virtual void render();
 
     uuid_t get_id() const;
@@ -24,7 +25,6 @@ public:
     float get_rotation();
 
 protected:
-    uuid_t uuid;
     b2Body* physic_body = nullptr; // automatically invalidated
     glm::vec2 position = glm::vec2(0, 0); // IN PIXELS
     float rotation = 0.0f; // IN RADIANS
@@ -33,5 +33,8 @@ protected:
     Sprite* sprite = nullptr;
 
     virtual void physics_update(int deltaTime);
+
+private:
+    uuid_t uuid;
 };
 

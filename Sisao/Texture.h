@@ -20,6 +20,7 @@ class Texture {
 
 public:
     Texture();
+    ~Texture();
 
     bool loadFromFile(const string& filename, PixelFormat format);
     void loadFromGlyphBuffer(unsigned char* buffer, int width, int height);

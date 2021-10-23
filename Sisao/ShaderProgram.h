@@ -17,13 +17,13 @@ class ShaderProgram {
 
 public:
     ShaderProgram();
+    ~ShaderProgram();
 
     void init();
     void addShader(const Shader& shader);
     void bindFragmentOutput(const string& outputName);
     GLint bindVertexAttribute(const string& attribName, GLint size, GLsizei stride, GLvoid* firstPointer);
     void link();
-    void free();
 
     void use();
 
