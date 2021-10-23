@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "Utils.h"
 
 b2Vec2 to_box2d(glm::vec2 const& vec) {
     return b2Vec2(vec.x, vec.y);

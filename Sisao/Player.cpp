@@ -1,5 +1,5 @@
 #include "Player.h"
-#include "utils.h"
+#include "Utils.h"
 #include <box2d/b2_fixture.h>
 #include <box2d/b2_polygon_shape.h>
 #include "Game.h"
@@ -11,10 +11,10 @@ void Player::init(b2World* physics, ShaderProgram& shaderProgram, bool inverse) 
     inverted = inverse;
     const glm::ivec2 sprite_size_pixels = glm::ivec2(31, 43);
 
-    spritesheet.loadFromFile("images/player-sheet2.png", TEXTURE_PIXEL_FORMAT_RGBA);
-    float h_frames = 23.f;
+    spritesheet.loadFromFile("images/player.png", TEXTURE_PIXEL_FORMAT_RGBA);
+    float h_frames = 22.f;
     sprite = Sprite::init(sprite_size_pixels, glm::vec2(1 / h_frames, 1.f), &spritesheet, &shaderProgram);
-    sprite->setNumberAnimations(5);
+    sprite->setNumberAnimations(6);
 
     sprite->setAnimationSpeed(JUMP_UP, 8);
     sprite->addKeyframe(JUMP_UP, glm::vec2(0.f, 0.f));
@@ -24,8 +24,9 @@ void Player::init(b2World* physics, ShaderProgram& shaderProgram, bool inverse) 
     sprite->addKeyframe(FALL, glm::vec2(1 / h_frames, 0.f));
     sprite->addKeyframe(FALL, glm::vec2(2 / h_frames, 0.f));
 
-    sprite->setAnimationSpeed(FALL_TO_STAND, 6);
+    sprite->setAnimationSpeed(FALL_TO_STAND, 7);
     sprite->setAnimationLoop(FALL_TO_STAND, false);
+    sprite->setAnimationNext(FALL_TO_STAND, STAND);
     sprite->addKeyframe(FALL_TO_STAND, glm::vec2(3 / h_frames, 0.f));
     sprite->addKeyframe(FALL_TO_STAND, glm::vec2(4 / h_frames, 0.f));
 
@@ -49,13 +50,11 @@ void Player::init(b2World* physics, ShaderProgram& shaderProgram, bool inverse) 
     sprite->addKeyframe(RUN, glm::vec2(18 / h_frames, 0.f));
     sprite->addKeyframe(RUN, glm::vec2(19 / h_frames, 0.f));
 
-    sprite->setAnimationSpeed(RUN_TO_STAND, 8);
+    sprite->setAnimationSpeed(RUN_TO_STAND, 11);
     sprite->setAnimationLoop(RUN_TO_STAND, false);
+    sprite->setAnimationNext(RUN_TO_STAND, STAND);
     sprite->addKeyframe(RUN_TO_STAND, glm::vec2(20 / h_frames, 0.f));
     sprite->addKeyframe(RUN_TO_STAND, glm::vec2(21 / h_frames, 0.f));
-
-    sprite->setAnimationSpeed(HANG, 8);
-    sprite->addKeyframe(HANG, glm::vec2(22 / h_frames, 0.f));
 
     sprite->changeAnimation(STAND);
     sprite->setPosition(position);
@@ -100,32 +99,39 @@ void Player::init(b2World* physics, ShaderProgram& shaderProgram, bool inverse) 
     b2FixtureDef fixture_box;
     fixture_box.shape = &box;
     fixture_box.density = 1.5f;
-    fixture_box.friction = 1.f;
+    fixture_box.friction = 0.f;
     fixture_box.filter.categoryBits = (int)Constants::Physics::Category::Regular;
     fixture_box.filter.maskBits = (int)Constants::Physics::Mask::Regular;
     physic_body->CreateFixture(&fixture_box);
     physic_body->SetFixedRotation(true);
+
+    b2BodyUserData data;
+    data.pointer = uuid;
+    physic_body->GetUserData() = data;
 }
 
 void Player::update(int deltaTime) {
     physics_update(deltaTime);
-
     b2Vec2 velocity = physic_body->GetLinearVelocity();
-
+    float gravity_direction_y = (inverted) ? -1 : 1;
+    float min_fall_speed = Constants::Regular::max_jump_speed * Constants::Units::meters_per_pixel / 5.f;
+    falling = velocity.y * gravity_direction_y - min_fall_speed > 0;
+    float max_stand_speed = Constants::Regular::max_movement_speed * Constants::Units::meters_per_pixel / 5.f;
+    standing = glm::abs(velocity.x) - max_stand_speed < 0;
     float max_xspeed_meters = Constants::Regular::max_movement_speed * Constants::Units::meters_per_pixel;
     float impulse = physic_body->GetMass() * (max_xspeed_meters - glm::abs(velocity.x));
     auto h_impulse = glm::vec2(0, 0);
-    float gravity_direction_y = (inverted) ? -1 : 1;
+
     if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
         sprite->setFlip(true, inverted);
-        if (sprite->animation() != RUN && !jumping) {
+        if (sprite->animation() != RUN && !jumping && !falling && !standing) {
             sprite->changeAnimation(RUN);
         }
         h_impulse += glm::vec2(-impulse, 0);
     }
     if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT)) {
         sprite->setFlip(false, inverted);
-        if (sprite->animation() != RUN && !jumping) {
+        if (sprite->animation() != RUN && !jumping && !falling && !standing) {
             sprite->changeAnimation(RUN);
         }
         h_impulse += glm::vec2(impulse, 0);
@@ -142,18 +148,19 @@ void Player::update(int deltaTime) {
             jumping = true;
         }
     }
-    float min_fall_speed = Constants::Regular::max_jump_speed * Constants::Units::meters_per_pixel / 5.f;
-    bool falling = velocity.y * gravity_direction_y - min_fall_speed > 0;
     if (falling && sprite->animation() != FALL) {
         sprite->changeAnimation(FALL);
     }
-    if (!falling && sprite->animation() == FALL) {
-        sprite->changeAnimation(STAND);
-    }
-    float max_stand_speed = Constants::Regular::max_movement_speed * Constants::Units::meters_per_pixel / 5.f;
-    bool standing = glm::abs(velocity.x) - max_stand_speed < 0;
-    if (!falling && !jumping && standing && sprite->animation() != STAND) {
-        sprite->changeAnimation(STAND);
+    if (!falling && !jumping && standing && sprite->animation() != STAND && sprite->animation() != FALL_TO_STAND && sprite->animation() != RUN_TO_STAND) {
+        if (sprite->animation() == FALL) {
+            sprite->changeAnimation(FALL_TO_STAND);
+        }
+        else if (sprite->animation() == RUN) {
+            sprite->changeAnimation(RUN_TO_STAND);
+        }
+        else {
+            sprite->changeAnimation(STAND);
+        }
     }
 
     // gravity
@@ -163,25 +170,16 @@ void Player::update(int deltaTime) {
 }
 
 
-void Player::end_overlap(b2Contact* contact) {
-    Object::uuid_t id1 = contact->GetFixtureA()->GetBody()->GetUserData().pointer;
-    Object::uuid_t id2 = contact->GetFixtureB()->GetBody()->GetUserData().pointer;
-    if (uuid == id1 || uuid == id2) {
-        --contacts;
-    }
-}
-
 void Player::begin_overlap(b2Contact* contact) {
     Object::uuid_t id1 = contact->GetFixtureA()->GetBody()->GetUserData().pointer;
     Object::uuid_t id2 = contact->GetFixtureB()->GetBody()->GetUserData().pointer;
 
     //Game::instance().get_scene().get_object(id2); might be useful with dynamic_cast ;D
     if (uuid == id1 || uuid == id2) {
-        ++contacts;
+        b2WorldManifold b;
+        contact->GetWorldManifold(&b);
+        auto normal = glm::vec2(b.normal.x, b.normal.y);
         if (jumping) {
-            b2WorldManifold b;
-            contact->GetWorldManifold(&b);
-            auto normal = glm::vec2(b.normal.x, b.normal.y);
             float gravity_direction_y = (inverted) ? -1 : 1;
             auto dot = glm::dot(normal, glm::vec2(0.f, 1.f)) * -gravity_direction_y;
             jumping = dot < 0.9;

@@ -21,7 +21,7 @@ public:
             ShaderProgram& program);
     ~TileMap();
 
-    void render() const;
+    void render();
     void free();
 
     int getTileSize() const { return tileSize; }
@@ -37,13 +37,14 @@ private:
     GLuint vao;
     GLuint vbo;
     GLint posLocation, texCoordLocation;
+    ShaderProgram shader;
 
     glm::vec2 position;
     glm::ivec2 mapSize, tilesheetSize;
     int tileSize, blockSize;
     Texture tilesheet;
     glm::vec2 tileTexSize;
-    int* map;
+    int* map = nullptr;
 
     b2Body* physics_body = nullptr; // freed automatically
 };

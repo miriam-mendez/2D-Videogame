@@ -24,8 +24,9 @@ TILESHEET_NUMTILES 10 2
 [END TILEMAP]
 
 [BEGIN OBJECTS]
-# TYPE ID(Unique or crash!) X Y FLIP
-PLAYER 0 240 160 0
+# TYPE ID(Unique or crash!). The rest of the arguments depends on the type
+PLAYER 0 240 150 0
 PLAYER 1 240 288 1
+CACTUS 2 300 300 2
 [END OBJECTS]
 

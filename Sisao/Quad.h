@@ -7,7 +7,7 @@ class Quad {
     Quad(glm::vec2 size, ShaderProgram* program);
 public:
     static Quad* init(glm::vec2 size, ShaderProgram* program);
-    ~Quad();
+    virtual ~Quad();
 
     virtual void update(int deltaTime);
     virtual void render() const;
@@ -22,7 +22,7 @@ public:
 protected:
     Quad() {};
 
-    glm::mat4& model_matrix() const;
+    glm::mat4 model_matrix() const;
 
     GLuint vao;
     GLuint vbo;

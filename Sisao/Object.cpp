@@ -1,5 +1,5 @@
 #include "Object.h"
-#include "utils.h"
+#include "Utils.h"
 #include "Constants.h"
 
 void Object::physics_update(int deltaTime) {
@@ -10,9 +10,6 @@ void Object::physics_update(int deltaTime) {
             sprite->setPosition(position);
             sprite->setRotation(rotation);
         }
-        b2BodyUserData data;
-        data.pointer = uuid;
-        physic_body->GetUserData() = data;
     }
 }
 
@@ -21,7 +18,8 @@ void Object::update(int deltaTime) {
 }
 
 void Object::render() {
-    sprite->render();
+    if (sprite)
+        sprite->render();
 }
 
 Object::uuid_t Object::get_id() const {

@@ -2,18 +2,19 @@
 #include <iostream>
 #include <vector>
 #include "Constants.h"
-#include "utils.h"
+#include "Utils.h"
 #include <box2d/b2_fixture.h>
 #include <box2d/b2_polygon_shape.h>
 #include <fstream>
 #include <sstream>
+#include "Game.h"
 using namespace std;
 
 
 TileMap::TileMap() {}
 
 TileMap::TileMap(std::ifstream& stream, b2World* physics, const glm::vec2& position,
-                 ShaderProgram& program) {
+                 ShaderProgram& program) : shader(program) {
     this->position = position;
     read_tilemap(stream);
     register_physics(physics);
@@ -21,11 +22,18 @@ TileMap::TileMap(std::ifstream& stream, b2World* physics, const glm::vec2& posit
 }
 
 TileMap::~TileMap() {
-    if (map != NULL)
+    if (map != nullptr)
         delete map;
 }
 
-void TileMap::render() const {
+void TileMap::render() {
+    shader.use();
+    auto cam = Game::instance().get_scene().get_camera();
+    auto projection = cam.projection_matrix();
+    auto model_view = cam.view_matrix();
+    shader.setUniformMatrix4f("projection", projection);
+    shader.setUniformMatrix4f("modelview", model_view);
+    shader.setUniform2f("texCoordDispl", 0.f, 0.f);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);

@@ -71,7 +71,7 @@ ShaderProgram* Quad::expose_shader() {
     return shaderProgram;
 }
 
-glm::mat4& Quad::model_matrix() const {
+glm::mat4 Quad::model_matrix() const {
     // compute translation
     const auto& cameraview = Game::instance().get_scene().get_camera().view_matrix();
     glm::mat4 modelview = glm::translate(cameraview, glm::vec3(position.x, position.y, 0.f));

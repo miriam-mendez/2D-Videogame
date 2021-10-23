@@ -2,7 +2,7 @@
 #include "Constants.h"
 #include <box2d/b2_fixture.h>
 #include <box2d/b2_polygon_shape.h>
-#include "utils.h"
+#include "Utils.h"
 
 void Camera::update(int deltaTime) {
     Object::physics_update(deltaTime);

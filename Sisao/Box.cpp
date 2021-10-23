@@ -1,5 +1,5 @@
 #include "Box.h"
-#include "utils.h"
+#include "Utils.h"
 #include <box2d/b2_fixture.h>
 #include <box2d/b2_polygon_shape.h>
 #include "Constants.h"
@@ -27,6 +27,10 @@ void Box::init(b2World* physics, ShaderProgram& shaderProgram, bool inverted) {
     fixture_def.filter.categoryBits = (int)Constants::Physics::Category::Regular;
     fixture_def.filter.maskBits = (int)Constants::Physics::Mask::Regular;
     physic_body->CreateFixture(&fixture_def);
+
+    b2BodyUserData data;
+    data.pointer = uuid;
+    physic_body->GetUserData() = data;
 }
 
 void Box::update(int deltaTime) {

@@ -8,7 +8,7 @@ class PhysicsListener :
     public b2ContactListener {
 
     static std::unordered_map<int32_t, PhysicsListener<Derived>*> subscribers;
-    const int32_t subscriber_id = 0;
+    int32_t subscriber_id = 0;
 
     void BeginContact(b2Contact*) override;
     void EndContact(b2Contact*) override;
@@ -29,6 +29,10 @@ public:
 
     ~PhysicsListener() {
         subscribers.erase(subscriber_id);
+    }
+
+    void free() {
+        subscribers.clear();
     }
 };
 

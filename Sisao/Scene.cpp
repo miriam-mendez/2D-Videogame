@@ -9,16 +9,13 @@
 #include "Constants.h"
 #include <fstream>
 #include <sstream>
+#include "Cactus.h"
 
 
 Scene::Scene() {}
 
 Scene::~Scene() {
-    for (auto const& x : objects) {
-        delete x.second;
-    }
-    objects.clear();
-    delete water;
+    free();
 }
 
 void Scene::free() {
@@ -28,12 +25,14 @@ void Scene::free() {
     }
     objects.clear();
     delete water;
+    physics_listener.free();
     delete physics;
 }
 
 
 void Scene::init(std::string level) {
-    initShaders();
+    setup_shader(texProgram, "shaders/texture.vert", "shaders/texture.frag");
+    setup_shader(waterProgram, "shaders/water.vert", "shaders/water.frag");
     currentTime = 0.0f;
 
     physics = new b2World(b2Vec2(0.0f, 0.0f));
@@ -65,22 +64,13 @@ void Scene::update(int deltaTime) {
 }
 
 void Scene::render() {
-    auto projection = camera.projection_matrix();
-    auto model_view = camera.view_matrix();
-    texProgram.use();
-    texProgram.setUniformMatrix4f("projection", projection);
-    texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
-    texProgram.setUniformMatrix4f("modelview", model_view);
-    texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
     map.render();
-
     for (auto const& x : objects) {
         x.second->render();
     }
-    waterProgram.use();
-    model_view = glm::translate(glm::mat4(1.0f), glm::vec3(0, SCREEN_HEIGHT / 2.f, 0));
+    // required to inject extra uniforms
+    water->expose_shader()->use();
     waterProgram.setUniform1f("time", currentTime);
-    waterProgram.setUniformMatrix4f("projection", projection);
     waterProgram.setUniform4f("color", 0.23f, 0.7f, 1.0f, 0.5f);
     water->render();
 }
@@ -140,61 +130,43 @@ void Scene::read_objects(std::ifstream& stream) {
             auto r = objects.emplace(id, box);
             assert(r.second);
         }
+        else if (instr == "CACTUS") {
+            glm::ivec2 pos;
+            Object::uuid_t id;
+            int orientation;
+            sstream.str(args);
+            sstream >> id >> pos.x >> pos.y >> orientation;
+            auto box = new Cactus(id);
+            box->init(physics, texProgram, orientation);
+            box->set_position(glm::vec2(pos));
+            auto r = objects.emplace(id, box);
+            assert(r.second);
+        }
         std::getline(stream, line);
     }
 }
 
-void Scene::initShaders() {
-    {
-        Shader vShader, fShader;
-
-        vShader.initFromFile(VERTEX_SHADER, "shaders/texture.vert");
-        if (!vShader.isCompiled()) {
-            cout << "Vertex Shader Error" << endl;
-            cout << "" << vShader.log() << endl << endl;
-        }
-        fShader.initFromFile(FRAGMENT_SHADER, "shaders/texture.frag");
-        if (!fShader.isCompiled()) {
-            cout << "Fragment Shader Error" << endl;
-            cout << "" << fShader.log() << endl << endl;
-        }
-        texProgram.init();
-        texProgram.addShader(vShader);
-        texProgram.addShader(fShader);
-        texProgram.link();
-        if (!texProgram.isLinked()) {
-            cout << "Shader Linking Error" << endl;
-            cout << "" << texProgram.log() << endl << endl;
-        }
-        texProgram.bindFragmentOutput("outColor");
-        vShader.free();
-        fShader.free();
-    }
-
-
-
-
+void Scene::setup_shader(ShaderProgram& shader, std::string const& vs, std::string const& fs) {
     Shader vShader, fShader;
-
-    vShader.initFromFile(VERTEX_SHADER, "shaders/water.vert");
+    vShader.initFromFile(VERTEX_SHADER, vs);
     if (!vShader.isCompiled()) {
         cout << "Vertex Shader Error" << endl;
         cout << "" << vShader.log() << endl << endl;
     }
-    fShader.initFromFile(FRAGMENT_SHADER, "shaders/water.frag");
+    fShader.initFromFile(FRAGMENT_SHADER, fs);
     if (!fShader.isCompiled()) {
         cout << "Fragment Shader Error" << endl;
         cout << "" << fShader.log() << endl << endl;
     }
-    waterProgram.init();
-    waterProgram.addShader(vShader);
-    waterProgram.addShader(fShader);
-    waterProgram.link();
-    if (!waterProgram.isLinked()) {
+    shader.init();
+    shader.addShader(vShader);
+    shader.addShader(fShader);
+    shader.link();
+    if (!shader.isLinked()) {
         cout << "Shader Linking Error" << endl;
-        cout << "" << waterProgram.log() << endl << endl;
+        cout << "" << shader.log() << endl << endl;
     }
-    waterProgram.bindFragmentOutput("outColor");
+    shader.bindFragmentOutput("outColor");
     vShader.free();
     fShader.free();
 }

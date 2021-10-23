@@ -6,9 +6,9 @@ class Player :
 protected:
     bool inverted = false;
     bool jumping = false;
-    int contacts = 0;
+    bool falling = false;
+    bool standing = false;
     virtual void begin_overlap(b2Contact* contact);
-    virtual void end_overlap(b2Contact* contact);
 public:
     enum PlayerAnims {
         STAND,
@@ -16,16 +16,7 @@ public:
         FALL,
         FALL_TO_STAND,
         RUN,
-        RUN_TO_STAND,
-        HANG
-        /*STAND_LEFT_UP,
-        STAND_RIGHT_UP,
-        MOVE_LEFT_UP,
-        MOVE_RIGHT_UP,*/
-        /* STAND_LEFT_DOWN,
-        STAND_RIGHT_DOWN,
-        MOVE_LEFT_DOWN,
-        MOVE_RIGHT_DOWN */
+        RUN_TO_STAND
     };
 
     Player(Object::uuid_t uuid) : Object(uuid) {}

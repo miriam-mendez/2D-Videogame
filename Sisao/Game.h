@@ -11,6 +11,7 @@
 
 class Game {
     int current_level = 0;
+    int set_level = -1;
 public:
     Game() {}
 
@@ -37,6 +38,8 @@ public:
 
     bool getKey(int key) const;
     bool getSpecialKey(int key) const;
+
+    void delayed_set_level(int level);
 
 private:
     bool bPlay;                       // Continue to play game?

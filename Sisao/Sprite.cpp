@@ -42,7 +42,13 @@ void Sprite::update(int deltaTime) {
             currentKeyframe = (currentKeyframe + 1) % animations[currentAnimation].keyframeDispl.size();;
             bool loops = animations[currentAnimation].loop;
             if (last > currentKeyframe && !loops) {
-                currentKeyframe = last;
+                int chained = animations[currentAnimation].next;
+                if (chained != -1) {
+                    changeAnimation(chained);
+                }
+                else {
+                    currentKeyframe = last;
+                }
             }
         }
         texCoordDispl = animations[currentAnimation].keyframeDispl[currentKeyframe];
@@ -82,6 +88,11 @@ void Sprite::setAnimationSpeed(int animId, int keyframesPerSec) {
 void Sprite::setAnimationLoop(int animId, bool loop) {
     if (animId < int(animations.size()))
         animations[animId].loop = loop;
+}
+
+void Sprite::setAnimationNext(int animId, int next_animId) {
+    if (animId < int(animations.size()))
+        animations[animId].next = next_animId;
 }
 
 void Sprite::addKeyframe(int animId, const glm::vec2& displacement) {

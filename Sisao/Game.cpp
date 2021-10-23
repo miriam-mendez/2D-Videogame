@@ -11,6 +11,11 @@ void Game::init() {
 }
 
 bool Game::update(int deltaTime) {
+    if (set_level != -1) {
+        scene = Scene();
+        scene.init("levels/level" + std::to_string(set_level) + ".txt");
+        set_level = -1;
+    }
     scene.update(deltaTime);
 
     return bPlay;
@@ -25,16 +30,13 @@ void Game::keyPressed(int key) {
     if (key == 27) // Escape code
         bPlay = false;
     else if (key == 114) { // R key
-        scene.free();
-        scene.init("levels/level" + std::to_string(current_level) + ".txt");
+        delayed_set_level(current_level);
     }
     else if (key == 101) { // E key
-        scene.free();
-        scene.init("levels/level" + std::to_string(--current_level) + ".txt");
+        delayed_set_level(--current_level);
     }
     else if (key == 116) { // T key
-        scene.free();
-        scene.init("levels/level" + std::to_string(++current_level) + ".txt");
+        delayed_set_level(++current_level);
     }
     keys[key] = true;
 }
@@ -63,6 +65,10 @@ bool Game::getKey(int key) const {
 
 bool Game::getSpecialKey(int key) const {
     return specialKeys[key];
+}
+
+void Game::delayed_set_level(int level) {
+    set_level = level;
 }
 
 
