@@ -17,7 +17,6 @@ public:
     virtual void update(int deltaTime);
     virtual void render() const;
 
-    void setNumberAnimations(int nAnimations);
     void setAnimationSpeed(int animId, int keyframesPerSec);
     void setAnimationLoop(int animId, bool loop);
     void setAnimationNext(int animId, int next_animId = -1);

@@ -14,7 +14,6 @@ void Player::init(b2World* physics, ShaderProgram& shaderProgram, bool inverse) 
     spritesheet.loadFromFile("images/player.png", TEXTURE_PIXEL_FORMAT_RGBA);
     float h_frames = 22.f;
     sprite = Sprite::init(sprite_size_pixels, glm::vec2(1 / h_frames, 1.f), &spritesheet, &shaderProgram);
-    sprite->setNumberAnimations(6);
 
     sprite->setAnimationSpeed(JUMP_UP, 8);
     sprite->addKeyframe(JUMP_UP, glm::vec2(0.f, 0.f));
@@ -151,14 +150,15 @@ void Player::update(int deltaTime) {
     if (falling && sprite->animation() != FALL) {
         sprite->changeAnimation(FALL);
     }
-    if (!falling && !jumping && standing && sprite->animation() != STAND && sprite->animation() != FALL_TO_STAND && sprite->animation() != RUN_TO_STAND) {
+    if (!falling && standing && sprite->animation() != STAND && sprite->animation() != FALL_TO_STAND && sprite->animation() != RUN_TO_STAND) {
         if (sprite->animation() == FALL) {
             sprite->changeAnimation(FALL_TO_STAND);
+            jumping = false;
         }
-        else if (sprite->animation() == RUN) {
+        else if (!jumping && sprite->animation() == RUN) {
             sprite->changeAnimation(RUN_TO_STAND);
         }
-        else {
+        else if (!jumping) {
             sprite->changeAnimation(STAND);
         }
     }
@@ -179,10 +179,8 @@ void Player::begin_overlap(b2Contact* contact) {
         b2WorldManifold b;
         contact->GetWorldManifold(&b);
         auto normal = glm::vec2(b.normal.x, b.normal.y);
-        if (jumping) {
-            float gravity_direction_y = (inverted) ? -1.f : 1.f;
-            auto dot = glm::dot(normal, glm::vec2(0.f, 1.f)) * -gravity_direction_y;
-            jumping = dot < 0.9;
-        }
+        float gravity_direction_y = (inverted) ? -1.f : 1.f;
+        auto dot = glm::dot(normal, glm::vec2(0.f, 1.f)) * -gravity_direction_y;
+        jumping = jumping && dot < 0.9;
     }
 }

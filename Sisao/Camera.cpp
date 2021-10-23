@@ -60,11 +60,11 @@ bool Camera::unfollow(Object* target) {
     return false;
 }
 
-glm::mat4 const& Camera::view_matrix() const {
+glm::mat4 Camera::view_matrix() const {
     return view;
 }
 
-glm::mat4 const& Camera::projection_matrix() const {
+glm::mat4 Camera::projection_matrix() const {
     return projection;
 }
 

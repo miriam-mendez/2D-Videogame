@@ -26,7 +26,7 @@ public:
     // These methods should be called with an active OpenGL context
     void initFromSource(const ShaderType type, const string& source);
     bool initFromFile(const ShaderType type, const string& filename);
-    void free();
+    void release();
 
     GLuint getId() const;
     bool isCompiled() const;

@@ -26,6 +26,7 @@ public:
 
 private:
     void read_level(std::ifstream& stream);
+    void read_general_settings(std::ifstream& stream);
     void read_objects(std::ifstream& stream);
     void setup_shader(ShaderProgram& shader,
                       std::string const& vs, std::string const& fs);
@@ -37,7 +38,7 @@ private:
 
     TileMap* map = nullptr;
     Quad* water = nullptr;
-    Camera camera = Camera(Object::undefined_uuid);
+    Camera camera;
     std::unordered_map<Object::uuid_t, Object*> objects;
     b2World* physics = nullptr;
     PhysicsListener<Object> physics_listener;

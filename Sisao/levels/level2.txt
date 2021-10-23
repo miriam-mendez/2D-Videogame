@@ -1,3 +1,10 @@
+[BEGIN GENERAL]
+PREV_LEVEL levels/level1.txt
+NEXT_LEVEL levels/level3.txt
+MUSIC music/...
+BACKGROUND images/background1.png
+[END GENERAL]
+
 [BEGIN TILEMAP]
 DIMENSIONS 22 18
 TILE_SIZE 32

@@ -31,8 +31,7 @@ void TileMap::render() {
     auto cam = Game::instance().get_scene().get_camera();
     auto projection = cam.projection_matrix();
     auto model_view = cam.view_matrix();
-    shader.setUniformMatrix4f("projection", projection);
-    shader.setUniformMatrix4f("modelview", model_view);
+    shader.setUniformMatrix4f("modelviewprojection", projection * model_view);
     shader.setUniform2f("texCoordDispl", 0.f, 0.f);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

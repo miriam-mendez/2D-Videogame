@@ -44,7 +44,7 @@ bool Shader::initFromFile(const ShaderType type, const string& filename) {
     return true;
 }
 
-void Shader::free() {
+void Shader::release() {
     glDeleteShader(shaderId);
     shaderId = 0;
     compiled = false;

@@ -31,7 +31,7 @@ public:
         subscribers.erase(subscriber_id);
     }
 
-    void free() {
+    void release() {
         subscribers.clear();
     }
 };

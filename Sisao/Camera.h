@@ -16,7 +16,6 @@ protected:
 
 public:
     Camera() : Object() {};
-    Camera(Object::uuid_t uuid) : Object(uuid) {}
 
     virtual void init(b2World* physics, float follow_speed, bool lock_x, bool lock_y);
 
@@ -25,8 +24,8 @@ public:
     bool follow(Object* target);
     bool unfollow(Object* target);
 
-    glm::mat4 const& view_matrix() const;
-    glm::mat4 const& projection_matrix() const;
+    glm::mat4 view_matrix() const;
+    glm::mat4 projection_matrix() const;
 
     void set_orthogonal(float left, float right, float bottom, float top);
 };

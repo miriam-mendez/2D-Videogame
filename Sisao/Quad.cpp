@@ -36,13 +36,16 @@ Quad::~Quad() {
 void Quad::update(int deltaTime) {}
 
 void Quad::render() const {
+    shaderProgram->use();
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    auto& modelview = model_matrix();
-    shaderProgram->use();
+    auto& model = model_matrix();
+    auto view = Game::instance().get_scene().get_camera().view_matrix();
     auto projection = Game::instance().get_scene().get_camera().projection_matrix();
-    shaderProgram->setUniformMatrix4f("modelview", modelview);
+    shaderProgram->setUniformMatrix4f("model", model);
+    shaderProgram->setUniformMatrix4f("view", view);
     shaderProgram->setUniformMatrix4f("projection", projection);
+    shaderProgram->setUniformMatrix4f("modelviewprojection", projection * view * model);
     glBindVertexArray(vao);
     glEnableVertexAttribArray(posLocation);
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -74,12 +77,16 @@ ShaderProgram* Quad::expose_shader() {
 
 glm::mat4 Quad::model_matrix() const {
     // compute translation
-    const auto& cameraview = Game::instance().get_scene().get_camera().view_matrix();
-    glm::mat4 modelview = glm::translate(cameraview, glm::vec3(position.x, position.y, 0.f));
+    glm::mat4 translation_mat = glm::translate(glm::mat4(1), glm::vec3(position.x, position.y, 0.f));
     // compute rotation
     auto rotation_mat = glm::rotate(glm::mat4(1), rotation, glm::vec3(0.f, 0.f, 1.f));
     rotation_mat = rotation_mat * flipVH;
     // compute scale
-    const auto scale_mat = glm::scale(glm::mat4(1.f), glm::vec3(scale, 1.f));
-    return modelview * rotation_mat * scale_mat;
+    auto model = glm::scale(translation_mat * rotation_mat, glm::vec3(scale, 1.f));
+    return model;
+}
+
+glm::mat4 Quad::modelview_matrix() const {
+    const auto& view = Game::instance().get_scene().get_camera().view_matrix();
+    return view * model_matrix();
 }

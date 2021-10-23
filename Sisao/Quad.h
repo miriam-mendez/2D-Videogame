@@ -23,6 +23,7 @@ protected:
     Quad() {};
 
     glm::mat4 model_matrix() const;
+    glm::mat4 modelview_matrix() const;
 
     GLuint vao;
     GLuint vbo;

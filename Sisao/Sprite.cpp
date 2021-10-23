@@ -57,10 +57,9 @@ void Sprite::update(int deltaTime) {
 
 void Sprite::render() const {
     shaderProgram->use();
-    auto& modelview = model_matrix();
+    auto& modelview = modelview_matrix();
     auto projection = Game::instance().get_scene().get_camera().projection_matrix();
-    shaderProgram->setUniformMatrix4f("modelview", modelview);
-    shaderProgram->setUniformMatrix4f("projection", projection);
+    shaderProgram->setUniformMatrix4f("modelviewprojection", projection * modelview);
     shaderProgram->setUniform2f("texCoordDispl", texCoordDispl.x, texCoordDispl.y);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -75,29 +74,28 @@ void Sprite::render() const {
 }
 
 
-void Sprite::setNumberAnimations(int nAnimations) {
-    animations.clear();
-    animations.resize(nAnimations);
-}
-
 void Sprite::setAnimationSpeed(int animId, int keyframesPerSec) {
-    if (animId < int(animations.size()))
-        animations[animId].millisecsPerKeyframe = 1000.f / keyframesPerSec;
+    auto r = glm::max(animId + 1, (int)animations.size());
+    animations.resize(r);
+    animations[animId].millisecsPerKeyframe = 1000.f / keyframesPerSec;
 }
 
 void Sprite::setAnimationLoop(int animId, bool loop) {
-    if (animId < int(animations.size()))
-        animations[animId].loop = loop;
+    auto r = glm::max(animId + 1, (int)animations.size());
+    animations.resize(r);
+    animations[animId].loop = loop;
 }
 
 void Sprite::setAnimationNext(int animId, int next_animId) {
-    if (animId < int(animations.size()))
-        animations[animId].next = next_animId;
+    auto r = glm::max(animId + 1, (int)animations.size());
+    animations.resize(r);
+    animations[animId].next = next_animId;
 }
 
 void Sprite::addKeyframe(int animId, const glm::vec2& displacement) {
-    if (animId < int(animations.size()))
-        animations[animId].keyframeDispl.push_back(displacement);
+    auto r = glm::max(animId + 1, (int)animations.size());
+    animations.resize(r);
+    animations[animId].keyframeDispl.push_back(displacement);
 }
 
 void Sprite::changeAnimation(int animId) {

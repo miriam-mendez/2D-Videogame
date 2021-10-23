@@ -10,7 +10,7 @@
 #include <fstream>
 #include <sstream>
 #include "Cactus.h"
-
+#include "Wall.h"
 
 Scene::Scene() {}
 
@@ -22,7 +22,7 @@ Scene::~Scene() {
     }
     objects.clear();
     delete water;
-    physics_listener.free();
+    physics_listener.release();
     delete physics;
 }
 
@@ -85,13 +85,45 @@ Camera& Scene::get_camera() {
 void Scene::read_level(std::ifstream& stream) {
     std::string line;
     while (std::getline(stream, line)) {
-        if (line.find("[BEGIN TILEMAP]") != string::npos) {
+        if (line.find("[BEGIN GENERAL]") != string::npos) {
+            read_general_settings(stream);
+        }
+        else if (line.find("[BEGIN TILEMAP]") != string::npos) {
             delete map;
             map = new TileMap(stream, physics, glm::vec2(0, 0), texProgram);
         }
         else if (line.find("[BEGIN OBJECTS]") != string::npos) {
             read_objects(stream);
         }
+    }
+}
+
+void Scene::read_general_settings(std::ifstream& stream) {
+    std::string line;
+    std::getline(stream, line);
+    while (line.find("[END GENERAL]") == string::npos) {
+        auto instr_end = line.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ_");
+        instr_end = (instr_end == string::npos) ? 0 : instr_end;
+        auto instr = line.substr(0, instr_end);
+        auto args = line.substr(instr_end);
+        std::stringstream sstream;
+        if (instr == "NEXT_LEVEL") {
+            std::string level;
+            sstream.str(args);
+            sstream >> level;
+            Game::instance().next_level = level;
+        }
+        else if (instr == "PREV_LEVEL") {
+            std::string level;
+            sstream.str(args);
+            sstream >> level;
+            Game::instance().prev_level = level;
+        }
+        else if (instr == "MUSIC") {
+        }
+        else if (instr == "BACKGROUND") {
+        }
+        std::getline(stream, line);
     }
 }
 
@@ -129,6 +161,18 @@ void Scene::read_objects(std::ifstream& stream) {
             auto r = objects.emplace(id, box);
             assert(r.second);
         }
+        else if (instr == "WALL") {
+            glm::ivec2 pos;
+            bool inverted;
+            Object::uuid_t id;
+            sstream.str(args);
+            sstream >> id >> pos.x >> pos.y >> inverted;
+            auto wall = new Wall(id);
+            wall->init(physics, texProgram, inverted);
+            wall->set_position(glm::vec2(pos));
+            auto r = objects.emplace(id, wall);
+            assert(r.second);
+        }
         else if (instr == "CACTUS") {
             glm::ivec2 pos;
             Object::uuid_t id;
@@ -148,26 +192,17 @@ void Scene::read_objects(std::ifstream& stream) {
 void Scene::setup_shader(ShaderProgram& shader, std::string const& vs, std::string const& fs) {
     Shader vShader, fShader;
     vShader.initFromFile(VERTEX_SHADER, vs);
-    if (!vShader.isCompiled()) {
-        cout << "Vertex Shader Error" << endl;
-        cout << "" << vShader.log() << endl << endl;
-    }
+    assert(vShader.isCompiled()); // Vertex Shader Error see vShader.log()
     fShader.initFromFile(FRAGMENT_SHADER, fs);
-    if (!fShader.isCompiled()) {
-        cout << "Fragment Shader Error" << endl;
-        cout << "" << fShader.log() << endl << endl;
-    }
+    assert(fShader.isCompiled()); // Fragment Shader Error see fShader.log()
     shader.init();
     shader.addShader(vShader);
     shader.addShader(fShader);
     shader.link();
-    if (!shader.isLinked()) {
-        cout << "Shader Linking Error" << endl;
-        cout << "" << shader.log() << endl << endl;
-    }
+    assert(shader.isLinked()); // Shader Linking Error see shader.log()
     shader.bindFragmentOutput("outColor");
-    vShader.free();
-    fShader.free();
+    vShader.release();
+    fShader.release();
 }
 
 

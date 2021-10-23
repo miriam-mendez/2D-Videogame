@@ -14,7 +14,6 @@ void Cactus::init(b2World* physics, ShaderProgram& shaderProgram, int orientatio
     const glm::ivec2 sprite_size_pixels = glm::ivec2(32, 32);
     spritesheet.loadFromFile("images/tilesblock2.png", TEXTURE_PIXEL_FORMAT_RGBA);
     sprite = Sprite::init(sprite_size_pixels, glm::vec2(1 / 8.f, 1.f), &spritesheet, &shaderProgram);
-    sprite->setNumberAnimations(1);
     sprite->addKeyframe(0, glm::vec2(6.f / 8.f, 0.f));
     sprite->changeAnimation(0);
     sprite->setPosition(position);
@@ -56,7 +55,7 @@ void Cactus::begin_overlap(b2Contact* contact) {
         Player* y = dynamic_cast<Player*>(b);
 
         if (x != nullptr || y != nullptr) {
-            Game::instance().delayed_set_level(0);
+            Game::instance().delayed_set_level(Game::instance().get_current_level());
         }
     }
 }
