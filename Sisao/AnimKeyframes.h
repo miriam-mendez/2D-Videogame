@@ -14,7 +14,7 @@ using namespace std;
 
 
 struct AnimKeyframes {
-    float millisecsPerKeyframe;
+    float millisecsPerKeyframe = 1000.f / 4.f;
     vector<glm::vec2> keyframeDispl;
     bool loop = true;
     int next = -1; // played if !loop and next > 0

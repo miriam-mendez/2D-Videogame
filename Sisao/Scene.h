@@ -4,7 +4,7 @@
 #include "ShaderProgram.h"
 #include "TileMap.h"
 #include <box2d/b2_world.h>
-#include <unordered_map>
+#include <map>
 #include "Object.h"
 #include "PhysicsListener.h"
 #include <fstream>
@@ -24,6 +24,8 @@ public:
     Object* get_object(Object::uuid_t id);
     Camera& get_camera();
 
+    int captured_flags = 0;
+
 private:
     void read_level(std::ifstream& stream);
     void read_general_settings(std::ifstream& stream);
@@ -31,7 +33,6 @@ private:
     void setup_shader(ShaderProgram& shader,
                       std::string const& vs, std::string const& fs);
 
-private:
     ShaderProgram texProgram;
     ShaderProgram waterProgram;
     float currentTime;
@@ -39,7 +40,9 @@ private:
     TileMap* map = nullptr;
     Quad* water = nullptr;
     Camera camera;
-    std::unordered_map<Object::uuid_t, Object*> objects;
+    // map because its sorted (rendering) and provides an easy way to get
+    // objets by its arbitrary id
+    std::map<Object::uuid_t, Object*> objects;
     b2World* physics = nullptr;
     PhysicsListener<Object> physics_listener;
 };

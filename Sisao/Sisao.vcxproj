@@ -17,6 +17,7 @@
     <ClInclude Include="Cactus.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="Flag.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Lever.h" />
     <ClInclude Include="Player.h" />
@@ -36,6 +37,7 @@
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="Cactus.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Flag.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Lever.cpp" />
     <ClCompile Include="main.cpp" />

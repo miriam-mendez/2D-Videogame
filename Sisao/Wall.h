@@ -1,8 +1,9 @@
 #pragma once
 #include "Object.h"
+#include "Activable.h"
 
 class Wall :
-    public Object {
+    public Object, public Activable {
 
     bool inverted = false;
 public:
@@ -12,6 +13,6 @@ public:
     void update(int deltaTime) override;
     void render() override;
 
-    void set(bool active);
+    void set(bool active) override;
 };
 

@@ -11,6 +11,8 @@
 #include <sstream>
 #include "Cactus.h"
 #include "Wall.h"
+#include "Lever.h"
+#include "Flag.h"
 
 Scene::Scene() {}
 
@@ -171,6 +173,36 @@ void Scene::read_objects(std::ifstream& stream) {
             wall->init(physics, texProgram, inverted);
             wall->set_position(glm::vec2(pos));
             auto r = objects.emplace(id, wall);
+            assert(r.second);
+        }
+        else if (instr == "FLAG") {
+            glm::ivec2 pos;
+            bool inverted;
+            Object::uuid_t id;
+            sstream.str(args);
+            sstream >> id >> pos.x >> pos.y >> inverted;
+            auto flag = new Flag(id);
+            flag->init(physics, texProgram, inverted);
+            flag->set_position(glm::vec2(pos));
+            auto r = objects.emplace(id, flag);
+            assert(r.second);
+        }
+        else if (instr == "LEVER") {
+            glm::ivec2 pos;
+            int orientation;
+            std::vector<Object::uuid_t> linked_ids;
+            Object::uuid_t id;
+            bool default_state;
+            sstream.str(args);
+            sstream >> id >> pos.x >> pos.y >> orientation >> default_state;
+            Object::uuid_t tmp;
+            while (sstream >> tmp) {
+                linked_ids.push_back(tmp);
+            }
+            auto lever = new Lever(id);
+            lever->init(physics, texProgram, orientation, default_state, linked_ids);
+            lever->set_position(glm::vec2(pos));
+            auto r = objects.emplace(id, lever);
             assert(r.second);
         }
         else if (instr == "CACTUS") {

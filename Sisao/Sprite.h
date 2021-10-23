@@ -22,6 +22,7 @@ public:
     void setAnimationNext(int animId, int next_animId = -1);
     void addKeyframe(int animId, const glm::vec2& frame);
     void changeAnimation(int animId);
+    void changeAnimation(int animId, int frame_start);
     int animation() const;
 
 protected:

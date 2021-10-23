@@ -12,9 +12,9 @@ void Cactus::update(int deltaTime) {}
 
 void Cactus::init(b2World* physics, ShaderProgram& shaderProgram, int orientation) {
     const glm::ivec2 sprite_size_pixels = glm::ivec2(32, 32);
-    spritesheet.loadFromFile("images/tilesblock2.png", TEXTURE_PIXEL_FORMAT_RGBA);
-    sprite = Sprite::init(sprite_size_pixels, glm::vec2(1 / 8.f, 1.f), &spritesheet, &shaderProgram);
-    sprite->addKeyframe(0, glm::vec2(6.f / 8.f, 0.f));
+    spritesheet.loadFromFile("images/blocks.png", TEXTURE_PIXEL_FORMAT_RGBA);
+    sprite = Sprite::init(sprite_size_pixels, glm::vec2(1 / 6.f, 1.f), &spritesheet, &shaderProgram);
+    sprite->addKeyframe(0, glm::vec2(4.f / 6.f, 0.f));
     sprite->changeAnimation(0);
     sprite->setPosition(position);
     auto rotation = glm::radians(90.f) * (orientation % 4);
