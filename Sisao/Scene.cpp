@@ -16,6 +16,8 @@
 Scene::Scene() {}
 
 Scene::~Scene() {
+    auto& sounds = Game::instance().get_sound_system();
+    sounds.releaseSound("background");
     delete map;
     for (auto const& x : objects) {
         camera.unfollow(x.second);
@@ -122,6 +124,12 @@ void Scene::read_general_settings(std::ifstream& stream) {
             Game::instance().prev_level = level;
         }
         else if (instr == "MUSIC") {
+            std::string path;
+            sstream.str(args);
+            sstream >> path;
+            auto& sounds = Game::instance().get_sound_system();
+            sounds.addNewSound(path, "background", "background", true);
+            sounds.playSound("background");
         }
         else if (instr == "BACKGROUND") {
         }

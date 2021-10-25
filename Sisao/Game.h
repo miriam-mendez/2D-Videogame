@@ -25,6 +25,7 @@ public:
     void render();
 
     Scene& get_scene() { return *scene; };
+    SoundSystem& get_sound_system() { return soundSystem; }
 
     // Input callback methods
     void keyPressed(int key);
@@ -49,10 +50,10 @@ private:
     bool keys[256], specialKeys[256]; // Store key states so that
                                       // we can have access at any time
 
-    bool level_change = false;
+    bool level_change = true;
     std::string current_level = "levels/default.txt";
     std::string prev_level = current_level;
     std::string next_level = current_level;
-    SoundSystem* soundSystem;
+    SoundSystem soundSystem;
 };
 

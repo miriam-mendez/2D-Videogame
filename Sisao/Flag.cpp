@@ -36,7 +36,7 @@ void Flag::init(b2World* physics, ShaderProgram& shaderProgram, bool inverted) {
     const glm::vec2 sprite_size_meters = glm::vec2(sprite_size_pixels) * Constants::Units::meters_per_pixel;
     b2PolygonShape box_shape;
     auto offset = b2Vec2(-sprite_size_meters.x / 2.f, 0);
-    box_shape.SetAsBox(0.7 * sprite_size_meters.x, sprite_size_meters.y, offset, 0.f);
+    box_shape.SetAsBox(0.7f * sprite_size_meters.x, sprite_size_meters.y, offset, 0.f);
     b2FixtureDef fixture_def;
     fixture_def.shape = &box_shape;
     fixture_def.filter.categoryBits = (int)Constants::Physics::Category::Sensor;

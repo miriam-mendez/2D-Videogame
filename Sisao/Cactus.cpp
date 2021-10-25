@@ -20,6 +20,9 @@ void Cactus::init(b2World* physics, ShaderProgram& shaderProgram, int orientatio
     auto rotation = glm::radians(90.f) * (orientation % 4);
     sprite->setRotation(rotation);
 
+    auto& sounds = Game::instance().get_sound_system();
+    sounds.addNewSound("sounds/SFX/cactus2.wav", "cactus", "cactus", false);
+
     b2BodyDef body_def;
     body_def.type = b2_staticBody;
     body_def.position.Set(position.x, position.y);
@@ -55,8 +58,8 @@ void Cactus::begin_overlap(b2Contact* contact) {
         Player* y = dynamic_cast<Player*>(b);
 
         if (x != nullptr || y != nullptr) {
-            soundSystem = new SoundSystem();
-            soundSystem -> playSound("cactus");
+            auto& sounds = Game::instance().get_sound_system();
+            sounds.playSound("cactus");
             Game::instance().delayed_set_level(Game::instance().get_current_level());
         }
     }

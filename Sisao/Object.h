@@ -34,7 +34,6 @@ protected:
     Sprite* sprite = nullptr;
 
     virtual void physics_update(int deltaTime);
-    SoundSystem *soundSystem;
 private:
     uuid_t uuid;
 };

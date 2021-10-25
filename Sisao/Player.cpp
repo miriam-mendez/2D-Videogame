@@ -144,8 +144,6 @@ void Player::update(int deltaTime) {
         if (!jumping) {
             sprite->changeAnimation(JUMP_UP);
             physic_body->ApplyLinearImpulseToCenter(b2Vec2(0, -gravity_direction_y * impulse), true);
-            soundSystem = new SoundSystem();
-            soundSystem->playSound("jump");
             jumping = true;
         }
     }

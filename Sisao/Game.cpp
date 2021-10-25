@@ -6,10 +6,6 @@
 void Game::init() {
     bPlay = true;
     glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-    scene = new Scene();
-    soundSystem = new SoundSystem(); //implicit -> load all the sounds
-    soundSystem->playSound("music-loop");
-    scene->init(current_level);
 }
 
 bool Game::update(int deltaTime) {
@@ -25,7 +21,8 @@ bool Game::update(int deltaTime) {
 
 void Game::render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    scene->render();
+    if (!level_change)
+        scene->render();
 }
 
 void Game::keyPressed(int key) {

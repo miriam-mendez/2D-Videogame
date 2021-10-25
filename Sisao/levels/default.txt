@@ -1,7 +1,7 @@
 [BEGIN GENERAL]
 PREV_LEVEL levels/default.txt
 NEXT_LEVEL levels/level1.txt
-MUSIC music/...
+MUSIC sounds/music-loop.wav
 BACKGROUND images/background1.png
 [END GENERAL]
 
