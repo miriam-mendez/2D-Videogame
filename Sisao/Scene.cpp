@@ -7,7 +7,6 @@
 #include "Player.h"
 #include "Box.h"
 #include "Constants.h"
-#include <fstream>
 #include <sstream>
 #include "Cactus.h"
 #include "Wall.h"
@@ -31,6 +30,7 @@ Scene::~Scene() {
 
 
 void Scene::init(std::string level) {
+
     setup_shader(texProgram, "shaders/texture.vert", "shaders/texture.frag");
     setup_shader(waterProgram, "shaders/water.vert", "shaders/water.frag");
     currentTime = 0.0f;

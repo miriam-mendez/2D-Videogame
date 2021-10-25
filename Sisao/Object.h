@@ -4,6 +4,7 @@
 #include "Sprite.h"
 #include "TileMap.h"
 #include "PhysicsListener.h"
+#include "SoundSystem.h"
 #include <limits>
 
 class Object : public PhysicsListener<Object> {
@@ -33,7 +34,7 @@ protected:
     Sprite* sprite = nullptr;
 
     virtual void physics_update(int deltaTime);
-
+    SoundSystem *soundSystem;
 private:
     uuid_t uuid;
 };

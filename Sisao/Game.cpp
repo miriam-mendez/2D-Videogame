@@ -7,6 +7,8 @@ void Game::init() {
     bPlay = true;
     glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
     scene = new Scene();
+    soundSystem = new SoundSystem(); //implicit -> load all the sounds
+    soundSystem->playSound("music-loop");
     scene->init(current_level);
 }
 

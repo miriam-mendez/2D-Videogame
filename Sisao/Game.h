@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Scene.h"
+#include "SoundSystem.h"
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 448
@@ -52,5 +53,6 @@ private:
     std::string current_level = "levels/default.txt";
     std::string prev_level = current_level;
     std::string next_level = current_level;
+    SoundSystem* soundSystem;
 };
 

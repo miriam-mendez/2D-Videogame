@@ -1,16 +1,15 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "ShaderProgram.h"
-#include "TileMap.h"
 #include <box2d/b2_world.h>
 #include <map>
+#include <fstream>
+#include "ShaderProgram.h"
+#include "TileMap.h"
 #include "Object.h"
 #include "PhysicsListener.h"
-#include <fstream>
 #include "Camera.h"
 #include "Quad.h"
-
 
 class Scene {
 
