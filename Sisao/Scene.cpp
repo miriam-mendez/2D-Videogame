@@ -56,19 +56,6 @@ void Scene::init(std::string level) {
     ocean_pos.y += ocean_size.y / 2;
     water = Quad::init(ocean_size, &waterProgram);
     water->set_position(ocean_pos);
-
-    background = Parallax::init("images/parallax/00.png", &texProgram);
-    background->set_position(map->get_center());
-    background->add_layer("images/parallax/01.png", 1.f / 30.f);
-    background->add_layer("images/parallax/02.png", 2.f / 30.f);
-    background->add_layer("images/parallax/03.png", 3.f / 30.f);
-    background->add_layer("images/parallax/04.png", 4.f / 30.f);
-    background->add_layer("images/parallax/05.png", 5.f / 30.f);
-    background->add_layer("images/parallax/06.png", 6.f / 30.f);
-    background->add_layer("images/parallax/07.png", 7.f / 30.f);
-    background->add_layer("images/parallax/08.png", 8.f / 30.f);
-    background->add_layer("images/parallax/09.png", 9.f / 30.f);
-
 }
 
 void Scene::update(int deltaTime) {
@@ -161,7 +148,22 @@ void Scene::read_general_settings(std::ifstream& stream) {
                 sounds.playSound("background");
             }
         }
-        else if (instr == "BACKGROUND") {
+        else if (instr == "BACKGROUND_BASE") {
+            std::string path;
+            glm::ivec2 pos;
+            sstream.str(args);
+            sstream >> pos.x >> pos.y >> path;
+            delete background;
+            background = Parallax::init(path, &texProgram);
+            background->set_position(pos);
+        }
+        else if (instr == "BACKGROUND_PARALLAX") {
+            assert(background != nullptr);
+            float speed;
+            std::string path;
+            sstream.str(args);
+            sstream >> speed >> path;
+            background->add_layer(path, speed);
         }
         std::getline(stream, line);
     }
