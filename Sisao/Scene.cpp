@@ -77,7 +77,7 @@ void Scene::render() {
     // required to inject extra uniforms
     water->expose_shader()->use();
     waterProgram.setUniform1f("time", currentTime);
-    waterProgram.setUniform4f("color", 0.23f, 0.7f, 1.0f, 0.5f);
+    waterProgram.setUniform4f("color", 0.4f, 0.65f, 1.0f, 0.5f);
     water->render();
 }
 

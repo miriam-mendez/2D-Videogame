@@ -11,7 +11,7 @@ PREV_LEVEL levels/default.txt
 NEXT_LEVEL levels/level1.txt
 REQUIRED_FLAGS 2
 MUSIC 60 sounds/music-loop.wav # VOLUME[0-100] and FILE
-BACKGROUND_BASE 304 250 images/parallax/00.png
+BACKGROUND_BASE 304 240 images/parallax/00.png
 BACKGROUND_PARALLAX 0.0333 images/parallax/01.png
 BACKGROUND_PARALLAX 0.0666 images/parallax/02.png
 BACKGROUND_PARALLAX 0.1 images/parallax/03.png
