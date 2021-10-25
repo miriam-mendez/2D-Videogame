@@ -56,8 +56,8 @@ void Player::init(b2World* physics, ShaderProgram& shaderProgram, bool inverse) 
     sprite->addKeyframe(RUN_TO_STAND, glm::vec2(21 / h_frames, 0.f));
 
     sprite->changeAnimation(STAND);
-    sprite->setPosition(position);
-    sprite->setFlip(false, inverted);
+    sprite->set_position(position);
+    sprite->set_flip(false, inverted);
 
     // PHYSICS: BODY CREATION
 
@@ -122,14 +122,14 @@ void Player::update(int deltaTime) {
     auto h_impulse = glm::vec2(0, 0);
 
     if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
-        sprite->setFlip(true, inverted);
+        sprite->set_flip(true, inverted);
         if (sprite->animation() != RUN && !jumping && !falling && !standing) {
             sprite->changeAnimation(RUN);
         }
         h_impulse += glm::vec2(-impulse, 0);
     }
     if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT)) {
-        sprite->setFlip(false, inverted);
+        sprite->set_flip(false, inverted);
         if (sprite->animation() != RUN && !jumping && !falling && !standing) {
             sprite->changeAnimation(RUN);
         }

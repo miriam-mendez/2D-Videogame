@@ -30,7 +30,7 @@ void Lever::init(b2World* physics, ShaderProgram& shaderProgram, int orientation
     auto default_state = (active) ? ACTIVATE : DEACTIVATE;
     sprite->changeAnimation(default_state, 2);
 
-    sprite->setPosition(position);
+    sprite->set_position(position);
 
     b2BodyDef body_def;
     body_def.type = b2_staticBody;

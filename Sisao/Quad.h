@@ -12,10 +12,16 @@ public:
     virtual void update(int deltaTime);
     virtual void render() const;
 
-    void setPosition(const glm::vec2& pos);
-    void setRotation(float radians);
-    void setFlip(bool vertical, bool horizontal);
-    void setScale(const glm::vec2& scale);
+    void set_position(const glm::vec2& pos);
+    glm::vec2 get_position() const;
+    void set_rotation(float radians);
+    float get_rotation() const;
+    void set_flip(bool vertical, bool horizontal);
+    bool is_horizontal_flipped() const;
+    bool is_vertical_flipped() const;
+    void set_scale(const glm::vec2& scale);
+    glm::vec2 get_scale() const;
+
 
     ShaderProgram* expose_shader();
 

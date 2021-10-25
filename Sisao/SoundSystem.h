@@ -9,9 +9,13 @@ public:
     SoundSystem();
     ~SoundSystem();
 
-    void addNewSound(std::string const& path, std::string const& name,
+    void addNewSound(std::string const& path, std::string const& sound,
                      std::string const& group = "default", bool loop = false);
-    void playSound(std::string const& name, uint32_t channel = 0);
+    void playSound(std::string const& sound, uint32_t channel = 0);
+
+    void set_group_volume(std::string const& group, float volume);
+    float get_group_volume(std::string const& group);
+    void stop_group_sounds(std::string const& group);
 
     void update();
     void releaseSound(std::string const& name);
@@ -20,7 +24,7 @@ private:
     FMOD::SoundGroup* get_or_create_group(std::string const& name);
 
     uint32_t num_channels = 16;
-    FMOD::System* system = nullptr; // Pointer to the FMOD instance
+    FMOD::System* system = nullptr;
 
     std::unordered_map<std::string, FMOD::SoundGroup*> groups;
     std::unordered_map<std::string, FMOD::Sound*> sounds;

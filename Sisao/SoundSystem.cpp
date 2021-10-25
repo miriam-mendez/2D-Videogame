@@ -48,6 +48,30 @@ void SoundSystem::playSound(std::string const& name, uint32_t channel) {
     system->playSound(sound->second, 0, false, &chan);
 }
 
+void SoundSystem::set_group_volume(std::string const& group, float volume) {
+    auto it = groups.find(group);
+    if (it != groups.end()) {
+        it->second->setVolume(volume);
+    }
+}
+
+float SoundSystem::get_group_volume(std::string const& group) {
+    auto it = groups.find(group);
+    float v = 0.f;
+    if (it != groups.end()) {
+        it->second->getVolume(&v);
+        return v;
+    }
+    return v;
+}
+
+void SoundSystem::stop_group_sounds(std::string const& group) {
+    auto it = groups.find(group);
+    if (it != groups.end()) {
+        it->second->stop();
+    }
+}
+
 void SoundSystem::update() {
     system->update();
 }

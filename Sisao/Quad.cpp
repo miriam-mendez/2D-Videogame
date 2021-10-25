@@ -53,22 +53,42 @@ void Quad::render() const {
 }
 
 
-void Quad::setPosition(const glm::vec2& pos) {
+void Quad::set_position(const glm::vec2& pos) {
     position = pos;
 }
 
-void Quad::setRotation(float radians) {
+glm::vec2 Quad::get_position() const {
+    return position;
+}
+
+void Quad::set_rotation(float radians) {
     rotation = radians;
 }
 
-void Quad::setFlip(bool vertical, bool horizontal) {
+float Quad::get_rotation() const {
+    return rotation;
+}
+
+void Quad::set_flip(bool vertical, bool horizontal) {
     const float radians = glm::radians(180.f);
     flipVH = glm::rotate(glm::mat4(1.0f), horizontal * radians, glm::vec3(1.f, 0.f, 0.f));
     flipVH = glm::rotate(flipVH, vertical * radians, glm::vec3(0.f, 1.f, 0.f));
 }
 
-void Quad::setScale(const glm::vec2& axis_scale) {
+bool Quad::is_horizontal_flipped() const {
+    return flipH;
+}
+
+bool Quad::is_vertical_flipped() const {
+    return flipV;
+}
+
+void Quad::set_scale(const glm::vec2& axis_scale) {
     scale = axis_scale;
+}
+
+glm::vec2 Quad::get_scale() const {
+    return scale;
 }
 
 ShaderProgram* Quad::expose_shader() {

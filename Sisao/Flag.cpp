@@ -6,8 +6,10 @@
 #include "Game.h"
 #include "Player.h"
 
-void Flag::init(b2World* physics, ShaderProgram& shaderProgram, bool inverted) {
+void Flag::init(b2World* physics, ShaderProgram& shaderProgram, bool inverted,
+                std::string const& level) {
     this->inverted = inverted;
+    this->level = level;
     const glm::ivec2 sprite_size_pixels = glm::ivec2(32, 64);
     spritesheet.loadFromFile("images/flag.png", TEXTURE_PIXEL_FORMAT_RGBA);
     sprite = Sprite::init(sprite_size_pixels, glm::vec2(1 / 14.f, 1), &spritesheet, &shaderProgram);
@@ -25,8 +27,11 @@ void Flag::init(b2World* physics, ShaderProgram& shaderProgram, bool inverted) {
     }
 
     sprite->changeAnimation(FALL, 13);
-    sprite->setPosition(position);
-    sprite->setFlip(false, inverted);
+    sprite->set_position(position);
+    sprite->set_flip(false, inverted);
+
+    auto& sounds = Game::instance().get_sound_system();
+    sounds.addNewSound("sounds/SFX/flag.ogg", "flag", "flag", false);
 
     b2BodyDef body_def;
     body_def.type = b2_staticBody;
@@ -50,14 +55,20 @@ void Flag::init(b2World* physics, ShaderProgram& shaderProgram, bool inverted) {
 }
 
 void Flag::update(int deltaTime) {
+    remaining_time = in_range ? remaining_time - deltaTime : timer;
     if (in_range && sprite->animation() != RISE) {
         sprite->changeAnimation(RISE);
     }
     else if (!in_range && sprite->animation() != FALL) {
         sprite->changeAnimation(FALL);
     }
-    if (Game::instance().get_scene().captured_flags > 1) {
-        Game::instance().delayed_set_level(Game::instance().get_next_level());
+    if (remaining_time <= 0) {
+        auto& scene = Game::instance().get_scene();
+        if (scene.captured_flags >= scene.required_flags) {
+            auto& sounds = Game::instance().get_sound_system();
+            sounds.playSound("flag");
+            Game::instance().delayed_set_level(level);
+        }
     }
     sprite->update(deltaTime);
 }

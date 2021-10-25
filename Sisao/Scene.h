@@ -10,6 +10,7 @@
 #include "PhysicsListener.h"
 #include "Camera.h"
 #include "Quad.h"
+#include "Parallax.h"
 
 class Scene {
 
@@ -24,6 +25,7 @@ public:
     Camera& get_camera();
 
     int captured_flags = 0;
+    int required_flags = 1;
 
 private:
     void read_level(std::ifstream& stream);
@@ -36,6 +38,7 @@ private:
     ShaderProgram waterProgram;
     float currentTime;
 
+    Parallax* background = nullptr;
     TileMap* map = nullptr;
     Quad* water = nullptr;
     Camera camera;

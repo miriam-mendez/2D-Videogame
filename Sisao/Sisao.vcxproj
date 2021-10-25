@@ -20,6 +20,7 @@
     <ClInclude Include="Flag.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Lever.h" />
+    <ClInclude Include="Parallax.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PhysicsListener.h" />
     <ClInclude Include="Quad.h" />
@@ -43,6 +44,7 @@
     <ClCompile Include="Lever.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Parallax.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Quad.cpp" />
     <ClCompile Include="Scene.cpp" />

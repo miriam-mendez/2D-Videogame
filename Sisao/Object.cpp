@@ -7,8 +7,8 @@ void Object::physics_update(int deltaTime) {
         position = to_glm(physic_body->GetPosition()) * Constants::Units::pixels_per_meter;
         rotation = physic_body->GetAngle();
         if (sprite) {
-            sprite->setPosition(position);
-            sprite->setRotation(rotation);
+            sprite->set_position(position);
+            sprite->set_rotation(rotation);
         }
     }
 }
@@ -35,7 +35,7 @@ void Object::set_position(glm::vec2 const& position) {
         physic_body->SetTransform(to_box2d(position * Constants::Units::meters_per_pixel), physic_body->GetAngle());
     }
     if (sprite) {
-        sprite->setPosition(position);
+        sprite->set_position(position);
     }
     this->position = position;
 }
@@ -45,7 +45,7 @@ void Object::set_rotation(float radians) {
         physic_body->SetTransform(physic_body->GetPosition(), radians);
     }
     if (sprite) {
-        sprite->setRotation(radians);
+        sprite->set_rotation(radians);
     }
     rotation = radians;
 }

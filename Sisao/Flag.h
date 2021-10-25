@@ -5,6 +5,9 @@ class Flag :
 
     bool inverted = false;
     bool in_range = false;
+    std::string level;
+    const int timer = 700; // time the flag needs to be active to change level
+    int remaining_time = timer;
     enum State {
         RISE,
         FALL
@@ -18,7 +21,8 @@ class Flag :
 public:
     Flag(Object::uuid_t uuid) : Object(uuid) {}
 
-    virtual void init(b2World* physics, ShaderProgram& shaderProgram, bool inverted);
+    virtual void init(b2World* physics, ShaderProgram& shaderProgram,
+                      bool inverted, std::string const& level);
     void update(int deltaTime) override;
 };
 

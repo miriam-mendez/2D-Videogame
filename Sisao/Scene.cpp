@@ -18,6 +18,7 @@ Scene::Scene() {}
 Scene::~Scene() {
     auto& sounds = Game::instance().get_sound_system();
     sounds.releaseSound("background");
+    delete background;
     delete map;
     for (auto const& x : objects) {
         camera.unfollow(x.second);
@@ -42,6 +43,7 @@ void Scene::init(std::string level) {
 
     std::ifstream stream;
     stream.open(level.c_str());
+    assert(stream.good());
     read_level(stream);
     stream.close();
 
@@ -53,7 +55,20 @@ void Scene::init(std::string level) {
     glm::vec2 ocean_pos = map->get_center();
     ocean_pos.y += ocean_size.y / 2;
     water = Quad::init(ocean_size, &waterProgram);
-    water->setPosition(ocean_pos);
+    water->set_position(ocean_pos);
+
+    background = Parallax::init("images/parallax/00.png", &texProgram);
+    background->set_position(map->get_center());
+    background->add_layer("images/parallax/01.png", 1.f / 30.f);
+    background->add_layer("images/parallax/02.png", 2.f / 30.f);
+    background->add_layer("images/parallax/03.png", 3.f / 30.f);
+    background->add_layer("images/parallax/04.png", 4.f / 30.f);
+    background->add_layer("images/parallax/05.png", 5.f / 30.f);
+    background->add_layer("images/parallax/06.png", 6.f / 30.f);
+    background->add_layer("images/parallax/07.png", 7.f / 30.f);
+    background->add_layer("images/parallax/08.png", 8.f / 30.f);
+    background->add_layer("images/parallax/09.png", 9.f / 30.f);
+
 }
 
 void Scene::update(int deltaTime) {
@@ -62,10 +77,12 @@ void Scene::update(int deltaTime) {
         x.second->update(deltaTime);
     }
     camera.update(deltaTime);
+    background->update(deltaTime);
     physics->Step(Constants::Physics::timestep, Constants::Physics::velocity_iters, Constants::Physics::position_iters);
 }
 
 void Scene::render() {
+    background->render();
     map->render();
     for (auto const& x : objects) {
         x.second->render();
@@ -115,21 +132,34 @@ void Scene::read_general_settings(std::ifstream& stream) {
             std::string level;
             sstream.str(args);
             sstream >> level;
-            Game::instance().next_level = level;
+            if (level != "")
+                Game::instance().next_level = level;
         }
         else if (instr == "PREV_LEVEL") {
             std::string level;
             sstream.str(args);
             sstream >> level;
-            Game::instance().prev_level = level;
+            if (level != "")
+                Game::instance().prev_level = level;
+        }
+        else if (instr == "REQUIRED_FLAGS") {
+            int flags;
+            sstream.str(args);
+            sstream >> flags;
+            required_flags = flags;
         }
         else if (instr == "MUSIC") {
             std::string path;
+            int v;
             sstream.str(args);
-            sstream >> path;
-            auto& sounds = Game::instance().get_sound_system();
-            sounds.addNewSound(path, "background", "background", true);
-            sounds.playSound("background");
+            sstream >> v >> path;
+            if (path != "") {
+                auto& sounds = Game::instance().get_sound_system();
+                sounds.addNewSound(path, "background", "background", true);
+                float volume = v / 100.f;
+                sounds.set_group_volume("background", volume);
+                sounds.playSound("background");
+            }
         }
         else if (instr == "BACKGROUND") {
         }
@@ -187,10 +217,11 @@ void Scene::read_objects(std::ifstream& stream) {
             glm::ivec2 pos;
             bool inverted;
             Object::uuid_t id;
+            std::string level;
             sstream.str(args);
-            sstream >> id >> pos.x >> pos.y >> inverted;
+            sstream >> id >> pos.x >> pos.y >> inverted >> level;
             auto flag = new Flag(id);
-            flag->init(physics, texProgram, inverted);
+            flag->init(physics, texProgram, inverted, level);
             flag->set_position(glm::vec2(pos));
             auto r = objects.emplace(id, flag);
             assert(r.second);
