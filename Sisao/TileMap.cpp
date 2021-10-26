@@ -13,9 +13,8 @@ using namespace std;
 
 TileMap::TileMap() {}
 
-TileMap::TileMap(std::ifstream& stream, b2World* physics, const glm::vec2& position,
+TileMap::TileMap(std::ifstream& stream, b2World* physics,
                  ShaderProgram& program) : shader(program) {
-    this->position = position;
     read_tilemap(stream);
     register_physics(physics);
     prepareArrays(program);
@@ -55,7 +54,11 @@ void TileMap::read_tilemap(std::ifstream& stream) {
         auto instr = line.substr(0, instr_end);
         auto args = line.substr(instr_end);
         std::stringstream sstream;
-        if (instr == "DIMENSIONS") {
+        if (instr == "POSITION") {
+            sstream.str(args);
+            sstream >> position.x >> position.y;
+        }
+        else if (instr == "DIMENSIONS") {
             sstream.str(args);
             sstream >> mapSize.x >> mapSize.y;
         }
@@ -83,14 +86,17 @@ void TileMap::read_tilemap(std::ifstream& stream) {
             tileTexSize = glm::vec2(1.f / tilesheetSize.x, 1.f / tilesheetSize.y);
         }
         else if (line.find("[BEGIN TILES]") != string::npos) {
-            char tile[1];
             map = std::vector<int>(mapSize.x * mapSize.y, 0);
             for (int j = 0; j < mapSize.y; j++) {
-                for (int i = 0; i < mapSize.x; i++) {
-                    stream.read(tile, 1);
-                    map[j * mapSize.x + i] = strtoul(tile, nullptr, 21);
+                std::getline(stream, line);
+                sstream.str(line);
+                for (int i = 0; i < mapSize.x - 1; ++i) {
+                    std::string s;
+                    std::getline(sstream, s, ',');
+                    if (s.empty()) break;
+                    int tile = std::stoi(s);
+                    map[j * mapSize.x + i] = tile + 1;
                 }
-                stream.read(tile, 1);
             }
         }
         std::getline(stream, line);

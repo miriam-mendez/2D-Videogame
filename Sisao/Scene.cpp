@@ -49,13 +49,7 @@ void Scene::init(std::string level) {
 
     camera.init(physics, 1.f, false, true);
     camera.set_orthogonal(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
-    camera.set_position(map->get_center());
-
-    glm::vec2 ocean_size = glm::vec2(SCREEN_WIDTH * 99, SCREEN_HEIGHT);
-    glm::vec2 ocean_pos = map->get_center();
-    ocean_pos.y += ocean_size.y / 2;
-    water = Quad::init(ocean_size, &waterProgram);
-    water->set_position(ocean_pos);
+    camera.set_position(scene_center);
 }
 
 void Scene::update(int deltaTime) {
@@ -64,21 +58,23 @@ void Scene::update(int deltaTime) {
         x.second->update(deltaTime);
     }
     camera.update(deltaTime);
-    background->update(deltaTime);
+    if (background) background->update(deltaTime);
     physics->Step(Constants::Physics::timestep, Constants::Physics::velocity_iters, Constants::Physics::position_iters);
 }
 
 void Scene::render() {
-    background->render();
+    if (background) background->render();
     map->render();
     for (auto const& x : objects) {
         x.second->render();
     }
     // required to inject extra uniforms
-    water->expose_shader()->use();
-    waterProgram.setUniform1f("time", currentTime);
-    waterProgram.setUniform4f("color", 0.4f, 0.65f, 1.0f, 0.5f);
-    water->render();
+    if (water) {
+        water->expose_shader()->use();
+        waterProgram.setUniform1f("time", currentTime);
+        waterProgram.setUniform4f("color", 0.4f, 0.65f, 1.0f, 0.5f);
+        water->render();
+    }
 }
 
 Object* Scene::get_object(Object::uuid_t id) {
@@ -98,7 +94,7 @@ void Scene::read_level(std::ifstream& stream) {
         }
         else if (line.find("[BEGIN TILEMAP]") != string::npos) {
             delete map;
-            map = new TileMap(stream, physics, glm::vec2(0, 0), texProgram);
+            map = new TileMap(stream, physics, texProgram);
         }
         else if (line.find("[BEGIN OBJECTS]") != string::npos) {
             read_objects(stream);
@@ -135,6 +131,19 @@ void Scene::read_general_settings(std::ifstream& stream) {
             sstream >> flags;
             required_flags = flags;
         }
+        if (instr == "WATER") {
+            bool w;
+            sstream.str(args);
+            sstream >> w;
+            delete water;
+            if (w) {
+                glm::vec2 ocean_size = glm::vec2(SCREEN_WIDTH * 99, SCREEN_HEIGHT);
+                glm::vec2 ocean_pos = scene_center;
+                ocean_pos.y += ocean_size.y / 2;
+                water = Quad::init(ocean_size, &waterProgram);
+                water->set_position(ocean_pos);
+            }
+        }
         else if (instr == "MUSIC") {
             std::string path;
             int v;
@@ -155,7 +164,7 @@ void Scene::read_general_settings(std::ifstream& stream) {
             sstream >> pos.x >> pos.y >> path;
             delete background;
             background = Parallax::init(path, &texProgram);
-            background->set_position(pos);
+            background->set_position(scene_center);
         }
         else if (instr == "BACKGROUND_PARALLAX") {
             assert(background != nullptr);

@@ -28,6 +28,7 @@ public:
     int required_flags = 1;
 
 private:
+    const glm::vec2 scene_center = glm::vec2(0, 0);
     void read_level(std::ifstream& stream);
     void read_general_settings(std::ifstream& stream);
     void read_objects(std::ifstream& stream);
