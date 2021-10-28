@@ -6,27 +6,25 @@ uniform float time;
 out vec4 outColor;
 
 const float speed = 0.0005;
-const float wave_size = 20;
-const float wave_top = 224;
-const float wave_bottom = 0;
+const float ycenter = 448.0 / 2.0;
+const float wave_size = 7;
 
 void main()
 {
-	vec2 wpos = gl_FragCoord.xy;
+	vec2 fpos = gl_FragCoord.xy;
+	float w = 4*sin(time*speed + fpos.x*0.01) + 2*sin(time*speed*5 + fpos.x*0.01);
+	w = wave_size * w / 6; // 4+2
 
-	float wh = 4 *sin(time*speed + wpos.x*0.01) + 2*sin(time*speed*5 + wpos.x*0.01);
-	float size = wave_size * (wh + 5) / 10.0; // map [-1, 1] to [0, wave_size]
-	float wave_h = wave_top - size;
-
-	float depth_visibility = 3 * wpos.y/560;
-	float a = max(color.a*1.5, 0);
-	vec4 xx = mix(vec4(0.11,0.11,0.13,a), color, depth_visibility* depth_visibility);
+	float wave_height = ycenter + w;
 	
-	if (wpos.y < wave_h) {
-		outColor = xx;
-	} else {
-		discard;
+	if (fpos.y < wave_height) {
+		float depth_visibility = 4 * fpos.y/560;
+		float visibility = clamp(depth_visibility * depth_visibility, 0, 1);
+		vec4 c = mix(vec4(0.09,0.09,0.14,0.75), color, visibility);
+		outColor = c;
 	}
-	
+	else {
+		discard;
+	}	
 }
 

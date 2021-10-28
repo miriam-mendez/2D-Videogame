@@ -36,6 +36,7 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TileMap.h" />
     <ClInclude Include="Wall.h" />
+    <ClInclude Include="Water.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Box.cpp" />
@@ -60,6 +61,7 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TileMap.cpp" />
     <ClCompile Include="Wall.cpp" />
+    <ClCompile Include="Water.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5BE6CA2A-E5A8-40CC-9015-047CE0C78036}</ProjectGuid>

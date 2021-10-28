@@ -1,7 +1,7 @@
 #pragma once
 #include <box2d/b2_body.h>
 #include <glm/glm.hpp>
-#include "Sprite.h"
+#include "Quad.h"
 #include "TileMap.h"
 #include "PhysicsListener.h"
 #include "SoundSystem.h"
@@ -31,7 +31,7 @@ protected:
     float rotation = 0.0f; // IN RADIANS
 
     Texture spritesheet;
-    Sprite* sprite = nullptr;
+    Quad* sprite = nullptr;
 
     virtual void physics_update(int deltaTime);
 private:

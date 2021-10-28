@@ -74,7 +74,7 @@ void Scene::render() {
     if (water) {
         water->expose_shader()->use();
         waterProgram.setUniform1f("time", currentTime);
-        waterProgram.setUniform4f("color", 0.4f, 0.65f, 1.0f, 0.5f);
+        waterProgram.setUniform4f("color", 0.2f, 0.27f, 0.37f, 0.6f);
         water->render();
     }
 }
@@ -139,9 +139,8 @@ void Scene::read_general_settings(std::ifstream& stream) {
             sstream >> w;
             delete water;
             if (w) {
-                glm::vec2 ocean_size = glm::vec2(SCREEN_WIDTH * 99, SCREEN_HEIGHT);
+                glm::vec2 ocean_size = glm::vec2(SCREEN_WIDTH * 20, SCREEN_HEIGHT);
                 glm::vec2 ocean_pos = scene_center;
-                ocean_pos.y += ocean_size.y / 2;
                 water = Quad::init(ocean_size, &waterProgram);
                 water->set_position(ocean_pos);
             }
