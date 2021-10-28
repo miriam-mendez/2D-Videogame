@@ -31,7 +31,7 @@ protected:
     float rotation = 0.0f; // IN RADIANS
 
     Texture spritesheet;
-    Quad* sprite = nullptr;
+    Quad* quad = nullptr;
 
     virtual void physics_update(int deltaTime);
 private:

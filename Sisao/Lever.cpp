@@ -14,8 +14,8 @@ void Lever::init(b2World* physics, ShaderProgram& shaderProgram, int orientation
     links = linked;
     const glm::ivec2 sprite_size_pixels = glm::ivec2(32, 32);
     spritesheet.loadFromFile("images/blocks.png", TEXTURE_PIXEL_FORMAT_RGBA);
-    sprite = Sprite::init(sprite_size_pixels, glm::vec2(1 / 6.f, 1), &spritesheet, &shaderProgram);
-    auto s = static_cast<Sprite*>(sprite);
+    quad = Sprite::init(sprite_size_pixels, glm::vec2(1 / 6.f, 1), &spritesheet, &shaderProgram);
+    auto sprite = static_cast<Sprite*>(quad);
     sprite->setAnimationSpeed(ACTIVATE, 8);
     sprite->setAnimationLoop(ACTIVATE, false);
     sprite->addKeyframe(ACTIVATE, glm::vec2(1.f / 6.f, 0.f));
@@ -56,6 +56,7 @@ void Lever::init(b2World* physics, ShaderProgram& shaderProgram, int orientation
 }
 
 void Lever::update(int deltaTime) {
+    auto sprite = static_cast<Sprite*>(quad);
     if (requires_sync_with_linked) {
         requires_sync_with_linked = false;
         send_to_linked(sprite->animation() == ACTIVATE);

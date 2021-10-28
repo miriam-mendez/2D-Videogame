@@ -12,8 +12,8 @@ void Flag::init(b2World* physics, ShaderProgram& shaderProgram, bool inverted,
     this->level = level;
     const glm::ivec2 sprite_size_pixels = glm::ivec2(32, 64);
     spritesheet.loadFromFile("images/flag.png", TEXTURE_PIXEL_FORMAT_RGBA);
-    sprite = Sprite::init(sprite_size_pixels, glm::vec2(1 / 14.f, 1), &spritesheet, &shaderProgram);
-
+    quad = Sprite::init(sprite_size_pixels, glm::vec2(1 / 14.f, 1), &spritesheet, &shaderProgram);
+    auto sprite = static_cast<Sprite*>(quad);
     sprite->setAnimationSpeed(FALL, 32);
     sprite->setAnimationLoop(FALL, false);
     for (int i = 0; i < 14; ++i) {
@@ -55,6 +55,7 @@ void Flag::init(b2World* physics, ShaderProgram& shaderProgram, bool inverted,
 }
 
 void Flag::update(int deltaTime) {
+    auto sprite = static_cast<Sprite*>(quad);
     remaining_time = in_range ? remaining_time - deltaTime : timer;
     if (in_range && sprite->animation() != RISE) {
         sprite->changeAnimation(RISE);
@@ -70,7 +71,7 @@ void Flag::update(int deltaTime) {
             Game::instance().delayed_set_level(level);
         }
     }
-    sprite->update(deltaTime);
+    quad->update(deltaTime);
 }
 
 void Flag::begin_overlap(b2Contact* contact) {

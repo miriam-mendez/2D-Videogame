@@ -61,21 +61,16 @@ void Scene::update(int deltaTime) {
     }
     camera.update(deltaTime);
     if (background) background->update(deltaTime);
+    if (water) water->update(deltaTime);
     physics->Step(Constants::Physics::timestep, Constants::Physics::velocity_iters, Constants::Physics::position_iters);
 }
 
 void Scene::render() {
     if (background) background->render();
-    map->render();
+    if (map) map->render();
+    if (water) water->render();
     for (auto const& x : objects) {
         x.second->render();
-    }
-    // required to inject extra uniforms
-    if (water) {
-        water->expose_shader()->use();
-        waterProgram.setUniform1f("time", currentTime);
-        waterProgram.setUniform4f("color", 0.2f, 0.27f, 0.37f, 0.6f);
-        water->render();
     }
 }
 
@@ -139,10 +134,9 @@ void Scene::read_general_settings(std::ifstream& stream) {
             sstream >> w;
             delete water;
             if (w) {
-                glm::vec2 ocean_size = glm::vec2(SCREEN_WIDTH * 20, SCREEN_HEIGHT);
-                glm::vec2 ocean_pos = scene_center;
-                water = Quad::init(ocean_size, &waterProgram);
-                water->set_position(ocean_pos);
+                water = new Water();
+                water->init(physics, waterProgram);
+                water->set_position(scene_center);
             }
         }
         else if (instr == "MUSIC") {

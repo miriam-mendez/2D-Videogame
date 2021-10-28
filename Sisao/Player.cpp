@@ -13,8 +13,9 @@ void Player::init(b2World* physics, ShaderProgram& shaderProgram, bool inverse) 
 
     spritesheet.loadFromFile("images/player.png", TEXTURE_PIXEL_FORMAT_RGBA);
     float h_frames = 22.f;
-    sprite = Sprite::init(sprite_size_pixels, glm::vec2(1 / h_frames, 1.f), &spritesheet, &shaderProgram);
+    quad = Sprite::init(sprite_size_pixels, glm::vec2(1 / h_frames, 1.f), &spritesheet, &shaderProgram);
 
+    auto sprite = static_cast<Sprite*>(quad);
     sprite->setAnimationSpeed(JUMP_UP, 8);
     sprite->addKeyframe(JUMP_UP, glm::vec2(0.f, 0.f));
 
@@ -110,6 +111,7 @@ void Player::init(b2World* physics, ShaderProgram& shaderProgram, bool inverse) 
 }
 
 void Player::update(int deltaTime) {
+    auto sprite = static_cast<Sprite*>(quad);
     physics_update(deltaTime);
     b2Vec2 velocity = physic_body->GetLinearVelocity();
     float gravity_direction_y = (inverted) ? -1.f : 1.f;

@@ -3,12 +3,14 @@
 #include <box2d/b2_fixture.h>
 #include <box2d/b2_polygon_shape.h>
 #include "Constants.h"
+#include "Sprite.h"
 
 void Box::init(b2World* physics, ShaderProgram& shaderProgram, bool inverted) {
     this->inverted = inverted;
     const glm::ivec2 sprite_size_pixels = glm::ivec2(32, 32);
     spritesheet.loadFromFile("images/blocks.png", TEXTURE_PIXEL_FORMAT_RGBA);
-    sprite = Sprite::init(sprite_size_pixels, glm::vec2(1 / 6.f, 1), &spritesheet, &shaderProgram);
+    quad = Sprite::init(sprite_size_pixels, glm::vec2(1 / 6.f, 1), &spritesheet, &shaderProgram);
+    auto sprite = static_cast<Sprite*>(quad);
     sprite->addKeyframe(0, glm::vec2(5.f / 6.f, 0.f));
     sprite->changeAnimation(0);
     sprite->set_position(position);

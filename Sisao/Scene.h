@@ -9,7 +9,7 @@
 #include "Object.h"
 #include "PhysicsListener.h"
 #include "Camera.h"
-#include "Quad.h"
+#include "Water.h"
 #include "Parallax.h"
 
 class Scene {
@@ -23,6 +23,7 @@ public:
 
     Object* get_object(Object::uuid_t id);
     Camera& get_camera();
+    float get_current_time() const { return currentTime; }
 
     int captured_flags = 0;
     int required_flags = 1;
@@ -42,7 +43,7 @@ private:
 
     Parallax* background = nullptr;
     TileMap* map = nullptr;
-    Quad* water = nullptr;
+    Water* water = nullptr;
     Camera camera;
     // map because its sorted (rendering) and provides an easy way to get
     // objets by its arbitrary id

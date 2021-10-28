@@ -13,8 +13,8 @@ Parallax::Parallax(std::string const& background_path, ShaderProgram* shader) {
     this->shader = shader;
     spritesheet.loadFromFile(background_path, TEXTURE_PIXEL_FORMAT_RGBA);
     auto size = glm::vec2(spritesheet.width(), spritesheet.height());
-    sprite = Sprite::init(size, glm::vec2(1, 1), &spritesheet, shader);
-    sprite->set_position(position);
+    quad = Sprite::init(size, glm::vec2(1, 1), &spritesheet, shader);
+    quad->set_position(position);
     max_scroll = size.x;
 }
 
@@ -52,7 +52,7 @@ void Parallax::update(int deltaTime) {
 }
 
 void Parallax::render() {
-    sprite->render();
+    quad->render();
     for (auto const& layer : layers) {
         layer.sprite->render();
     }

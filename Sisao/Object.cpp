@@ -6,15 +6,15 @@ void Object::physics_update(int deltaTime) {
     if (physic_body) {
         position = to_glm(physic_body->GetPosition()) * Constants::Units::pixels_per_meter;
         rotation = physic_body->GetAngle();
-        if (sprite) {
-            sprite->set_position(position);
-            sprite->set_rotation(rotation);
+        if (quad) {
+            quad->set_position(position);
+            quad->set_rotation(rotation);
         }
     }
 }
 
 Object::~Object() {
-    delete sprite;
+    delete quad;
 }
 
 void Object::update(int deltaTime) {
@@ -22,8 +22,8 @@ void Object::update(int deltaTime) {
 }
 
 void Object::render() {
-    if (sprite)
-        sprite->render();
+    if (quad)
+        quad->render();
 }
 
 Object::uuid_t Object::get_id() const {
@@ -34,8 +34,8 @@ void Object::set_position(glm::vec2 const& position) {
     if (physic_body) {
         physic_body->SetTransform(to_box2d(position * Constants::Units::meters_per_pixel), physic_body->GetAngle());
     }
-    if (sprite) {
-        sprite->set_position(position);
+    if (quad) {
+        quad->set_position(position);
     }
     this->position = position;
 }
@@ -44,8 +44,8 @@ void Object::set_rotation(float radians) {
     if (physic_body) {
         physic_body->SetTransform(physic_body->GetPosition(), radians);
     }
-    if (sprite) {
-        sprite->set_rotation(radians);
+    if (quad) {
+        quad->set_rotation(radians);
     }
     rotation = radians;
 }

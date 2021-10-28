@@ -2,7 +2,9 @@
 #include "Object.h"
 class Water :
     public Object {
+
 public:
+    Water() : Object() {}
     Water(Object::uuid_t uuid) : Object(uuid) {}
 
     virtual void init(b2World* physics, ShaderProgram& shaderProgram);
