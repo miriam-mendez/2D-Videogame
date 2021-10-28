@@ -26,7 +26,6 @@
     <ClInclude Include="Quad.h" />
     <ClInclude Include="SoundSystem.h" />
     <ClInclude Include="Text.h" />
-    <ClInclude Include="TextRender.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Scene.h" />
@@ -54,7 +53,6 @@
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="SoundSystem.cpp" />
     <ClCompile Include="Text.cpp" />
-    <ClCompile Include="TextRender.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Texture.cpp" />
