@@ -12,6 +12,7 @@
 #include "Wall.h"
 #include "Lever.h"
 #include "Flag.h"
+#include "Text.h"
 
 Scene::Scene() {}
 
@@ -51,8 +52,6 @@ void Scene::init(std::string level) {
     camera.init(physics, 1.f, false, true);
     camera.set_orthogonal(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
     camera.set_position(scene_center);
-
-    assert(text.init("fonts/OpenSans-Regular.ttf"));
 }
 
 void Scene::update(int deltaTime) {
@@ -78,11 +77,6 @@ void Scene::render() {
         waterProgram.setUniform4f("color", 0.4f, 0.65f, 1.0f, 0.5f);
         water->render();
     }
-    text.set_position(glm::vec2(90, 150));
-    text.set_font_size(14);
-    text.set_font_color(glm::vec4(1, 1, 1, 1));
-    text.set_text("Instructions");
-    text.render();
 }
 
 Object* Scene::get_object(Object::uuid_t id) {
@@ -206,6 +200,21 @@ void Scene::read_objects(std::ifstream& stream) {
             player->set_position(glm::vec2(pos));
             auto r = objects.emplace(id, player);
             camera.follow(player);
+            assert(r.second);
+        }
+        else if (instr == "TEXT") {
+            Object::uuid_t id;
+            int size;
+            glm::vec2 pos;
+            glm::vec4 color;
+            std::string text_with_spaces;
+            sstream.str(args);
+            sstream >> id >> pos.x >> pos.y >> size >> color.r >> color.g >> color.b >> color.a;
+            std::getline(sstream, text_with_spaces);
+            auto t = new Text(id);
+            t->init(text_with_spaces, size, color);
+            t->set_position(pos);
+            auto r = objects.emplace(id, t);
             assert(r.second);
         }
         else if (instr == "BOX") {

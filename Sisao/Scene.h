@@ -11,7 +11,6 @@
 #include "Camera.h"
 #include "Quad.h"
 #include "Parallax.h"
-#include "Text.h"
 
 class Scene {
 
@@ -50,6 +49,5 @@ private:
     std::map<Object::uuid_t, Object*> objects;
     b2World* physics = nullptr;
     PhysicsListener<Object> physics_listener;
-    Text text;
 };
 
