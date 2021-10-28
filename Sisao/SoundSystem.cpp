@@ -1,7 +1,5 @@
 #include "SoundSystem.h"
 #include<assert.h>
-#include "dirent.h"
-#include<string>
 
 
 SoundSystem::SoundSystem() {

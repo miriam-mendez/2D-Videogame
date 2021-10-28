@@ -36,6 +36,7 @@ void Scene::init(std::string level) {
 
     setup_shader(texProgram, "shaders/texture.vert", "shaders/texture.frag");
     setup_shader(waterProgram, "shaders/water.vert", "shaders/water.frag");
+    setup_shader(textProgram, "shaders/text.vert", "shaders/text.frag");
     currentTime = 0.0f;
 
     physics = new b2World(b2Vec2(0.0f, 0.0f));
@@ -50,6 +51,8 @@ void Scene::init(std::string level) {
     camera.init(physics, 1.f, false, true);
     camera.set_orthogonal(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
     camera.set_position(scene_center);
+
+    assert(text.init("fonts/OpenSans-Regular.ttf"));
 }
 
 void Scene::update(int deltaTime) {
@@ -75,6 +78,10 @@ void Scene::render() {
         waterProgram.setUniform4f("color", 0.4f, 0.65f, 1.0f, 0.5f);
         water->render();
     }
+    text.render("Instructions", glm::vec2(90, 150), 12, glm::vec4(1, 1, 1, 1));
+    text.render("Let's play!", glm::vec2(550, 100), 12, glm::vec4(1, 1, 1, 1));
+    text.render("Credits", glm::vec2(96, 20), 12, glm::vec4(1, 1, 1, 1));
+
 }
 
 Object* Scene::get_object(Object::uuid_t id) {

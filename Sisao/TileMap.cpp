@@ -14,7 +14,7 @@ using namespace std;
 TileMap::TileMap() {}
 
 TileMap::TileMap(std::ifstream& stream, b2World* physics,
-                 ShaderProgram& program) : shader(program) {
+    ShaderProgram& program) : shader(program) {
     read_tilemap(stream);
     register_physics(physics);
     prepareArrays(program);
@@ -120,7 +120,7 @@ void TileMap::prepareArrays(ShaderProgram& program) {
                     glm::vec2(offset.x + i * tileSize, offset.y + j * tileSize);
                 texCoordTile[0] =
                     glm::vec2(float((tile - 1) % tilesheetSize.x) / tilesheetSize.x,
-                              float((tile - 1) / tilesheetSize.x) / tilesheetSize.y);
+                        float((tile - 1) / tilesheetSize.x) / tilesheetSize.y);
                 texCoordTile[1] = texCoordTile[0] + tileTexSize;
                 texCoordTile[0] += halfTexel;
                 texCoordTile[1] -= halfTexel;
@@ -159,7 +159,7 @@ void TileMap::prepareArrays(ShaderProgram& program) {
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, 24 * nTiles * sizeof(float), &vertices[0],
-                 GL_STATIC_DRAW);
+        GL_STATIC_DRAW);
     posLocation =
         program.bindVertexAttribute("position", 2, 4 * sizeof(float), 0);
     texCoordLocation = program.bindVertexAttribute(
