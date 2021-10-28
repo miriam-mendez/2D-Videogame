@@ -4,7 +4,7 @@
 #include <GL/gl.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include "Text.h"
-
+#include "Game.h"
 
 #define ATLAS_FONT_SIZE 64
 
@@ -60,6 +60,7 @@ bool Text::init(const char* filename) {
                                                 geom[1].x, geom[1].y, texCoords[1].x, texCoords[1].y,
                                                 geom[0].x, geom[1].y, texCoords[0].x, texCoords[1].y };
 
+
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     glGenBuffers(1, &vbo);
@@ -83,59 +84,29 @@ int Text::getSize() const {
     return fontSize;
 }
 
-void Text::render(char c, const glm::vec2& pixel, int size, const glm::vec4& color) {
+
+void Text::render() {
     int vp[4];
-    glm::mat4 projection, modelview;
-    glm::vec2 minTexCoord, maxTexCoord;
+    glm::vec2 minTexCoord, maxTexCoord, pos = position;
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
     program.use();
     glGetIntegerv(GL_VIEWPORT, vp);
-    projection = glm::ortho(0.f, float(vp[2] - 1), float(vp[3] - 1), 0.f);
+    auto projection = Game::instance().get_scene().get_camera().projection_matrix();
     program.setUniformMatrix4f("projection", projection);
-    program.setUniform4f("color", color.r, color.g, color.b, color.a);
-    modelview = glm::mat4(1.0f);
-    modelview = glm::translate(modelview, glm::vec3(pixel.x, pixel.y - size, 0.f));
-    modelview = glm::scale(modelview, (float(size) / fontSize) * glm::vec3(chars[c - 32].sx, chars[c - 32].sy, 0.f));
-    program.setUniformMatrix4f("modelview", modelview);
-    minTexCoord = glm::vec2(float(chars[c - 32].tx) / textureSize, float(chars[c - 32].ty) / textureSize);
-    maxTexCoord = glm::vec2(float(chars[c - 32].tx + chars[c - 32].sx) / textureSize, float(chars[c - 32].ty + chars[c - 32].sy) / textureSize);
-    program.setUniform2f("minTexCoord", minTexCoord.s, minTexCoord.t);
-    program.setUniform2f("maxTexCoord", maxTexCoord.s, maxTexCoord.t);
+    program.setUniform4f("color", tint.r, tint.g, tint.b, tint.a);
 
-    glEnable(GL_TEXTURE_2D);
-    textureAtlas.use();
-    glBindVertexArray(vao);
-    glEnableVertexAttribArray(posLocation);
-    glEnableVertexAttribArray(texCoordLocation);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    glDisable(GL_TEXTURE_2D);
-
-
-    glDisable(GL_BLEND);
-}
-
-void Text::render(const string& str, const glm::vec2& pixel, int size, const glm::vec4& color) {
-    int vp[4];
-    glm::mat4 projection, modelview;
-    glm::vec2 minTexCoord, maxTexCoord, pos = pixel;
-
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
-    program.use();
-    glGetIntegerv(GL_VIEWPORT, vp);
-    projection = glm::ortho(0.f, float(vp[2] - 1), float(vp[3] - 1), 0.f);
-    program.setUniformMatrix4f("projection", projection);
-    program.setUniform4f("color", color.r, color.g, color.b, color.a);
-
-    for (unsigned int i = 0; i < str.length(); i++) {
-        modelview = glm::mat4(1.0f);
-        modelview = glm::translate(modelview, glm::vec3(pos.x + (float(size) / fontSize) * chars[str[i] - 32].bl, pos.y - (float(size) / fontSize) * chars[str[i] - 32].bt, 0.f));
-        modelview = glm::scale(modelview, (float(size) / fontSize) * glm::vec3(chars[str[i] - 32].sx, chars[str[i] - 32].sy, 0.f));
-        program.setUniformMatrix4f("modelview", modelview);
-        minTexCoord = glm::vec2(float(chars[str[i] - 32].tx) / textureSize, float(chars[str[i] - 32].ty) / textureSize);
-        maxTexCoord = glm::vec2(float(chars[str[i] - 32].tx + chars[str[i] - 32].sx) / textureSize, float(chars[str[i] - 32].ty + chars[str[i] - 32].sy) / textureSize);
+    for (unsigned int i = 0; i < text.length(); i++) {
+        glm::mat4 modelview = glm::mat4(1.0f);
+        modelview = glm::translate(modelview, glm::vec3(pos.x + (float(render_font_size) / fontSize) * chars[text[i] - 32].bl * scale.x, pos.y - (float(render_font_size) / fontSize) * chars[text[i] - 32].bt * scale.y, 0.f));
+        auto rotation_mat = glm::rotate(glm::mat4(1), rotation, glm::vec3(0.f, 0.f, 1.f));
+        rotation_mat = rotation_mat * flipVH;
+        modelview = glm::scale(modelview * rotation_mat, (float(render_font_size) / fontSize) * glm::vec3(chars[text[i] - 32].sx, chars[text[i] - 32].sy, 0.f) * glm::vec3(scale, 0.f));
+        auto view = Game::instance().get_scene().get_camera().view_matrix();
+        program.setUniformMatrix4f("modelview", view * modelview);
+        minTexCoord = glm::vec2(float(chars[text[i] - 32].tx) / textureSize, float(chars[text[i] - 32].ty) / textureSize);
+        maxTexCoord = glm::vec2(float(chars[text[i] - 32].tx + chars[text[i] - 32].sx) / textureSize, float(chars[text[i] - 32].ty + chars[text[i] - 32].sy) / textureSize);
         program.setUniform2f("minTexCoord", minTexCoord.s, minTexCoord.t);
         program.setUniform2f("maxTexCoord", maxTexCoord.s, maxTexCoord.t);
 
@@ -147,10 +118,22 @@ void Text::render(const string& str, const glm::vec2& pixel, int size, const glm
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glDisable(GL_TEXTURE_2D);
 
-        pos.x += (float(size) / fontSize) * chars[str[i] - 32].ax;
+        pos.x += (float(render_font_size) / fontSize) * chars[text[i] - 32].ax;
     }
 
     glDisable(GL_BLEND);
+}
+
+void Text::set_font_size(int size) {
+    render_font_size = size;
+}
+
+void Text::set_font_color(glm::vec4 const& color) {
+    tint = color;
+}
+
+void Text::set_text(std::string const& text) {
+    this->text = text;
 }
 
 void Text::initShaders() {

@@ -78,10 +78,11 @@ void Scene::render() {
         waterProgram.setUniform4f("color", 0.4f, 0.65f, 1.0f, 0.5f);
         water->render();
     }
-    text.render("Instructions", glm::vec2(90, 150), 12, glm::vec4(1, 1, 1, 1));
-    text.render("Let's play!", glm::vec2(550, 100), 12, glm::vec4(1, 1, 1, 1));
-    text.render("Credits", glm::vec2(96, 20), 12, glm::vec4(1, 1, 1, 1));
-
+    text.set_position(glm::vec2(90, 150));
+    text.set_font_size(14);
+    text.set_font_color(glm::vec4(1, 1, 1, 1));
+    text.set_text("Instructions");
+    text.render();
 }
 
 Object* Scene::get_object(Object::uuid_t id) {

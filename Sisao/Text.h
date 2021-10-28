@@ -4,7 +4,7 @@
 #include FT_FREETYPE_H
 #include "Texture.h"
 #include "ShaderProgram.h"
-
+#include "Quad.h"
 
 #define NUM_CHARACTERS (128 - 32)
 
@@ -18,11 +18,10 @@ struct CharMetrics {
 
 
 // Using Freetype the Text class is capable of building a texture atlas
-// for a given font and size. Combining with TexturedQuad allows it 
-// to render text strings
+// for a given font and size
 
 
-class Text {
+class Text : public Quad {
 
 public:
     Text();
@@ -33,20 +32,27 @@ public:
 
     ShaderProgram& getProgram();
     int getSize() const;
-    void render(char c, const glm::vec2& pixel, int size, const glm::vec4& color);
-    void render(const string& str, const glm::vec2& pixel, int size, const glm::vec4& color);
-
+    virtual void render();
+    void set_font_size(int size);
+    void set_font_color(glm::vec4 const& color);
+    void set_text(std::string const& text);
 private:
     void initShaders();
     bool extractCharSizes(int* maxCharWidth, int* maxCharHeight);
     void createTextureAtlas();
 
 private:
+    void set_scale(const glm::vec2& scale) = delete;
+    void set_rotation(float radians) = delete;
+
     GLuint vao;
     GLuint vbo;
     GLint posLocation, texCoordLocation;
 
     int fontSize, textureSize, maxCharWidth, maxCharHeight;
+    int render_font_size = 14;
+    glm::vec4 tint = glm::vec4(1, 1, 1, 1);
+    std::string text;
     FT_Face face;
     CharMetrics chars[NUM_CHARACTERS];
     Texture textureAtlas;
