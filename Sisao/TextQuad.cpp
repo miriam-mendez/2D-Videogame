@@ -25,7 +25,8 @@ TextQuad::~TextQuad() {
 }
 
 
-bool TextQuad::init(const char* filename) {
+bool TextQuad::init(std::string const& filename, ShaderProgram* program) {
+    this->program = program;
     FT_Error error;
 
     if (!bLibInit) {
@@ -34,7 +35,7 @@ bool TextQuad::init(const char* filename) {
             return false;
         bLibInit = true;
     }
-    error = FT_New_Face(TextQuad::library, filename, 0, &face);
+    error = FT_New_Face(TextQuad::library, filename.c_str(), 0, &face);
     if (error)
         return false;
     FT_Set_Pixel_Sizes(face, ATLAS_FONT_SIZE, ATLAS_FONT_SIZE);
@@ -48,7 +49,6 @@ bool TextQuad::init(const char* filename) {
     if (floor(float(textureSize) / maxCharWidth) * floor(float(textureSize) / maxCharHeight) < (128 - 32))
         return false;
     createTextureAtlas();
-    initShaders();
 
     glm::vec2 geom[2] = { glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f) };
     glm::vec2 texCoords[2] = { glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f) };
@@ -66,8 +66,8 @@ bool TextQuad::init(const char* filename) {
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(float), vertices, GL_STATIC_DRAW);
-    posLocation = program.bindVertexAttribute("position", 2, 4 * sizeof(float), 0);
-    texCoordLocation = program.bindVertexAttribute("texCoord", 2, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+    posLocation = program->bindVertexAttribute("position", 2, 4 * sizeof(float), 0);
+    texCoordLocation = program->bindVertexAttribute("texCoord", 2, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
     return true;
 }
@@ -76,9 +76,6 @@ void TextQuad::destroy() {
     FT_Done_Face(face);
 }
 
-ShaderProgram& TextQuad::getProgram() {
-    return program;
-}
 
 int TextQuad::getSize() const {
     return fontSize;
@@ -91,11 +88,11 @@ void TextQuad::render() {
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
-    program.use();
+    program->use();
     glGetIntegerv(GL_VIEWPORT, vp);
     auto projection = Game::instance().get_scene().get_camera().projection_matrix();
-    program.setUniformMatrix4f("projection", projection);
-    program.setUniform4f("color", tint.r, tint.g, tint.b, tint.a);
+    program->setUniformMatrix4f("projection", projection);
+    program->setUniform4f("color", tint.r, tint.g, tint.b, tint.a);
 
     for (unsigned int i = 0; i < text.length(); i++) {
         glm::mat4 modelview = glm::mat4(1.0f);
@@ -104,11 +101,11 @@ void TextQuad::render() {
         rotation_mat = rotation_mat * flipVH;
         modelview = glm::scale(modelview * rotation_mat, (float(render_font_size) / fontSize) * glm::vec3(chars[text[i] - 32].sx, chars[text[i] - 32].sy, 0.f) * glm::vec3(scale, 0.f));
         auto view = Game::instance().get_scene().get_camera().view_matrix();
-        program.setUniformMatrix4f("modelview", view * modelview);
+        program->setUniformMatrix4f("modelview", view * modelview);
         minTexCoord = glm::vec2(float(chars[text[i] - 32].tx) / textureSize, float(chars[text[i] - 32].ty) / textureSize);
         maxTexCoord = glm::vec2(float(chars[text[i] - 32].tx + chars[text[i] - 32].sx) / textureSize, float(chars[text[i] - 32].ty + chars[text[i] - 32].sy) / textureSize);
-        program.setUniform2f("minTexCoord", minTexCoord.s, minTexCoord.t);
-        program.setUniform2f("maxTexCoord", maxTexCoord.s, maxTexCoord.t);
+        program->setUniform2f("minTexCoord", minTexCoord.s, minTexCoord.t);
+        program->setUniform2f("maxTexCoord", maxTexCoord.s, maxTexCoord.t);
 
         glEnable(GL_TEXTURE_2D);
         textureAtlas.use();
@@ -136,31 +133,6 @@ void TextQuad::set_text(std::string const& text) {
     this->text = text;
 }
 
-void TextQuad::initShaders() {
-    Shader vShader, fShader;
-
-    vShader.release();
-    fShader.release();
-    vShader.initFromFile(VERTEX_SHADER, "shaders/text.vert");
-    if (!vShader.isCompiled()) {
-        cout << "Vertex Shader Error" << endl;
-        cout << "" << vShader.log() << endl << endl;
-    }
-    fShader.initFromFile(FRAGMENT_SHADER, "shaders/text.frag");
-    if (!fShader.isCompiled()) {
-        cout << "Fragment Shader Error" << endl;
-        cout << "" << fShader.log() << endl << endl;
-    }
-    program.init();
-    program.addShader(vShader);
-    program.addShader(fShader);
-    program.link();
-    if (!program.isLinked()) {
-        cout << "Shader Linking Error" << endl;
-        cout << "" << program.log() << endl << endl;
-    }
-    program.bindFragmentOutput("outColor");
-}
 
 bool TextQuad::extractCharSizes(int* maxCharWidth, int* maxCharHeight) {
     unsigned char c;

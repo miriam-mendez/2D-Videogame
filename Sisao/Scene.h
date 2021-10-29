@@ -43,7 +43,6 @@ private:
 
     Parallax* background = nullptr;
     TileMap* map = nullptr;
-    Water* water = nullptr;
     Camera camera;
     // map because its sorted (rendering) and provides an easy way to get
     // objets by its arbitrary id

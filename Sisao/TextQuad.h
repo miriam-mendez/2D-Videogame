@@ -27,17 +27,15 @@ public:
     TextQuad();
     ~TextQuad();
 
-    bool init(const char* filename);
+    bool init(std::string const& filename, ShaderProgram* program);
     void destroy();
 
-    ShaderProgram& getProgram();
     int getSize() const;
     virtual void render();
     void set_font_size(int size);
     void set_font_color(glm::vec4 const& color);
     void set_text(std::string const& text);
 private:
-    void initShaders();
     bool extractCharSizes(int* maxCharWidth, int* maxCharHeight);
     void createTextureAtlas();
 
@@ -56,7 +54,7 @@ private:
     FT_Face face;
     CharMetrics chars[NUM_CHARACTERS];
     Texture textureAtlas;
-    ShaderProgram program;
+    ShaderProgram* program;
 
     static bool bLibInit;
     static FT_Library library;

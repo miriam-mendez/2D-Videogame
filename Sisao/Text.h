@@ -8,7 +8,8 @@ class Text :
 public:
     Text(Object::uuid_t uuid) : Object(uuid) {}
 
-    virtual void init(std::string const& text, int size, glm::vec4 const& color);
+    virtual void init(std::string const& text, int size, glm::vec4 const& color,
+                      ShaderProgram& shader);
     void render() override;
     void update(int deltaTime) override;
 };

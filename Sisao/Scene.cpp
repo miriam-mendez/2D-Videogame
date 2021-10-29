@@ -26,7 +26,6 @@ Scene::~Scene() {
         delete x.second;
     }
     objects.clear();
-    delete water;
     physics_listener.release();
     delete physics;
 }
@@ -61,14 +60,12 @@ void Scene::update(int deltaTime) {
     }
     camera.update(deltaTime);
     if (background) background->update(deltaTime);
-    if (water) water->update(deltaTime);
     physics->Step(Constants::Physics::timestep, Constants::Physics::velocity_iters, Constants::Physics::position_iters);
 }
 
 void Scene::render() {
     if (background) background->render();
     if (map) map->render();
-    if (water) water->render();
     for (auto const& x : objects) {
         x.second->render();
     }
@@ -127,17 +124,6 @@ void Scene::read_general_settings(std::ifstream& stream) {
             sstream.str(args);
             sstream >> flags;
             required_flags = flags;
-        }
-        if (instr == "WATER") {
-            bool w;
-            sstream.str(args);
-            sstream >> w;
-            delete water;
-            if (w) {
-                water = new Water();
-                water->init(physics, waterProgram);
-                water->set_position(scene_center);
-            }
         }
         else if (instr == "MUSIC") {
             std::string path;
@@ -205,9 +191,20 @@ void Scene::read_objects(std::ifstream& stream) {
             sstream >> id >> pos.x >> pos.y >> size >> color.r >> color.g >> color.b >> color.a;
             std::getline(sstream, text_with_spaces);
             auto t = new Text(id);
-            t->init(text_with_spaces, size, color);
+            t->init(text_with_spaces, size, color, textProgram);
             t->set_position(pos);
             auto r = objects.emplace(id, t);
+            assert(r.second);
+        }
+        else if (instr == "WATER") {
+            glm::vec2 pos;
+            Object::uuid_t id;
+            sstream.str(args);
+            sstream >> id >> pos.x >> pos.y;
+            auto water = new Water(id);
+            water->init(physics, waterProgram);
+            water->set_position(glm::vec2(pos));
+            auto r = objects.emplace(id, water);
             assert(r.second);
         }
         else if (instr == "BOX") {
@@ -296,7 +293,3 @@ void Scene::setup_shader(ShaderProgram& shader, std::string const& vs, std::stri
     vShader.release();
     fShader.release();
 }
-
-
-
-

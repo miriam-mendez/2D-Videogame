@@ -1,7 +1,8 @@
 #include "Text.h"
 
-void Text::init(std::string const& text, int size, glm::vec4 const& color) {
-    assert(text_quad.init("fonts/OpenSans-Regular.ttf"));
+void Text::init(std::string const& text, int size, glm::vec4 const& color,
+                ShaderProgram& shader) {
+    assert(text_quad.init("fonts/OpenSans-Regular.ttf", &shader));
     text_quad.set_text(text);
     text_quad.set_position(position);
     text_quad.set_font_size(size);

@@ -4,6 +4,8 @@
 #include <box2d/b2_polygon_shape.h>
 #include "Constants.h"
 #include "Sprite.h"
+#include "Game.h"
+#include "Water.h"
 
 void Box::init(b2World* physics, ShaderProgram& shaderProgram, bool inverted) {
     this->inverted = inverted;
@@ -28,20 +30,53 @@ void Box::init(b2World* physics, ShaderProgram& shaderProgram, bool inverted) {
     fixture_def.shape = &box_shape;
     fixture_def.density = 3.0f;
     fixture_def.friction = 0.4f;
+    auto water_mask = inverted ? (int)Constants::Physics::Category::BelowWater : (int)Constants::Physics::Category::AboveWater;
     fixture_def.filter.categoryBits = (int)Constants::Physics::Category::Regular;
-    fixture_def.filter.maskBits = (int)Constants::Physics::Mask::Regular;
+    fixture_def.filter.maskBits = (int)Constants::Physics::Mask::Regular | water_mask;
     physic_body->CreateFixture(&fixture_def);
 
     b2BodyUserData data;
     data.pointer = get_id();
     physic_body->GetUserData() = data;
+
+    auto& sounds = Game::instance().get_sound_system();
+    sounds.addNewSound("sounds/SFX/box-water.wav", "box-water", "box-water", false);
+    sounds.set_group_volume("box-water", 0.25f);
 }
 
 void Box::update(int deltaTime) {
+    if (in_water && physic_body->GetMass() < 99) {
+        b2MassData md;
+        md.center = b2Vec2(0, 0);
+        md.I = physic_body->GetInertia();;
+        md.mass = 99;
+        physic_body->SetMassData(&md);
+        auto& sounds = Game::instance().get_sound_system();
+        sounds.playSound("box-water");
+    }
+
     physics_update(deltaTime);
 
     // gravity
     auto gravity = Constants::Physics::gravity * Constants::Units::meters_per_pixel;
     gravity = inverted ? -gravity : (gravity);
     physic_body->ApplyForceToCenter(to_box2d(gravity * physic_body->GetMass()), true);
+}
+
+
+void Box::begin_overlap(b2Contact* contact) {
+    Object::uuid_t id1 = contact->GetFixtureA()->GetBody()->GetUserData().pointer;
+    Object::uuid_t id2 = contact->GetFixtureB()->GetBody()->GetUserData().pointer;
+    Object::uuid_t self_id = get_id();
+    if (self_id == id1 || self_id == id2) {
+        auto obj1 = Game::instance().get_scene().get_object(id1);
+        auto obj2 = Game::instance().get_scene().get_object(id2);
+
+        auto w0 = dynamic_cast<Water*>(obj1);
+        auto w1 = dynamic_cast<Water*>(obj2);
+
+        if (w0 != nullptr || w1 != nullptr) {
+            in_water = true;
+        }
+    }
 }

@@ -6,6 +6,7 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include "Constants.h"
+#include "Water.h"
 
 void Player::init(b2World* physics, ShaderProgram& shaderProgram, bool inverse) {
     inverted = inverse;
@@ -164,6 +165,9 @@ void Player::update(int deltaTime) {
             sprite->changeAnimation(STAND);
         }
     }
+    if (in_water) {
+        Game::instance().delayed_set_level(Game::instance().get_current_level());
+    }
 
     // gravity
     auto gravity = Constants::Physics::gravity * Constants::Units::meters_per_pixel * gravity_direction_y;
@@ -184,5 +188,13 @@ void Player::begin_overlap(b2Contact* contact) {
         float gravity_direction_y = (inverted) ? -1.f : 1.f;
         auto dot = glm::dot(normal, glm::vec2(0.f, 1.f)) * -gravity_direction_y;
         jumping = jumping && dot < 0.9;
+
+        auto obj1 = Game::instance().get_scene().get_object(id1);
+        auto obj2 = Game::instance().get_scene().get_object(id2);
+        auto w0 = dynamic_cast<Water*>(obj1);
+        auto w1 = dynamic_cast<Water*>(obj2);
+        if (w0 != nullptr || w1 != nullptr) {
+            in_water = true;
+        }
     }
 }

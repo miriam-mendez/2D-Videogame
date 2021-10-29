@@ -8,6 +8,7 @@ protected:
     bool jumping = false;
     bool falling = false;
     bool standing = false;
+    bool in_water = false;
     virtual void begin_overlap(b2Contact* contact);
 public:
     enum PlayerStates {
