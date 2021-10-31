@@ -187,11 +187,12 @@ void Scene::read_objects(std::ifstream& stream) {
             glm::vec2 pos;
             glm::vec4 color;
             std::string text_with_spaces;
+            std::string font;
             sstream.str(args);
-            sstream >> id >> pos.x >> pos.y >> size >> color.r >> color.g >> color.b >> color.a;
+            sstream >> id >> pos.x >> pos.y >> font >> size >> color.r >> color.g >> color.b >> color.a;
             std::getline(sstream, text_with_spaces);
             auto t = new Text(id);
-            t->init(text_with_spaces, size, color, textProgram);
+            t->init(text_with_spaces, size, color, font, textProgram);
             t->set_position(pos);
             auto r = objects.emplace(id, t);
             assert(r.second);

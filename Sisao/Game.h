@@ -3,8 +3,8 @@
 #include "Scene.h"
 #include "SoundSystem.h"
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 448
+#define SCREEN_WIDTH 640 // max tiles: 40
+#define SCREEN_HEIGHT 448 // max tiles: 28
 
 // Game is a singleton (a class with a single instance) that represents our
 // whole application
@@ -51,7 +51,7 @@ private:
                                       // we can have access at any time
 
     bool level_change = true;
-    std::string current_level = "levels/default.txt";
+    std::string current_level = "levels/menu.txt";
     std::string prev_level = current_level;
     std::string next_level = current_level;
     SoundSystem soundSystem;

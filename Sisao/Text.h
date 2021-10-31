@@ -9,7 +9,7 @@ public:
     Text(Object::uuid_t uuid) : Object(uuid) {}
 
     virtual void init(std::string const& text, int size, glm::vec4 const& color,
-                      ShaderProgram& shader);
+        std::string const& font, ShaderProgram& shader);
     void render() override;
     void update(int deltaTime) override;
 };
