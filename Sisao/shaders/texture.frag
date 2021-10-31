@@ -14,4 +14,3 @@ void main()
 	//outColor = texColor*color;
 	outColor = texColor;
 }
-
