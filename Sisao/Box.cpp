@@ -48,7 +48,7 @@ void Box::update(int deltaTime) {
     if (in_water && physic_body->GetMass() < 99) {
         b2MassData md;
         md.center = b2Vec2(0, 0);
-        md.I = physic_body->GetInertia();;
+        md.I = physic_body->GetInertia();
         md.mass = 99;
         physic_body->SetMassData(&md);
         auto& sounds = Game::instance().get_sound_system();

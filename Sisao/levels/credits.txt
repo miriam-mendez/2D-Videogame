@@ -57,7 +57,7 @@ TEXT 6 -312 -150 fonts/NineTsukiRegular.ttf 72 1 1 1 1 DONE BY
 TEXT 5 -90 -90 fonts/Calibri-Bold.ttf 24 1 1 1 1 Programmers
 TEXT 2 -180 -46 fonts/Calibri-Regular.ttf 18 1 1 1 1 Miriam Mendez
 TEXT 1 -146 -25 fonts/Calibri-Regular.ttf 18 1 1 1 1 Serrano
-TEXT 0 20 -46 fonts/Calibri-Regular.ttf 18 1 1 1 1 Alexandre Perex
+TEXT 0 20 -46 fonts/Calibri-Regular.ttf 18 1 1 1 1 Alexandre Perez
 TEXT 4 54 -25 fonts/Calibri-Regular.ttf 18 1 1 1 1 Josende
 PLAYER 21 0 120 0
 FLAG 20 160 80 0 levels/menu.txt

@@ -12,8 +12,8 @@
 void Lever::init(b2World* physics, ShaderProgram& shaderProgram, int orientation,
                  bool active, std::vector<Object::uuid_t> const& linked) {
     links = linked;
-    const glm::ivec2 sprite_size_pixels = glm::ivec2(32, 32);
-    spritesheet.loadFromFile("images/blocks.png", TEXTURE_PIXEL_FORMAT_RGBA);
+    const glm::ivec2 sprite_size_pixels = glm::ivec2(16, 16);
+    spritesheet.loadFromFile("images/blocks16px.png", TEXTURE_PIXEL_FORMAT_RGBA);
     quad = Sprite::init(sprite_size_pixels, glm::vec2(1 / 6.f, 1), &spritesheet, &shaderProgram);
     auto sprite = static_cast<Sprite*>(quad);
     sprite->setAnimationSpeed(ACTIVATE, 8);
@@ -32,6 +32,8 @@ void Lever::init(b2World* physics, ShaderProgram& shaderProgram, int orientation
     sprite->changeAnimation(default_state, 2);
 
     sprite->set_position(position);
+    auto rotation = glm::radians(90.f) * (orientation % 4);
+    quad->set_rotation(rotation);
 
     b2BodyDef body_def;
     body_def.type = b2_staticBody;
@@ -53,6 +55,10 @@ void Lever::init(b2World* physics, ShaderProgram& shaderProgram, int orientation
     b2BodyUserData data;
     data.pointer = get_id();
     physic_body->GetUserData() = data;
+
+    auto& sounds = Game::instance().get_sound_system();
+    sounds.addNewSound("sounds/SFX/lever.wav", "lever", "lever", false);
+    sounds.set_group_volume("lever", 0.15f);
 }
 
 void Lever::update(int deltaTime) {
@@ -72,6 +78,8 @@ void Lever::update(int deltaTime) {
             sprite->changeAnimation(ACTIVATE);
             send_to_linked(true);
         }
+        auto& sounds = Game::instance().get_sound_system();
+        sounds.playSound("lever");
     }
     sprite->update(deltaTime);
 }
