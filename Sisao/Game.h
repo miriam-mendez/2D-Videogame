@@ -2,6 +2,7 @@
 
 #include "Scene.h"
 #include "SoundSystem.h"
+#include <array>
 
 #define SCREEN_WIDTH 640 // max tiles: 40
 #define SCREEN_HEIGHT 448 // max tiles: 28
@@ -45,9 +46,13 @@ public:
     std::string get_prev_level() { return prev_level; }
 
 private:
+
+    void clean_input();
+
     bool bPlay;                       // Continue to play game?
     Scene* scene = nullptr;                      // Scene to render
-    bool keys[256], specialKeys[256]; // Store key states so that
+    std::array<bool, 256> keys;
+    std::array<bool, 256> specialKeys;// Store key states so that
                                       // we can have access at any time
 
     bool level_change = true;

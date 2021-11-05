@@ -6,10 +6,12 @@
 void Game::init() {
     bPlay = true;
     glClearColor(0.f, 0.f, 0.f, 1.0f);
+    clean_input();
 }
 
 bool Game::update(int deltaTime) {
     if (level_change) {
+        clean_input();
         delete scene;
         scene = new Scene();
         level_change = false;
@@ -69,4 +71,11 @@ bool Game::getSpecialKey(int key) const {
 void Game::delayed_set_level(std::string const& level) {
     current_level = level;
     level_change = true;
+}
+
+void Game::clean_input() {
+    for (int i = 0; i < 256; ++i) {
+        keys[i] = false;
+        specialKeys[i] = false;
+    }
 }
