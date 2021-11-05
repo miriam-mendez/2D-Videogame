@@ -127,6 +127,8 @@ void Player::update(int deltaTime) {
     float impulse_left = physic_body->GetMass() * (max_xspeed_meters - velocity_left);
     auto h_impulse = glm::vec2(0, 0);
 
+    if (!falling) jump_delay_after_fall_timer -= deltaTime;
+
     if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
         sprite->set_flip(true, inverted);
         if (sprite->animation() != RUN && !jumping && !falling && !standing) {
@@ -147,7 +149,8 @@ void Player::update(int deltaTime) {
         float max_jump = Constants::Regular::max_jump_speed * Constants::Units::meters_per_pixel;
         float vvchange = max_jump - glm::abs(velocity.y);
         float impulse = physic_body->GetMass() * vvchange;
-        if (!jumping) {
+        if (!jumping && !falling && jump_delay_after_fall_timer <= 0) {
+            jump_delay_after_fall_timer = jump_delay_after_fall;
             sprite->changeAnimation(JUMP_UP);
             physic_body->ApplyLinearImpulseToCenter(b2Vec2(0, -gravity_direction_y * impulse), true);
             jumping = true;
@@ -190,6 +193,7 @@ void Player::begin_overlap(b2Contact* contact) {
         auto normal = glm::vec2(b.normal.x, b.normal.y);
         float gravity_direction_y = (inverted) ? -1.f : 1.f;
         auto dot = glm::dot(normal, glm::vec2(0.f, 1.f)) * -gravity_direction_y;
+
         jumping = jumping && dot < 0.9;
 
         auto obj1 = Game::instance().get_scene().get_object(id1);
