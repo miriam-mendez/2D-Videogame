@@ -121,7 +121,10 @@ void Player::update(int deltaTime) {
     float max_stand_speed = Constants::Regular::max_movement_speed * Constants::Units::meters_per_pixel / 5.f;
     standing = glm::abs(velocity.x) - max_stand_speed < 0;
     float max_xspeed_meters = Constants::Regular::max_movement_speed * Constants::Units::meters_per_pixel;
-    float impulse = physic_body->GetMass() * (max_xspeed_meters - glm::abs(velocity.x));
+    float velocity_left = (velocity.x < 0.f) ? -velocity.x : 0.f;
+    float velocity_right = (velocity.x > 0.f) ? velocity.x : 0.f;
+    float impulse_right = physic_body->GetMass() * (max_xspeed_meters - velocity_right);
+    float impulse_left = physic_body->GetMass() * (max_xspeed_meters - velocity_left);
     auto h_impulse = glm::vec2(0, 0);
 
     if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
@@ -129,14 +132,14 @@ void Player::update(int deltaTime) {
         if (sprite->animation() != RUN && !jumping && !falling && !standing) {
             sprite->changeAnimation(RUN);
         }
-        h_impulse += glm::vec2(-impulse, 0);
+        h_impulse += glm::vec2(-impulse_left, 0);
     }
     if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT)) {
         sprite->set_flip(false, inverted);
         if (sprite->animation() != RUN && !jumping && !falling && !standing) {
             sprite->changeAnimation(RUN);
         }
-        h_impulse += glm::vec2(impulse, 0);
+        h_impulse += glm::vec2(impulse_right, 0);
     }
     physic_body->ApplyLinearImpulseToCenter(to_box2d(h_impulse), true);
 

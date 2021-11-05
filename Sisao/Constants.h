@@ -29,7 +29,7 @@ namespace Constants {
     };
 
     namespace Regular {
-        static constexpr int max_movement_speed = 200;
+        static constexpr int max_movement_speed = 180;
         static constexpr int max_jump_speed = 330;
     };
 };
