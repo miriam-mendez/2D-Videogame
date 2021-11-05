@@ -20,7 +20,7 @@ public:
     virtual void render();
 
     uuid_t get_id() const;
-    void set_position(glm::vec2 const& position);
+    virtual void set_position(glm::vec2 const& position);
     void set_rotation(float radians);
     glm::vec2 get_position();
     float get_rotation();

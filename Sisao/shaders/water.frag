@@ -6,7 +6,7 @@ uniform float time;
 in vec4 fragPosition; // (ClipSpace: -1 to 1)
 out vec4 outColor;
 
-uniform float amp = 0.01;
+uniform float amp = 0.005;
 uniform float freq = 0.00025; // Hz
 uniform float freq2 = 0.0008; // Hz
 const float pi = 3.141592;

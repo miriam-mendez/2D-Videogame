@@ -5,6 +5,7 @@
 #include "Utils.h"
 
 void Camera::update(int deltaTime) {
+    if (!does_follow) return;
     Object::physics_update(deltaTime);
     // calculate following center position
     glm::vec2 follow_target = glm::vec2(0.f, 0.f);
@@ -25,18 +26,10 @@ void Camera::update(int deltaTime) {
     view = glm::translate(glm::mat4(1.0f), glm::vec3(current, 0.f));
 }
 
-bool Camera::follow(Object* target, bool update_pos) {
+bool Camera::follow(Object* target) {
     if (target) {
         auto result = follow_targets.emplace(target->get_id(), target);
         return result.second;
-    }
-    if (update_pos) {
-        glm::vec2 follow_target = glm::vec2(0.f, 0.f);
-        for (auto const& target : follow_targets) {
-            follow_target += target.second->get_position();
-        }
-        follow_target /= follow_targets.size();
-        set_position(follow_target);
     }
     return false;
 }
@@ -80,4 +73,9 @@ glm::mat4 Camera::projection_matrix() const {
 void Camera::set_orthogonal(float left, float right, float bottom, float top) {
     projection = glm::ortho(left, right, bottom, top);
     view_rect = glm::ivec2(right - left, bottom - top);
+}
+
+void Camera::set_position(glm::vec2 const& position) {
+    glm::vec2 current = glm::vec2(view_rect) / 2.f - position;
+    view = glm::translate(glm::mat4(1.0f), glm::vec3(current, 0.f));
 }

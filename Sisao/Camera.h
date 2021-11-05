@@ -13,7 +13,7 @@ protected:
     float follow_speed = 1.f;
     bool lock_x = false;
     bool lock_y = false;
-
+    bool does_follow = true;
 public:
     Camera() : Object() {};
 
@@ -21,7 +21,11 @@ public:
 
     virtual void update(int deltaTime);
 
-    bool follow(Object* target, bool update_pos);
+    void set_position(glm::vec2 const& position) override;
+
+    void enable_follow(bool follow) { does_follow = follow; }
+
+    bool follow(Object* target);
     bool unfollow(Object* target);
 
     glm::mat4 view_matrix() const;

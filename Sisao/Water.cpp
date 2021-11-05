@@ -70,3 +70,4 @@ void Water::render() {
     shader->setUniform4f("color", 0.2f, 0.27f, 0.37f, 0.6f);
     quad->render();
 }
+

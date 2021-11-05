@@ -3,16 +3,16 @@
 # PREV_LEVEL LEVEL_PATH
 # NEXT_LEVEL LEVEL_PATH
 # REQUIRED_FLAGS NUMBER_OF_FLAGS_TO_WIN_LEVEL
-# WATER [0|1]
 # MUSIC VOLUME AUDIO_PATH
 # BACKGROUND_BASE X Y IMAGE_PATH
 # BACKGROUND_PARALLAX SPEED IMAGE_PATH # order doesn't matter
+# UI_CAMERA X Y # Sets the camera in UI mode. Does not follow.
 
 PREV_LEVEL levels/instructions.txt
 NEXT_LEVEL levels/level1.txt
 REQUIRED_FLAGS 1
-WATER 0
 MUSIC 60 sounds/music-loop.wav # VOLUME[0-100] and FILE
+UI_CAMERA 0 0
 BACKGROUND_BASE 0 0 images/parallaxMenu/00.png
 BACKGROUND_PARALLAX 0.0333 images/parallaxMenu/01.png
 BACKGROUND_PARALLAX 0.0666 images/parallaxMenu/02.png
@@ -65,4 +65,5 @@ TEXT 4 -290 20 fonts/NineTsukiRegular.ttf 14 1 1 1 1 Instructions
 TEXT 5 160 -30 fonts/NineTsukiRegular.ttf 14 1 1 1 1 Let's play!
 TEXT 6 -215 -110 fonts/NineTsukiRegular.ttf 14 1 1 1 1 Credits
 PLAYER 7 -10 70 0
+WATER 8 0 400
 [END OBJECTS]

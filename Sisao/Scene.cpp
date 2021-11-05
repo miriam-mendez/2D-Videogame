@@ -44,7 +44,7 @@ void Scene::init(std::string level) {
 
     camera.init(physics, 1.f, false, true);
     camera.set_orthogonal(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
-    camera.set_position(scene_center);
+    //camera.set_position(scene_center);
 
     std::ifstream stream;
     stream.open(level.c_str());
@@ -119,6 +119,13 @@ void Scene::read_general_settings(std::ifstream& stream) {
             if (level != "")
                 Game::instance().prev_level = level;
         }
+        else if (instr == "UI_CAMERA") {
+            glm::ivec2 pos;
+            sstream.str(args);
+            sstream >> pos.x >> pos.y;
+            camera.set_position(pos);
+            camera.enable_follow(false);
+        }
         else if (instr == "REQUIRED_FLAGS") {
             int flags;
             sstream.str(args);
@@ -178,7 +185,7 @@ void Scene::read_objects(std::ifstream& stream) {
             player->init(physics, texProgram, inverted);
             player->set_position(glm::vec2(pos));
             auto r = objects.emplace(id, player);
-            camera.follow(player, true);
+            camera.follow(player);
             assert(r.second);
         }
         else if (instr == "TEXT") {
@@ -204,7 +211,7 @@ void Scene::read_objects(std::ifstream& stream) {
             sstream >> id >> pos.x >> pos.y;
             auto water = new Water(id);
             water->init(physics, waterProgram);
-            water->set_position(glm::vec2(pos));
+            water->set_position(pos);
             auto r = objects.emplace(id, water);
             assert(r.second);
         }
