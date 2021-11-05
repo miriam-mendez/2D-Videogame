@@ -9,8 +9,6 @@ protected:
     bool falling = false;
     bool standing = false;
     bool in_water = false;
-    const int jump_delay_after_fall = 300;
-    int jump_delay_after_fall_timer = 0;
     virtual void begin_overlap(b2Contact* contact);
 public:
     enum PlayerStates {

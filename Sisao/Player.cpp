@@ -127,8 +127,6 @@ void Player::update(int deltaTime) {
     float impulse_left = physic_body->GetMass() * (max_xspeed_meters - velocity_left);
     auto h_impulse = glm::vec2(0, 0);
 
-    if (!falling) jump_delay_after_fall_timer -= deltaTime;
-
     if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
         sprite->set_flip(true, inverted);
         if (sprite->animation() != RUN && !jumping && !falling && !standing) {
@@ -149,8 +147,7 @@ void Player::update(int deltaTime) {
         float max_jump = Constants::Regular::max_jump_speed * Constants::Units::meters_per_pixel;
         float vvchange = max_jump - glm::abs(velocity.y);
         float impulse = physic_body->GetMass() * vvchange;
-        if (!jumping && !falling && jump_delay_after_fall_timer <= 0) {
-            jump_delay_after_fall_timer = jump_delay_after_fall;
+        if (!jumping && !falling) {
             sprite->changeAnimation(JUMP_UP);
             physic_body->ApplyLinearImpulseToCenter(b2Vec2(0, -gravity_direction_y * impulse), true);
             jumping = true;
@@ -186,7 +183,11 @@ void Player::begin_overlap(b2Contact* contact) {
     Object::uuid_t id1 = contact->GetFixtureA()->GetBody()->GetUserData().pointer;
     Object::uuid_t id2 = contact->GetFixtureB()->GetBody()->GetUserData().pointer;
     Object::uuid_t self_id = get_id();
-    //Game::instance().get_scene().get_object(id2); might be useful with dynamic_cast ;D
+
+    int category = contact->GetFixtureA()->GetFilterData().categoryBits;
+    category = category | contact->GetFixtureB()->GetFilterData().categoryBits;
+    bool is_sensor = (category & (int)Constants::Physics::Category::Sensor) != 0;
+
     if (self_id == id1 || self_id == id2) {
         b2WorldManifold b;
         contact->GetWorldManifold(&b);
@@ -194,7 +195,8 @@ void Player::begin_overlap(b2Contact* contact) {
         float gravity_direction_y = (inverted) ? -1.f : 1.f;
         auto dot = glm::dot(normal, glm::vec2(0.f, 1.f)) * -gravity_direction_y;
 
-        jumping = jumping && dot < 0.9;
+        if (!is_sensor)
+            jumping = jumping && dot < 0.9;
 
         auto obj1 = Game::instance().get_scene().get_object(id1);
         auto obj2 = Game::instance().get_scene().get_object(id2);
