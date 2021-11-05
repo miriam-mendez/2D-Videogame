@@ -3,28 +3,27 @@
 uniform vec4 color;
 uniform float time;
 
+in vec4 fragPosition; // (ClipSpace: -1 to 1)
 out vec4 outColor;
 
-const float speed = 0.0005;
-const float ycenter = 448.0 / 2.0;
-const float wave_size = 7;
+uniform float amp = 0.01;
+uniform float freq = 0.00025; // Hz
+uniform float freq2 = 0.0008; // Hz
+const float pi = 3.141592;
 
 void main()
 {
-	vec2 fpos = gl_FragCoord.xy;
-	float w = 4*sin(time*speed + fpos.x*0.01) + 2*sin(time*speed*5 + fpos.x*0.01);
-	w = wave_size * w / 6; // 4+2
+	vec2 pos = fragPosition.xy;
+	float y = amp*sin(2*pi*freq*time+10*pos.x) + amp/2*sin(2*pi*freq2*time+10*pos.x);
 
-	float wave_height = ycenter + w;
-	
-	if (fpos.y < wave_height) {
-		float depth_visibility = 4 * fpos.y/560;
+	if (pos.y  + y < 0) {
+		float depth_visibility = pos.y;
 		float visibility = clamp(depth_visibility * depth_visibility, 0, 1);
-		vec4 c = mix(vec4(0.09,0.09,0.14,0.75), color, visibility);
+		vec4 c = mix(vec4(0.09,0.09,0.14,0.75), color, 1-visibility);
+		c.rgb = mix(vec3(0.5), c.rgb, 1.4); // increments the contrast
 		outColor = c;
 	}
 	else {
 		discard;
 	}	
 }
-

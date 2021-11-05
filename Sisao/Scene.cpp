@@ -42,15 +42,15 @@ void Scene::init(std::string level) {
     physics = new b2World(b2Vec2(0.0f, 0.0f));
     physics->SetContactListener(&physics_listener);
 
+    camera.init(physics, 1.f, false, true);
+    camera.set_orthogonal(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
+    camera.set_position(scene_center);
+
     std::ifstream stream;
     stream.open(level.c_str());
     assert(stream.good());
     read_level(stream);
     stream.close();
-
-    camera.init(physics, 1.f, false, true);
-    camera.set_orthogonal(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
-    camera.set_position(scene_center);
 }
 
 void Scene::update(int deltaTime) {
