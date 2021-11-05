@@ -44,7 +44,7 @@ void Scene::init(std::string level) {
 
     camera.init(physics, 1.f, false, true);
     camera.set_orthogonal(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
-    //camera.set_position(scene_center);
+    camera.set_position(scene_center);
 
     std::ifstream stream;
     stream.open(level.c_str());
@@ -120,11 +120,10 @@ void Scene::read_general_settings(std::ifstream& stream) {
                 Game::instance().prev_level = level;
         }
         else if (instr == "UI_CAMERA") {
-            glm::ivec2 pos;
+            bool ui = false;
             sstream.str(args);
-            sstream >> pos.x >> pos.y;
-            camera.set_position(pos);
-            camera.enable_follow(false);
+            sstream >> ui;
+            camera.enable_follow(!ui);
         }
         else if (instr == "REQUIRED_FLAGS") {
             int flags;

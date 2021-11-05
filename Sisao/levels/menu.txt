@@ -6,13 +6,13 @@
 # MUSIC VOLUME AUDIO_PATH
 # BACKGROUND_BASE X Y IMAGE_PATH
 # BACKGROUND_PARALLAX SPEED IMAGE_PATH # order doesn't matter
-# UI_CAMERA X Y # Sets the camera in UI mode. Does not follow.
+# UI_CAMERA [0|1]
 
 PREV_LEVEL levels/instructions.txt
 NEXT_LEVEL levels/level1.txt
 REQUIRED_FLAGS 1
 MUSIC 60 sounds/music-loop.wav # VOLUME[0-100] and FILE
-UI_CAMERA 0 0
+UI_CAMERA 1
 BACKGROUND_BASE 0 0 images/parallaxMenu/00.png
 BACKGROUND_PARALLAX 0.0333 images/parallaxMenu/01.png
 BACKGROUND_PARALLAX 0.0666 images/parallaxMenu/02.png
