@@ -178,7 +178,7 @@ void Scene::read_objects(std::ifstream& stream) {
             player->init(physics, texProgram, inverted);
             player->set_position(glm::vec2(pos));
             auto r = objects.emplace(id, player);
-            camera.follow(player);
+            camera.follow(player, true);
             assert(r.second);
         }
         else if (instr == "TEXT") {

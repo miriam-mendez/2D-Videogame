@@ -21,7 +21,7 @@ public:
 
     virtual void update(int deltaTime);
 
-    bool follow(Object* target);
+    bool follow(Object* target, bool update_pos);
     bool unfollow(Object* target);
 
     glm::mat4 view_matrix() const;

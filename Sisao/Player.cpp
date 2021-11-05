@@ -84,7 +84,7 @@ void Player::init(b2World* physics, ShaderProgram& shaderProgram, bool inverse) 
     b2FixtureDef fixture_c1;
     fixture_c1.shape = &c1;
     fixture_c1.density = 1.5f;
-    fixture_c1.friction = 1.f;
+    fixture_c1.friction = inverse ? 0.f : 1.f;
     fixture_c1.filter.categoryBits = (int)Constants::Physics::Category::Regular;
     fixture_c1.filter.maskBits = (int)Constants::Physics::Mask::Regular;
     physic_body->CreateFixture(&fixture_c1);
@@ -92,7 +92,7 @@ void Player::init(b2World* physics, ShaderProgram& shaderProgram, bool inverse) 
     b2FixtureDef fixture_c2;
     fixture_c2.shape = &c2;
     fixture_c2.density = 1.5f;
-    fixture_c2.friction = 1.f;
+    fixture_c2.friction = inverse ? 1.f : 0.f;
     fixture_c2.filter.categoryBits = (int)Constants::Physics::Category::Regular;
     fixture_c2.filter.maskBits = (int)Constants::Physics::Mask::Regular;
     physic_body->CreateFixture(&fixture_c2);

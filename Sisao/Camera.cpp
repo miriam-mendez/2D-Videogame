@@ -25,10 +25,18 @@ void Camera::update(int deltaTime) {
     view = glm::translate(glm::mat4(1.0f), glm::vec3(current, 0.f));
 }
 
-bool Camera::follow(Object* target) {
+bool Camera::follow(Object* target, bool update_pos) {
     if (target) {
         auto result = follow_targets.emplace(target->get_id(), target);
         return result.second;
+    }
+    if (update_pos) {
+        glm::vec2 follow_target = glm::vec2(0.f, 0.f);
+        for (auto const& target : follow_targets) {
+            follow_target += target.second->get_position();
+        }
+        follow_target /= follow_targets.size();
+        set_position(follow_target);
     }
     return false;
 }
