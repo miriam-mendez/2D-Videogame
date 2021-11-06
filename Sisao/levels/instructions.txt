@@ -8,11 +8,12 @@
 # BACKGROUND_BASE X Y IMAGE_PATH
 # BACKGROUND_PARALLAX SPEED IMAGE_PATH # order doesn't matter
 
-PREV_LEVEL levels/instructions.txt
+PREV_LEVEL levels/credits.txt
 NEXT_LEVEL levels/menu.txt
 REQUIRED_FLAGS 1
 WATER 0
 MUSIC 60 sounds/music-loop.wav # VOLUME[0-100] and FILE
+UI_CAMERA 1
 BACKGROUND_BASE 0 0 images/parallaxMenu/00.png
 BACKGROUND_PARALLAX 0.0333 images/parallaxMenu/01.png
 BACKGROUND_PARALLAX 0.0666 images/parallaxMenu/02.png
@@ -52,27 +53,30 @@ TILESHEET_NUMTILES 4 7
 # TEXT ID X Y FONT_PATH SIZE R G B A TEXTSTRING
 # WATER ID X Y
 
-WALL 0 -192 96 0
-WALL 22 -192 64 0
-BOX 1 -224 80 0
-# LEVER 2 140 80 0 DEFAULT_ACTIVE LINKED_ID1 LINKED_ID2 LINKED_ID3 ...
-TEXT 3 105 30 fonts/NineTsukiRegular.ttf 25 1 1 1 1 MENU
-TEXT 4 -310 -170 fonts/NineTsukiRegular.ttf 36 1 1 1 1 INSTRUCTIONS
-TEXT 5 -130 -24 fonts/Keyboard.otf 24 1 1 1 1 ASD
-TEXT 6 -104 -51 fonts/Keyboard.otf 24 1 1 1 1 W
-TEXT 7 -105 -8 fonts/Calibri-Regular.ttf 15 1 1 1 1 to move
-TEXT 16 -6 -42 fonts/Keyboard.otf 24 1 1 1 1 E
-TEXT 17 -14 -22 fonts/Calibri-Regular.ttf 15 1 1 1 1 enable/
-TEXT 18 -14 -8 fonts/Calibri-Regular.ttf 15 1 1 1 1 diasble object
-TEXT 8 -250 -100 fonts/Keyboard.otf 24 1 1 1 1 R
-TEXT 9 -275 -80 fonts/Calibri-Regular.ttf 15 1 1 1 1 to restart level
-TEXT 10 -270 10 fonts/Keyboard.otf 24 1 1 1 1 < >
-TEXT 11 -269 30 fonts/Calibri-Regular.ttf 15 1 1 1 1 to skip level
-TEXT 12 100 -140 fonts/Calibri-Bold.ttf 18 1 1 1 1 Debugging keys:
-TEXT 13 105 -100 fonts/Keyboard.otf 24 1 1 1 1 G
-TEXT 14 142 -105 fonts/Calibri-Regular.ttf 15 1 1 1 1 : God mode
-TEXT 19 105 -60 fonts/Keyboard.otf 24 1 1 1 1 B
-TEXT 15 142 -65 fonts/Calibri-Regular.ttf 15 1 1 1 1 : Disable all barriers
-PLAYER 21 0 120 0
-FLAG 20 160 80 0 levels/menu.txt
+TEXT 0 105 30 fonts/NineTsukiRegular.ttf 25 1 1 1 1 MENU
+TEXT 1 -310 -170 fonts/NineTsukiRegular.ttf 36 1 1 1 1 INSTRUCTIONS
+TEXT 2 -250 -100 fonts/Keyboard.otf 24 1 1 1 1 R
+TEXT 3 -275 -80 fonts/Calibri-Regular.ttf 15 1 1 1 1 to restart level
+TEXT 4 -250 -25 fonts/Keyboard.otf 24 1 1 1 1 E
+TEXT 5 -275 -5 fonts/Calibri-Regular.ttf 15 1 1 1 1 enable/
+TEXT 6 -275 9 fonts/Calibri-Regular.ttf 15 1 1 1 1 diasble object
+TEXT 7 -140 -51 fonts/Keyboard.otf 24 1 1 1 1 W
+TEXT 8 -166 -24 fonts/Keyboard.otf 24 1 1 1 1 ASD w
+TEXT 9 -120 -4 fonts/Calibri-Regular.ttf 15 1 1 1 1 to move / jump
+TEXT 10 45 -155 fonts/Calibri-Bold.ttf 18 1 1 1 1 Debugging keys:
+TEXT 11 40 -110 fonts/Keyboard.otf 24 1 1 1 1 G
+TEXT 12 82 -115 fonts/Calibri-Regular.ttf 15 1 1 1 1 god mode
+TEXT 13 40 -80 fonts/Keyboard.otf 24 1 1 1 1 B
+TEXT 14 82 -85 fonts/Calibri-Regular.ttf 15 1 1 1 1 disable all barriers
+TEXT 15 40 -50 fonts/Keyboard.otf 24 1 1 1 1 <>
+TEXT 16 110 -55 fonts/Calibri-Regular.ttf 15 1 1 1 1 skip the level
+TEXT 17 40 -20 fonts/Keyboard.otf 24 1 1 1 1 12345
+TEXT 18 190 -25 fonts/Calibri-Regular.ttf 15 1 1 1 1 select the level
+FLAG 19 160 80 0 levels/menu.txt
+WALL 20 -192 96 0
+WALL 21 -192 64 0
+LEVER 22 -50 105 0 1 20 21
+BOX 23 -224 80 0
+PLAYER 24 0 120 0
+WATER 25 0 400
 [END OBJECTS]
