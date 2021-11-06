@@ -1,0 +1,87 @@
+#################################
+Integrants del grup:
+#################################
+- Alexandre Pérez Josende
+- Míriam Méndez Serrano
+
+#################################
+Funcionalitats implementades:
+#################################
+
+--- BASE ---
+
+- Reinici de nivell (si el personatge cau a l'aigua o el reflectit en surt).
+
+- SCROLL per visualitzar els nivells que siguin majors que la finestra
+
+- Cinc NIVELLS superables, on el jugador interactua amb els següents objectes:
+	- NIVELL 1: Només l'aigua, ja que és el nivell introductori.
+	- NIVELL 2: Aigua + Cactus + Barreres + Interruptor
+	- NIVELL 3: Aigua + Capsa + Barreres + Interruptor
+	- NIVELL 4: Aigua + Cactus + Capsa + Barreres + Interruptor
+	- NIVELL 5: Aigua + Cactus + Capsa + Barreres + Interruptor + Mecànica
+
+- TECLES d'interacció pel videojoc:
+	- WASD i/o Espai : moure i saltar.
+	- E : desactivar/activar l'interruptor.
+	- R : Reiniciar nivell.
+	- ESC : Sortir del joc.
+
+- TECLES de debugg:
+	- G : god mode, no es pot morir al tocar un cactus.
+	- B : Elimina totes les barreres del nivell.
+	- 1, 2, 3, 4, 5: Selecciona el nivell corresponent.
+	- Fletxa esquerra i dreta: per anar al nivell anterior i següent, respectivament.
+
+- [EXTRA] Implementació de FÍSICA amb Box2D:
+	- Definició de cossos (dinàmics i estàtics).
+	- Efecte de gravetat.
+	- Efecte de fricció
+	- Efecte de restitució (quants cops rebota l'objecte després d'una col·lisió).
+	- Efecte de densitat 
+	- Col·lisions
+	- [MECÀNICA] Efecte parell motor.
+
+
+- [EXTRA] BACKGROUND amb número arbitrari de capes i regulació de desplaçament del paral·laxi configurable.
+	- Efecte Parallax.
+
+- [EXTRA] CÀMERA de seguiment suau i regulable dels personatges.
+
+------ POLISH ----
+
+- Menús creats: 
+	- Menú principal: Amb opcions d'anar a instruccions, crèdits i començar el joc.
+	- Crèdits
+	- Instruccions
+	- Jugar: On es pot seleccionar el nivell
+
+- Efectes de so i música implementades amb FMOD.
+	- bucle musical (musica de fons ).
+	- salt.
+	- explosió quan topem amb cactus.
+	- caixa a l'aigua
+	- so dels passos mentre es mou.
+	- so quan es canvia de nivell.
+	- so d'interaccionament amb els objectes: interruptor, bandera, cactus i caixa.
+
+- Animacions del personatge: idle, caminar/córrer, salt.
+- Animació de la bandera.
+- Animació de l'aigua, implementada amb shader.
+
+------ MECANICA EXTRA -----
+Com a mecànica extra hem implementat una palanca que li dóna més complexitat al joc, ja que al 
+ser una plataforma dinàmica el personatge té el repte de trobar la posició i/o equilibrar-la per tal
+d'arribar al seu objectiu, la bandera.
+
+#################################
+Instruccions:
+#################################
+
+CONTROLS:
+	WASD: per moure's + SPACE: per saltar.
+	R: reiniciar nivell.
+	E: activa/desactiva l'interruptor.
+
+OBJECTIU:
+	Portar a tots dos personatge a les seves respectives banderes.
