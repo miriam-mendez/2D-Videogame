@@ -27,7 +27,7 @@ BACKGROUND_PARALLAX 0.3 images/parallaxMenu/09.png
 
 [BEGIN TILEMAP]
 POSITION -264 -30
-DIMENSIONS 33 10
+DIMENSIONS 33 9
 TILE_SIZE 16
 BLOCK_SIZE 16
 TILESHEET images/wasteland.png
@@ -38,11 +38,10 @@ TILESHEET_NUMTILES 4 7
 -1,-1,-1,19,14,9,9,9,9,9,10,10,10,10,4,5,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
 -1,-1,-1,-1,19,14,1,1,1,1,1,1,1,1,1,15,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
 -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,3,10,10,10,10,10,10,10,10,10,10,10,5
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,14,1,1,1,1,1,1,1,1,1,1,1,15
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
-3,4,10,10,10,10,10,10,10,10,10,10,10,10,10,10,4,5,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
-14,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,15,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
+-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,3,10,10,10,10,10,10,10,10,10,10,10,5,-1
+-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,8,9,9,9,9,9,9,9,9,9,9,9,7,-1
+3,4,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,9,9,9,9,9,9,9,9,9,9,9,9,7,-1
+14,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,15,-1
 [END TILEMAP]
 
 [BEGIN OBJECTS]
@@ -58,12 +57,12 @@ TILESHEET_NUMTILES 4 7
 # WATER ID X Y
 
 TEXT 0 -115 -130 fonts/NineTsukiRegular.ttf 72 1 1 1 1 SISAO
-FLAG 2 -230 60 0 levels/instructions.txt
-FLAG 1 210 10 0 levels/level1.txt
-FLAG 3 -175 -70 0 levels/credits.txt
-TEXT 4 -290 20 fonts/NineTsukiRegular.ttf 14 1 1 1 1 Instructions
-TEXT 5 160 -30 fonts/NineTsukiRegular.ttf 14 1 1 1 1 Let's play!
-TEXT 6 -215 -110 fonts/NineTsukiRegular.ttf 14 1 1 1 1 Credits
+TEXT 1 -290 4 fonts/NineTsukiRegular.ttf 14 1 1 1 1 Instructions
+TEXT 2 160 -30 fonts/NineTsukiRegular.ttf 14 1 1 1 1 Let's play!
+TEXT 3 -215 -110 fonts/NineTsukiRegular.ttf 14 1 1 1 1 Credits
+FLAG 4 -230 44 0 levels/instructions.txt
+FLAG 5 210 10 0 levels/level1.txt
+FLAG 6 -175 -70 0 levels/credits.txt
 PLAYER 7 -10 70 0
 WATER 8 0 400
 [END OBJECTS]
