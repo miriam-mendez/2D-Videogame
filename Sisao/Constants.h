@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <GL/glut.h>
 
 namespace Constants {
     namespace Units {
@@ -31,5 +32,21 @@ namespace Constants {
     namespace Regular {
         static constexpr int max_movement_speed = 180;
         static constexpr int max_jump_speed = 330;
+    };
+
+    namespace Keys {
+        static constexpr int R = 114;
+        static constexpr int E = 101;
+        static constexpr int T = 116;
+        static constexpr int W = 119;
+        static constexpr int A = 97;
+        static constexpr int S = 115;
+        static constexpr int D = 100;
+        static constexpr int Space = 32;
+        static constexpr int Esc = 27;
+        static constexpr int ArrowUp = GLUT_KEY_UP;
+        static constexpr int ArrowDown = GLUT_KEY_DOWN;
+        static constexpr int ArrowLeft = GLUT_KEY_LEFT;
+        static constexpr int ArrowRight = GLUT_KEY_RIGHT;
     };
 };

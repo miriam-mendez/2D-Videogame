@@ -127,14 +127,14 @@ void Player::update(int deltaTime) {
     float impulse_left = physic_body->GetMass() * (max_xspeed_meters - velocity_left);
     auto h_impulse = glm::vec2(0, 0);
 
-    if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
+    if (Game::instance().getKey(Constants::Keys::A)) {
         sprite->set_flip(true, inverted);
         if (sprite->animation() != RUN && !jumping && !falling && !standing) {
             sprite->changeAnimation(RUN);
         }
         h_impulse += glm::vec2(-impulse_left, 0);
     }
-    if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT)) {
+    if (Game::instance().getKey(Constants::Keys::D)) {
         sprite->set_flip(false, inverted);
         if (sprite->animation() != RUN && !jumping && !falling && !standing) {
             sprite->changeAnimation(RUN);
@@ -143,7 +143,9 @@ void Player::update(int deltaTime) {
     }
     physic_body->ApplyLinearImpulseToCenter(to_box2d(h_impulse), true);
 
-    if (Game::instance().getSpecialKey(GLUT_KEY_UP)) {
+    if (Game::instance().getKey(Constants::Keys::W) || 
+        Game::instance().getKey(Constants::Keys::S) ||
+        Game::instance().getKey(Constants::Keys::Space)) {
         float max_jump = Constants::Regular::max_jump_speed * Constants::Units::meters_per_pixel;
         float vvchange = max_jump - glm::abs(velocity.y);
         float impulse = physic_body->GetMass() * vvchange;

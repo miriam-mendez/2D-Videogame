@@ -1,7 +1,7 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include "Game.h"
-
+#include "Constants.h"
 
 void Game::init() {
     bPlay = true;
@@ -28,9 +28,9 @@ void Game::render() {
 }
 
 void Game::keyPressed(int key) {
-    if (key == 27) // Escape code
+    if (key == Constants::Keys::Esc)
         bPlay = false;
-    else if (key == 114) { // R key
+    else if (key == Constants::Keys::R) {
         delayed_set_level(current_level);
     }
     else if (key == 101) { // E key
