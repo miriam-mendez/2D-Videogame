@@ -18,6 +18,7 @@ bool Game::update(int deltaTime) {
         scene->init(current_level);
     }
     scene->update(deltaTime);
+    soundSystem.update(deltaTime);
     return bPlay;
 }
 

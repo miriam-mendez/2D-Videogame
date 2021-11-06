@@ -31,7 +31,8 @@ void Flag::init(b2World* physics, ShaderProgram& shaderProgram, bool inverted,
     sprite->set_flip(false, inverted);
 
     auto& sounds = Game::instance().get_sound_system();
-    sounds.addNewSound("sounds/SFX/flag.ogg", "flag", "flag", false);
+    sounds.addNewSound("sounds/SFX/congrats.wav", "flag", "flag", false);
+    sounds.addNewSound("sounds/SFX/congrats_part.wav", "flag_part", "flag_part", false);
 
     b2BodyDef body_def;
     body_def.type = b2_staticBody;
@@ -56,7 +57,9 @@ void Flag::init(b2World* physics, ShaderProgram& shaderProgram, bool inverted,
 
 void Flag::update(int deltaTime) {
     auto sprite = static_cast<Sprite*>(quad);
+    auto& sounds = Game::instance().get_sound_system();
     remaining_time = in_range ? remaining_time - deltaTime : timer;
+    part_sound_played = in_range ? part_sound_played : false;
     if (in_range && sprite->animation() != RISE) {
         sprite->changeAnimation(RISE);
     }
@@ -64,9 +67,12 @@ void Flag::update(int deltaTime) {
         sprite->changeAnimation(FALL);
     }
     if (remaining_time <= 0) {
+        if (!part_sound_played) {
+            sounds.playSound("flag_part");
+            part_sound_played = true;
+        }
         auto& scene = Game::instance().get_scene();
         if (scene.captured_flags >= scene.required_flags) {
-            auto& sounds = Game::instance().get_sound_system();
             sounds.playSound("flag");
             Game::instance().delayed_set_level(level);
         }

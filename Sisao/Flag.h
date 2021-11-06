@@ -5,6 +5,7 @@ class Flag :
 
     bool inverted = false;
     bool in_range = false;
+    bool part_sound_played = false;
     std::string level;
     const int timer = 700; // time the flag needs to be active to change level
     int remaining_time = timer;
