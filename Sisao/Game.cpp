@@ -33,6 +33,21 @@ void Game::keyPressed(int key) {
     else if (key == Constants::Keys::R) {
         delayed_set_level(current_level);
     }
+    else if (key == Constants::Keys::_1) {
+        delayed_set_level("levels/level1.txt");
+    }
+    else if (key == Constants::Keys::_2) {
+        delayed_set_level("levels/level2.txt");
+    }
+    else if (key == Constants::Keys::_3) {
+        delayed_set_level("levels/level3.txt");
+    }
+    else if (key == Constants::Keys::_4) {
+        delayed_set_level("levels/level4.txt");
+    }
+    else if (key == Constants::Keys::_5) {
+        delayed_set_level("levels/level5.txt");
+    }
     keys[key] = true;
 }
 
