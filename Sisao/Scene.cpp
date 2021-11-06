@@ -57,6 +57,11 @@ void Scene::init(std::string level) {
 
 void Scene::update(int deltaTime) {
     currentTime += deltaTime;
+    debug_key_delay_timer -= deltaTime;
+    if (debug_key_delay_timer <= 0 && Game::instance().getKey(Constants::Keys::G)) {
+        debug_key_delay_timer = debug_key_delay;
+        god_mode = !god_mode;
+    }
     for (auto const& x : objects) {
         x.second->update(deltaTime);
     }

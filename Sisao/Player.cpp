@@ -80,13 +80,14 @@ void Player::init(b2World* physics, ShaderProgram& shaderProgram, bool inverse) 
     c2.m_p.Set(0, c2_y);
     b2PolygonShape box;
     box.SetAsBox(capsule_bb_size_meters.x / 2.f, glm::abs(c1_y - c2_y) / 2.f, b2Vec2(0, 0), 0.f);
+    auto water_mask = inverted ? (int)Constants::Physics::Category::BelowWater : (int)Constants::Physics::Category::AboveWater;
 
     b2FixtureDef fixture_c1;
     fixture_c1.shape = &c1;
     fixture_c1.density = 1.5f;
     fixture_c1.friction = inverse ? 0.f : 1.f;
     fixture_c1.filter.categoryBits = (int)Constants::Physics::Category::Regular;
-    fixture_c1.filter.maskBits = (int)Constants::Physics::Mask::Regular;
+    fixture_c1.filter.maskBits = (int)Constants::Physics::Mask::Regular | water_mask;;
     physic_body->CreateFixture(&fixture_c1);
 
     b2FixtureDef fixture_c2;
@@ -94,7 +95,7 @@ void Player::init(b2World* physics, ShaderProgram& shaderProgram, bool inverse) 
     fixture_c2.density = 1.5f;
     fixture_c2.friction = inverse ? 1.f : 0.f;
     fixture_c2.filter.categoryBits = (int)Constants::Physics::Category::Regular;
-    fixture_c2.filter.maskBits = (int)Constants::Physics::Mask::Regular;
+    fixture_c2.filter.maskBits = (int)Constants::Physics::Mask::Regular | water_mask;;
     physic_body->CreateFixture(&fixture_c2);
 
     b2FixtureDef fixture_box;
@@ -102,7 +103,7 @@ void Player::init(b2World* physics, ShaderProgram& shaderProgram, bool inverse) 
     fixture_box.density = 1.5f;
     fixture_box.friction = 0.f;
     fixture_box.filter.categoryBits = (int)Constants::Physics::Category::Regular;
-    fixture_box.filter.maskBits = (int)Constants::Physics::Mask::Regular;
+    fixture_box.filter.maskBits = (int)Constants::Physics::Mask::Regular | water_mask;;
     physic_body->CreateFixture(&fixture_box);
     physic_body->SetFixedRotation(true);
 
@@ -143,7 +144,7 @@ void Player::update(int deltaTime) {
     }
     physic_body->ApplyLinearImpulseToCenter(to_box2d(h_impulse), true);
 
-    if (Game::instance().getKey(Constants::Keys::W) || 
+    if (Game::instance().getKey(Constants::Keys::W) ||
         Game::instance().getKey(Constants::Keys::S) ||
         Game::instance().getKey(Constants::Keys::Space)) {
         float max_jump = Constants::Regular::max_jump_speed * Constants::Units::meters_per_pixel;
@@ -170,8 +171,11 @@ void Player::update(int deltaTime) {
             sprite->changeAnimation(STAND);
         }
     }
-    if (in_water) {
+    if (in_water && !Game::instance().get_scene().god_mode) {
         Game::instance().delayed_set_level(Game::instance().get_current_level());
+    }
+    else {
+        in_water = false;
     }
 
     // gravity

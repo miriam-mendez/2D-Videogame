@@ -42,6 +42,8 @@ namespace Constants {
         static constexpr int A = 97;
         static constexpr int S = 115;
         static constexpr int D = 100;
+        static constexpr int G = 103;
+        static constexpr int B = 98;
         static constexpr int Space = 32;
         static constexpr int Esc = 27;
         static constexpr int ArrowUp = GLUT_KEY_UP;

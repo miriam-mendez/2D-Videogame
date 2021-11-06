@@ -58,7 +58,7 @@ void Cactus::begin_overlap(b2Contact* contact) {
         Player* x = dynamic_cast<Player*>(a);
         Player* y = dynamic_cast<Player*>(b);
 
-        if (x != nullptr || y != nullptr) {
+        if ((x != nullptr || y != nullptr) && !Game::instance().get_scene().god_mode) {
             auto& sounds = Game::instance().get_sound_system();
             sounds.playSound("cactus");
             Game::instance().delayed_set_level(Game::instance().get_current_level());

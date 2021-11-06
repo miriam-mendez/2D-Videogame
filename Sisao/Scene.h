@@ -27,6 +27,9 @@ public:
 
     int captured_flags = 0;
     int required_flags = 1;
+    const int debug_key_delay = 500;
+    int debug_key_delay_timer = 0;
+    bool god_mode = false;
 
 private:
     const glm::vec2 scene_center = glm::vec2(0, 0);

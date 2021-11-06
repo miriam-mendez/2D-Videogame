@@ -33,12 +33,6 @@ void Game::keyPressed(int key) {
     else if (key == Constants::Keys::R) {
         delayed_set_level(current_level);
     }
-    else if (key == 101) { // E key
-        delayed_set_level(prev_level);
-    }
-    else if (key == 116) { // T key
-        delayed_set_level(next_level);
-    }
     keys[key] = true;
 }
 
@@ -47,6 +41,12 @@ void Game::keyReleased(int key) {
 }
 
 void Game::specialKeyPressed(int key) {
+    if (key == Constants::Keys::ArrowLeft) {
+        delayed_set_level(prev_level);
+    }
+    else if (key == Constants::Keys::ArrowRight) {
+        delayed_set_level(next_level);
+    }
     specialKeys[key] = true;
 }
 
