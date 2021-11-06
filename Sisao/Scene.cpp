@@ -62,6 +62,14 @@ void Scene::update(int deltaTime) {
         debug_key_delay_timer = debug_key_delay;
         god_mode = !god_mode;
     }
+    else if (debug_key_delay_timer <= 0 && Game::instance().getKey(Constants::Keys::B)) {
+        debug_key_delay_timer = debug_key_delay;
+        no_barrier_mode = !no_barrier_mode;
+        for (auto& o : objects) {
+            Wall* w = dynamic_cast<Wall*>(o.second);
+            if (w) w->set(no_barrier_mode);
+        }
+    }
     for (auto const& x : objects) {
         x.second->update(deltaTime);
     }
