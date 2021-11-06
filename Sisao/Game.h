@@ -56,7 +56,7 @@ private:
                                       // we can have access at any time
 
     bool level_change = true;
-    std::string current_level = "levels/instructions.txt";
+    std::string current_level = "levels/level5.txt";
     std::string prev_level = current_level;
     std::string next_level = current_level;
     SoundSystem soundSystem;
