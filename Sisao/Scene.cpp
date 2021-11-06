@@ -13,6 +13,8 @@
 #include "Lever.h"
 #include "Flag.h"
 #include "Text.h"
+#include "Balance.h"
+
 
 Scene::Scene() {}
 
@@ -222,6 +224,19 @@ void Scene::read_objects(std::ifstream& stream) {
             sstream >> id >> pos.x >> pos.y >> inverted;
             auto box = new Box(id);
             box->init(physics, texProgram, inverted);
+            box->set_position(glm::vec2(pos));
+            auto r = objects.emplace(id, box);
+            assert(r.second);
+        }
+        else if (instr == "BALANCE") {
+            glm::ivec2 pos;
+            Object::uuid_t id;
+            float angle = 0;
+            int length = 16;
+            sstream.str(args);
+            sstream >> id >> pos.x >> pos.y >> length >> angle;
+            auto box = new Balance(id);
+            box->init(physics, texProgram, length, angle);
             box->set_position(glm::vec2(pos));
             auto r = objects.emplace(id, box);
             assert(r.second);

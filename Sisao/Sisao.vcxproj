@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClInclude Include="Activable.h" />
     <ClInclude Include="AnimKeyframes.h" />
+    <ClInclude Include="Balance.h" />
     <ClInclude Include="Box.h" />
     <ClInclude Include="Cactus.h" />
     <ClInclude Include="Camera.h" />
@@ -39,6 +40,7 @@
     <ClInclude Include="Water.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Balance.cpp" />
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="Cactus.cpp" />
     <ClCompile Include="Camera.cpp" />
