@@ -35,7 +35,7 @@ void Balance::init(b2World* physics, ShaderProgram& shaderProgram, int length, f
     b2FixtureDef fixture_def;
     fixture_def.shape = &box_shape;
     fixture_def.density = 2.0f;
-    fixture_def.friction = 1.f;
+    fixture_def.friction = 0.5f;
     fixture_def.filter.categoryBits = (int)Constants::Physics::Category::Regular;
     fixture_def.filter.maskBits = (int)Constants::Physics::Mask::Regular;
     physic_body->CreateFixture(&fixture_def);
@@ -49,6 +49,12 @@ void Balance::init(b2World* physics, ShaderProgram& shaderProgram, int length, f
     jointDef.bodyA = physic_body;
     jointDef.collideConnected = false;
     jointDef.bodyB = axis_physic_body;
+    jointDef.lowerAngle = -0.25f * b2_pi; // -45 graus
+    jointDef.upperAngle = 0.25f * b2_pi; // 45 graus
+    jointDef.enableLimit = true;
+    jointDef.maxMotorTorque = 50.f;
+    jointDef.motorSpeed = 0.0f;
+    jointDef.enableMotor = true;
 
     b2RevoluteJoint* joint = (b2RevoluteJoint*)physics->CreateJoint(&jointDef);
 
