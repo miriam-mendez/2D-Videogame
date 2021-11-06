@@ -17,7 +17,9 @@ public:
     float get_group_volume(std::string const& group);
     void stop_group_sounds(std::string const& group);
 
-    void update();
+    int get_playing_sounds(std::string const& group);
+
+    void update(int deltaTime);
     void releaseSound(std::string const& name);
 
 private:

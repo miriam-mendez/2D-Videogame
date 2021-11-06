@@ -110,9 +110,19 @@ void Player::init(b2World* physics, ShaderProgram& shaderProgram, bool inverse) 
     b2BodyUserData data;
     data.pointer = get_id();
     physic_body->GetUserData() = data;
+
+    // SFX
+    auto& sounds = Game::instance().get_sound_system();
+    sounds.addNewSound("sounds/SFX/Grass Running.wav", "walk", "walk", false);
+    sounds.set_group_volume("walk", 0.3f);
+    sounds.addNewSound("sounds/SFX/jump.ogg", "jump", "jump", false);
+    sounds.set_group_volume("jump", 0.8f);
+    sounds.addNewSound("sounds/SFX/Grass Step.wav", "ground", "ground", false);
+    sounds.set_group_volume("ground", 0.3f);
 }
 
 void Player::update(int deltaTime) {
+    auto& sounds = Game::instance().get_sound_system();
     auto sprite = static_cast<Sprite*>(quad);
     physics_update(deltaTime);
     b2Vec2 velocity = physic_body->GetLinearVelocity();
@@ -144,6 +154,13 @@ void Player::update(int deltaTime) {
     }
     physic_body->ApplyLinearImpulseToCenter(to_box2d(h_impulse), true);
 
+    walk_sound_timer -= deltaTime;
+    if (sprite->animation() == RUN && walk_sound_timer <= 0) {
+        walk_sound_timer = walk_sound_delay;
+        if (sounds.get_playing_sounds("walk") <= 2)
+            sounds.playSound("walk");
+    }
+
     if (Game::instance().getKey(Constants::Keys::W) ||
         Game::instance().getKey(Constants::Keys::S) ||
         Game::instance().getKey(Constants::Keys::Space)) {
@@ -151,6 +168,8 @@ void Player::update(int deltaTime) {
         float vvchange = max_jump - glm::abs(velocity.y);
         float impulse = physic_body->GetMass() * vvchange;
         if (!jumping && !falling) {
+            if (sounds.get_playing_sounds("jump") <= 1)
+                sounds.playSound("jump");
             sprite->changeAnimation(JUMP_UP);
             physic_body->ApplyLinearImpulseToCenter(b2Vec2(0, -gravity_direction_y * impulse), true);
             jumping = true;
@@ -163,6 +182,8 @@ void Player::update(int deltaTime) {
         if (sprite->animation() == FALL) {
             sprite->changeAnimation(FALL_TO_STAND);
             jumping = false;
+            if (sounds.get_playing_sounds("ground") <= 0)
+                sounds.playSound("ground");
         }
         else if (!jumping && sprite->animation() == RUN) {
             sprite->changeAnimation(RUN_TO_STAND);

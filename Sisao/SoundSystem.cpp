@@ -70,7 +70,15 @@ void SoundSystem::stop_group_sounds(std::string const& group) {
     }
 }
 
-void SoundSystem::update() {
+int SoundSystem::get_playing_sounds(std::string const& group) {
+    int result = 0;
+    auto it = groups.find(group);
+    if (it != groups.end())
+        it->second->getNumPlaying(&result);
+    return result;
+}
+
+void SoundSystem::update(int deltaTime) {
     system->update();
 }
 

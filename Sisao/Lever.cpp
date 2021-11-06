@@ -68,7 +68,7 @@ void Lever::update(int deltaTime) {
         send_to_linked(sprite->animation() == ACTIVATE);
     }
     current_delay -= deltaTime;
-    if (in_range && current_delay < 0 && Game::instance().getSpecialKey(GLUT_KEY_DOWN)) {
+    if (in_range && current_delay < 0 && Game::instance().getKey(Constants::Keys::E)) {
         current_delay = switch_delay;
         if (sprite->animation() == ACTIVATE) {
             sprite->changeAnimation(DEACTIVATE);
