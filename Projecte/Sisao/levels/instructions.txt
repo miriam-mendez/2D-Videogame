@@ -1,0 +1,84 @@
+[BEGIN GENERAL]
+## INFORMATION ##
+# PREV_LEVEL LEVEL_PATH
+# NEXT_LEVEL LEVEL_PATH
+# REQUIRED_FLAGS NUMBER_OF_FLAGS_TO_WIN_LEVEL
+# WATER [0|1]
+# MUSIC VOLUME AUDIO_PATH
+# BACKGROUND_BASE X Y IMAGE_PATH
+# BACKGROUND_PARALLAX SPEED IMAGE_PATH # order doesn't matter
+
+PREV_LEVEL levels/credits.txt
+NEXT_LEVEL levels/menu.txt
+REQUIRED_FLAGS 1
+WATER 0
+MUSIC 60 sounds/music-loop.wav # VOLUME[0-100] and FILE
+UI_CAMERA 1
+BACKGROUND_BASE 0 0 images/parallaxMenu/00.png
+BACKGROUND_PARALLAX 0.0333 images/parallaxMenu/01.png
+BACKGROUND_PARALLAX 0.0666 images/parallaxMenu/02.png
+BACKGROUND_PARALLAX 0.1 images/parallaxMenu/03.png
+BACKGROUND_PARALLAX 0.1333 images/parallaxMenu/04.png
+BACKGROUND_PARALLAX 0.1666 images/parallaxMenu/05.png
+BACKGROUND_PARALLAX 0.2 images/parallaxMenu/06.png
+BACKGROUND_PARALLAX 0.2333 images/parallaxMenu/07.png
+BACKGROUND_PARALLAX 0.2666 images/parallaxMenu/08.png
+BACKGROUND_PARALLAX 0.3 images/parallaxMenu/09.png
+[END GENERAL]
+
+[BEGIN TILEMAP]
+POSITION -264 120
+DIMENSIONS 33 5
+TILE_SIZE 16
+BLOCK_SIZE 16
+TILESHEET images/wasteland.png
+TILESHEET_NUMTILES 4 7
+[BEGIN TILES]
+19,6,10,10,10,10,10,10,10,10,10,10,4,4,4,4,4,10,4,4,4,10,10,10,10,10,10,10,10,10,10,5,16
+-1,19,14,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,1,1,1,15,-1
+-1,-1,19,14,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,9,15,16,17,17,20,-1
+-1,-1,-1,18,6,16,17,17,17,17,17,20,25,25,25,25,21,25,25,21,24,25,25,25,19,8,15,20,-1,-1,-1,-1,-1
+-1,-1,-1,-1,17,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,19,16,-1,-1,-1,-1,-1,-1
+[END TILEMAP]
+
+[BEGIN OBJECTS]
+## INFORMATION ##
+# The ID dictamines the order of rendering!
+# PLAYER ID X Y INVERSE[0|1]
+# BOX ID X Y INVERSE[0|1]
+# WALL ID X Y INVERSE[0|1]
+# CACTUS ID X Y ORIENTATION[0|1|2|3]
+# LEVER ID X Y ORIENTATION[0|1|2|3] DEFAULT_ACTIVE LINKED_ID1 LINKED_ID2 LINKED_ID3 ...
+# FLAG ID X Y INVERSE[0|1] LEVEL_TO_LOAD
+# TEXT ID X Y FONT_PATH SIZE R G B A TEXTSTRING
+# WATER ID X Y
+
+TEXT 0 105 30 fonts/NineTsukiRegular.ttf 25 1 1 1 1 MENU
+TEXT 1 -310 -170 fonts/NineTsukiRegular.ttf 36 1 1 1 1 INSTRUCTIONS
+TEXT 2 -285 -120 fonts/Keyboard.otf 24 1 1 1 1 R
+TEXT 3 -300 -100 fonts/Calibri-Regular.ttf 15 1 1 1 1 restart level
+TEXT 4 -285 -60 fonts/Keyboard.otf 24 1 1 1 1 E
+TEXT 5 -300 -40 fonts/Calibri-Regular.ttf 15 1 1 1 1 enable/
+TEXT 6 -300 -26 fonts/Calibri-Regular.ttf 15 1 1 1 1 disable switch
+TEXT 26 -285 14 fonts/Keyboard.otf 24 1 1 1 1 m
+TEXT 27 -275  34 fonts/Calibri-Regular.ttf 15 1 1 1 1 quit
+TEXT 7 -140 -61 fonts/Keyboard.otf 24 1 1 1 1 W
+TEXT 8 -166 -34 fonts/Keyboard.otf 24 1 1 1 1 ASD w
+TEXT 9 -120 -14 fonts/Calibri-Regular.ttf 15 1 1 1 1 to move / jump
+TEXT 10 45 -155 fonts/Calibri-Bold.ttf 18 1 1 1 1 Debugging keys:
+TEXT 11 40 -110 fonts/Keyboard.otf 24 1 1 1 1 G
+TEXT 12 82 -115 fonts/Calibri-Regular.ttf 15 1 1 1 1 god mode
+TEXT 13 40 -80 fonts/Keyboard.otf 24 1 1 1 1 B
+TEXT 14 82 -85 fonts/Calibri-Regular.ttf 15 1 1 1 1 disable all barriers
+TEXT 15 40 -50 fonts/Keyboard.otf 24 1 1 1 1 st
+TEXT 16 110 -55 fonts/Calibri-Regular.ttf 15 1 1 1 1 skip levels
+TEXT 17 40 -20 fonts/Keyboard.otf 24 1 1 1 1 12345
+TEXT 18 190 -25 fonts/Calibri-Regular.ttf 15 1 1 1 1 select levels
+FLAG 19 160 80 0 levels/menu.txt
+WALL 20 -192 96 0
+WALL 21 -192 64 0
+LEVER 22 -50 103 0 1 20 21
+BOX 23 -224 80 0
+PLAYER 24 0 120 0
+WATER 25 0 400
+[END OBJECTS]

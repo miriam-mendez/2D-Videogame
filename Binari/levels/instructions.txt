@@ -59,7 +59,7 @@ TEXT 2 -285 -120 fonts/Keyboard.otf 24 1 1 1 1 R
 TEXT 3 -300 -100 fonts/Calibri-Regular.ttf 15 1 1 1 1 restart level
 TEXT 4 -285 -60 fonts/Keyboard.otf 24 1 1 1 1 E
 TEXT 5 -300 -40 fonts/Calibri-Regular.ttf 15 1 1 1 1 enable/
-TEXT 6 -300 -26 fonts/Calibri-Regular.ttf 15 1 1 1 1 diasble switch
+TEXT 6 -300 -26 fonts/Calibri-Regular.ttf 15 1 1 1 1 disable switch
 TEXT 26 -285 14 fonts/Keyboard.otf 24 1 1 1 1 m
 TEXT 27 -275  34 fonts/Calibri-Regular.ttf 15 1 1 1 1 quit
 TEXT 7 -140 -61 fonts/Keyboard.otf 24 1 1 1 1 W
@@ -71,9 +71,9 @@ TEXT 12 82 -115 fonts/Calibri-Regular.ttf 15 1 1 1 1 god mode
 TEXT 13 40 -80 fonts/Keyboard.otf 24 1 1 1 1 B
 TEXT 14 82 -85 fonts/Calibri-Regular.ttf 15 1 1 1 1 disable all barriers
 TEXT 15 40 -50 fonts/Keyboard.otf 24 1 1 1 1 st
-TEXT 16 110 -55 fonts/Calibri-Regular.ttf 15 1 1 1 1 skip the level
+TEXT 16 110 -55 fonts/Calibri-Regular.ttf 15 1 1 1 1 skip levels
 TEXT 17 40 -20 fonts/Keyboard.otf 24 1 1 1 1 12345
-TEXT 18 190 -25 fonts/Calibri-Regular.ttf 15 1 1 1 1 select the level
+TEXT 18 190 -25 fonts/Calibri-Regular.ttf 15 1 1 1 1 select levels
 FLAG 19 160 80 0 levels/menu.txt
 WALL 20 -192 96 0
 WALL 21 -192 64 0

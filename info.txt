@@ -27,7 +27,7 @@ Funcionalitats implementades:
 	- R : Reiniciar nivell.
 	- ESC : Sortir del joc.
 
-- TECLES de debugg:
+- TECLES de debug:
 	- G : god mode, no es pot morir al tocar un cactus.
 	- B : Elimina totes les barreres del nivell.
 	- 1, 2, 3, 4, 5: Selecciona el nivell corresponent.
@@ -43,7 +43,7 @@ Funcionalitats implementades:
 	- [MECÀNICA] Efecte parell motor.
 
 
-- [EXTRA] BACKGROUND amb número arbitrari de capes i regulació de desplaçament del paral·laxi configurable.
+- [EXTRA] BACKGROUND amb número arbitrari de capes i regulació de desplaçament del paral·laxe configurable.
 	- Efecte Parallax.
 
 - [EXTRA] CÀMERA de seguiment suau i regulable dels personatges.
