@@ -1,6 +1,6 @@
 SISAO
 ======
-> Sisao is a 2D-Videogame implemnted during the subject of Videogames Q1 2021-2022 FIB (UPC)
+> Sisao is a 2D-Videogame implemented during the subject of Videogames Q1 2021-2022 FIB (UPC)
 
 ![GitHub Logo](Videos/level5.gif)
 
