@@ -9,7 +9,7 @@ As you can see in the video below, you are two players and have to put each resp
 
 To do so, you can use the following controls:
 
-![Screenshot](Videos/instructions.png)
+![Screenshot](Videos/instructions.PNG)
 
 ## Authors:
  - Alexandre Pérez Josende
