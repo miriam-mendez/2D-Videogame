@@ -61,7 +61,7 @@ TEXT 1 -290 4 fonts/NineTsukiRegular.ttf 14 1 1 1 1 Instructions
 TEXT 2 160 -30 fonts/NineTsukiRegular.ttf 14 1 1 1 1 Let's play!
 TEXT 3 -215 -110 fonts/NineTsukiRegular.ttf 14 1 1 1 1 Credits
 FLAG 4 -230 44 0 levels/instructions.txt
-FLAG 5 210 10 0 levels/level1.txt
+FLAG 5 210 10 0 levels/play.txt
 FLAG 6 -175 -70 0 levels/credits.txt
 PLAYER 7 -10 70 0
 WATER 8 0 400
